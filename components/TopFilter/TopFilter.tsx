@@ -4,7 +4,8 @@ import Chip from "./Chip";
 import { initialState } from "./initialState";
 import { reducer } from "./reducer";
 import { SetFilterPayload } from "./types";
-import { Filter } from "./types";
+// import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const TopFilter = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -48,6 +49,20 @@ const TopFilter = () => {
         </Chip>
         <Chip>
           <Text>Direction: North</Text>
+        </Chip>
+        <Chip
+          icon={
+            <MaterialCommunityIcons
+              // name="walk"
+              name="bike"
+              // name="car-hatchback"
+              size={16}
+              color="green"
+              style={{ marginRight: 5 }}
+            />
+          }
+        >
+          <Text>Going by Car</Text>
         </Chip>
         <Chip
           selected={filter.restaurants.checked}

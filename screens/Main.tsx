@@ -134,7 +134,7 @@ const Main: React.FC<Props> = () => {
       <ScrollBottomSheet<ListItemData>
         ref={bottomSheetRef}
         enableOverScroll
-        removeClippedSubviews={Platform.OS === "android" && sections.length > 0}
+        // removeClippedSubviews={Platform.OS === "android" && sections.length > 0}
         componentType="ScrollView"
         topInset={statusBarHeight + navBarHeight}
         animatedPosition={animatedPosition.current}

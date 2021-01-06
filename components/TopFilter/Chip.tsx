@@ -11,8 +11,14 @@ interface Props {
   children: ReactNode;
   selected?: boolean;
   onPress?: (event: GestureResponderEvent) => void;
+  icon?: ReactNode;
 }
-const Chip = ({ children, selected = false, onPress = () => {} }: Props) => (
+const Chip = ({
+  children,
+  icon,
+  selected = false,
+  onPress = () => {},
+}: Props) => (
   <TouchableOpacity
     style={[
       styles.container,
@@ -20,7 +26,10 @@ const Chip = ({ children, selected = false, onPress = () => {} }: Props) => (
     ]}
     onPress={onPress}
   >
-    {children}
+    <View style={{ flexDirection: "row" }}>
+      {icon && icon}
+      {children}
+    </View>
   </TouchableOpacity>
 );
 
