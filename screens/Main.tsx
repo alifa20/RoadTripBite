@@ -6,7 +6,7 @@
  *
  */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Constants from "expo-constants";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import { Dimensions, Platform, StyleSheet, Text, View } from "react-native";
@@ -24,6 +24,9 @@ import Animated, {
   interpolate,
   Value,
 } from "react-native-reanimated";
+import MapView from "react-native-maps";
+import * as Location from "expo-location";
+import Permissions from "expo-permissions";
 
 interface Props {
   //   navigation: StackNavigationProp<HomeStackParamsList, "Main">;
@@ -36,8 +39,22 @@ const navBarHeight = 56;
 const sections = createMockData();
 
 const Main: React.FC<Props> = () => {
-  const snapPointsFromTop = [96, "45%", windowHeight - 264];
+  const snapPointsFromTop = ["45%", windowHeight - 64];
   const animatedPosition = React.useRef(new Value(0.5));
+  const [location, setLocation] = useState<Location.LocationObject>({
+    coords: {
+      latitude: 37.78825,
+      longitude: -122.4324,
+      altitude: null,
+      accuracy: null,
+      altitudeAccuracy: null,
+      heading: null,
+      speed: null,
+    },
+    timestamp: 0,
+  });
+  const [errorMsg, setErrorMsg] = useState<string>();
+
   const handleLeftRotate = concat(
     interpolate(animatedPosition.current, {
       inputRange: [0, 0.4, 1],
@@ -74,47 +91,30 @@ const Main: React.FC<Props> = () => {
     []
   );
 
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
+
   return (
     <View style={styles.container}>
-      <View style={styles.balanceContainer}>
-        <Text style={styles.poundSign}>£</Text>
-        <Text style={styles.balance}>4,345</Text>
-      </View>
-      {/* <ProgressBar
-        style={styles.progressBar}
-        progress={0.8}
-        color={Colors.green600}
-      /> */}
-      <Animated.Image
-        source={require("../assets/card-front.png")}
-        style={[styles.card, { transform: [{ scale: cardScale }] }]}
+      <MapView
+        style={styles.map}
+        region={{
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }}
       />
-      <View style={styles.row}>
-        <View>
-          <View style={styles.action}>
-            <FontAwesome5 name="credit-card" size={24} color="black" />
-          </View>
-          <Text style={{ textAlign: "center" }}>Account</Text>
-        </View>
-        <View>
-          <View style={styles.action}>
-            <FontAwesome5 name="eye" size={24} color="black" />
-          </View>
-          <Text style={{ textAlign: "center" }}>Pin</Text>
-        </View>
-        <View>
-          <View style={styles.action}>
-            <Ionicons name="md-snow" size={24} color="black" />
-          </View>
-          <Text style={{ textAlign: "center" }}>Freeze</Text>
-        </View>
-        <View>
-          <View style={styles.action}>
-            <FontAwesome5 name="plus" size={24} color="black" />
-          </View>
-          <Text style={{ textAlign: "center" }}>Top up</Text>
-        </View>
-      </View>
       <ScrollBottomSheet<ListItemData>
         enableOverScroll
         removeClippedSubviews={Platform.OS === "android" && sections.length > 0}
@@ -226,6 +226,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     paddingTop: 8,
   },
+  map: { width: windowWidth, height: windowHeight },
 });
 
 export default Main;
