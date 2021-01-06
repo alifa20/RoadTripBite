@@ -9,24 +9,9 @@ export const setIsDirty = (
   isDirty,
 });
 
-export const setFilter = (
-  state: State,
-  { isDirty, filter }: { isDirty: boolean; filter: Filter }
-) => ({
-  ...state,
-  oldFilter: initialState.oldFilter,
-  newFilter: filter,
-  isDirty,
-});
+export const clearFilter = (state: State) => initialState;
 
-export const setOldFilter = (state: State) => ({
-  ...state,
-  oldFilter: state.newFilter,
-  newFilter: state.newFilter,
-  isDirty: false,
-});
-
-export const updateNewFilter = (
+export const updateFilter = (
   state: State,
   {
     isDirty,
@@ -34,7 +19,7 @@ export const updateNewFilter = (
   }: { isDirty: boolean; filter: SetFilterPayload }
 ) => ({
   ...state,
-  newFilter: { ...state.newFilter, [key]: rest },
+  filter: { ...state.filter, [key]: rest },
   isDirty,
 });
 
@@ -46,6 +31,6 @@ export const updateOldFilter = (
   }: { isDirty: boolean; filter: SetFilterPayload }
 ) => ({
   ...state,
-  newFilter: { ...state.newFilter, [key]: rest },
+  filter: { ...state.filter, [key]: rest },
   isDirty,
 });

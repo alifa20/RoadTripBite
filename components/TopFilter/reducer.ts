@@ -1,10 +1,5 @@
 import { initialState } from "./initialState";
-import {
-  updateNewFilter,
-  setIsDirty,
-  setFilter,
-  setOldFilter,
-} from "./stateHandler";
+import { clearFilter, setIsDirty, updateFilter } from "./stateHandler";
 import { Action } from "./types";
 
 export const reducer = (state = initialState, action: Action) => {
@@ -12,14 +7,11 @@ export const reducer = (state = initialState, action: Action) => {
     case "SET_IS_DIRTY":
       return setIsDirty(state, action.payload);
 
-    case "SET_FILTER":
-      return setFilter(state, action.payload);
-
-    case "SAVE_OLD_FILTER":
-      return setOldFilter(state);
+    case "CLEAR_FILTER":
+      return clearFilter(state);
 
     case "UPDATE_FILTER":
-      return updateNewFilter(state, action.payload);
+      return updateFilter(state, action.payload);
 
     default:
       return state;

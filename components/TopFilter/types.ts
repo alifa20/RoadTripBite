@@ -1,6 +1,4 @@
 export type Filter = {
-  arrive: number;
-  direction: string[];
   restaurants: { rating: number; checked: boolean };
   petrol: { checked: boolean };
   groceries: { checked: boolean };
@@ -9,8 +7,9 @@ export type Filter = {
 };
 export type State = {
   isDirty: boolean;
-  oldFilter: Filter;
-  newFilter: Filter;
+  arrive: number;
+  direction: string[];
+  filter: Filter;
 };
 
 export type SetFilterPayload =
@@ -34,9 +33,5 @@ export type Action =
       payload: { isDirty: boolean; filter: SetFilterPayload };
     }
   | {
-      type: "SET_FILTER";
-      payload: { isDirty: boolean; filter: Filter };
-    }
-  | {
-      type: "SAVE_OLD_FILTER";
+      type: "CLEAR_FILTER";
     };
