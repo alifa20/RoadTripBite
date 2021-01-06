@@ -6,10 +6,17 @@
  *
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Constants from "expo-constants";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-import { Dimensions, Platform, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+} from "react-native";
 // import { Colors, ProgressBar } from "react-native-paper";
 import ScrollBottomSheet from "react-native-scroll-bottom-sheet";
 // import { StackNavigationProp } from "@react-navigation/stack";
@@ -27,6 +34,8 @@ import Animated, {
 import MapView from "react-native-maps";
 import * as Location from "expo-location";
 import Permissions from "expo-permissions";
+import BottomSheetContent from "../components/BottomSheetContent";
+import { TopFilter } from "../components/TopFilter";
 
 interface Props {
   //   navigation: StackNavigationProp<HomeStackParamsList, "Main">;
@@ -39,8 +48,9 @@ const navBarHeight = 56;
 const sections = createMockData();
 
 const Main: React.FC<Props> = () => {
-  const snapPointsFromTop = ["45%", windowHeight - 64];
+  const snapPointsFromTop = ["45%", windowHeight - 100];
   const animatedPosition = React.useRef(new Value(0.5));
+  const bottomSheetRef = useRef<ScrollBottomSheet<ListItemData>>(null);
   const [location, setLocation] = useState<Location.LocationObject>({
     coords: {
       latitude: 37.78825,
@@ -104,6 +114,9 @@ const Main: React.FC<Props> = () => {
     })();
   }, []);
 
+  const closeBottomSheet = () => {
+    bottomSheetRef?.current?.snapTo(1);
+  };
   return (
     <View style={styles.container}>
       <MapView
@@ -114,11 +127,53 @@ const Main: React.FC<Props> = () => {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
+        onPanDrag={closeBottomSheet}
       />
+      <TopFilter />
+      {/* <ScrollView style={styles.scrollView}> */}
       <ScrollBottomSheet<ListItemData>
+        ref={bottomSheetRef}
         enableOverScroll
         removeClippedSubviews={Platform.OS === "android" && sections.length > 0}
-        componentType="SectionList"
+        componentType="ScrollView"
+        topInset={statusBarHeight + navBarHeight}
+        animatedPosition={animatedPosition.current}
+        snapPoints={snapPointsFromTop}
+        initialSnapIndex={0}
+        animationConfig={{
+          easing: Easing.inOut(Easing.linear),
+        }}
+        renderHandle={() => (
+          <Handle style={{ paddingVertical: 20, backgroundColor: "#F3F4F9" }}>
+            <Animated.View
+              style={[
+                styles.handle,
+                {
+                  left: windowWidth / 2 - 20,
+                  transform: [{ rotate: handleLeftRotate }],
+                },
+              ]}
+            />
+            <Animated.View
+              style={[
+                styles.handle,
+                {
+                  right: windowWidth / 2 - 20,
+                  transform: [{ rotate: handleRightRotate }],
+                },
+              ]}
+            />
+          </Handle>
+        )}
+        contentContainerStyle={styles.contentContainerStyle}
+      >
+        <BottomSheetContent />
+      </ScrollBottomSheet>
+
+      {/* <ScrollBottomSheet<ListItemData>
+        enableOverScroll
+        removeClippedSubviews={Platform.OS === "android" && sections.length > 0}
+        componentType="ScrollView"
         topInset={statusBarHeight + navBarHeight}
         animatedPosition={animatedPosition.current}
         snapPoints={snapPointsFromTop}
@@ -154,7 +209,7 @@ const Main: React.FC<Props> = () => {
         keyExtractor={(i) => i.id}
         renderSectionHeader={renderSectionHeader}
         renderItem={renderItem}
-      />
+      /> */}
     </View>
   );
 };
@@ -162,7 +217,7 @@ const Main: React.FC<Props> = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    // padding: 16,
     alignItems: "center",
   },
   contentContainerStyle: {
@@ -227,6 +282,10 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   map: { width: windowWidth, height: windowHeight },
+  scrollView: {
+    backgroundColor: "pink",
+    marginHorizontal: 20,
+  },
 });
 
 export default Main;
