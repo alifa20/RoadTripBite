@@ -16,6 +16,7 @@ import {
   View,
   Text,
   StatusBar,
+  Button,
 } from 'react-native';
 
 import {
@@ -25,6 +26,7 @@ import {
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import analytics from '@react-native-firebase/analytics';
 
 declare const global: {HermesInternal: null | {}};
 
@@ -42,12 +44,23 @@ const App = () => {
               <Text style={styles.footer}>Engine: Hermes</Text>
             </View>
           )}
+          <Button
+            title="Add To Basket"
+            onPress={async () =>
+              await analytics().logEvent('basket', {
+                id: 3745092,
+                item: 'mens grey t-shirt',
+                description: ['round neck', 'long sleeved'],
+                size: 'L',
+              })
+            }
+          />
           <View style={styles.body}>
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionTitle}>Step One</Text>
               <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-                screen and then come back to see your edits.
+                Edit <Text style={styles.highlight}>App.tsx</Text> to change
+                this screen and then come back to see your edits.
               </Text>
             </View>
             <View style={styles.sectionContainer}>

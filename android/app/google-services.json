@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "68598414917",
+    "project_id": "roadtripbite-b024d",
+    "storage_bucket": "roadtripbite-b024d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:68598414917:android:673b9f40276bc00c3a6d2c",
+        "android_client_info": {
+          "package_name": "com.roadtripbite"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "68598414917-ieq6a3lq0h1vnktlamdur03cq55sk6mi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgR8u94SD_ynsPTuNiiHsj-8ziShRoFvQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "68598414917-ieq6a3lq0h1vnktlamdur03cq55sk6mi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "68598414917-n1b9lqullvp5vm10rc3coeqvubn8rkmp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.RoadTripBite"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
