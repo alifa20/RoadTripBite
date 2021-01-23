@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>68598414917-n1b9lqullvp5vm10rc3coeqvubn8rkmp.apps.googleusercontent.com</string>
+	<string>68598414917-gs4rbm213huehj5u6113oa7ufd8ktqbm.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.68598414917-n1b9lqullvp5vm10rc3coeqvubn8rkmp</string>
+	<string>com.googleusercontent.apps.68598414917-gs4rbm213huehj5u6113oa7ufd8ktqbm</string>
 	<key>API_KEY</key>
 	<string>AIzaSyBxJUcCa43IQwDJ00PWCeqKmpzWjTohJ9s</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.reactjs.native.example.RoadTripBite</string>
+	<string>com.evda.RoadTripBite</string>
 	<key>PROJECT_ID</key>
 	<string>roadtripbite-b024d</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:68598414917:ios:b833a85c117235aa3a6d2c</string>
+	<string>1:68598414917:ios:d495923c1be672ab3a6d2c</string>
 </dict>
 </plist>
