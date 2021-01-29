@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {PermissionsAndroid, StyleSheet, View} from 'react-native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 
 const Main = () => {
@@ -15,6 +15,34 @@ const Main = () => {
     },
     timestamp: 0,
   });
+  const [errorMsg, setErrorMsg] = useState<string>();
+
+  useEffect(() => {
+    (async () => {
+      let status = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      //   let location = await Location.getCurrentPositionAsync({});
+      //   setLocation(location);
+    })();
+  }, []);
+
+  //  const  findCoordinates = () => {
+  //     navigator.geolocation.getCurrentPosition(
+  //       (position) => {
+  //         const location = JSON.stringify(position);
+
+  //         this.setState({location});
+  //       },
+  //       (error) => Alert.alert(error.message),
+  //       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+  //     );
+  //   };
 
   return (
     <View style={styles.container}>
