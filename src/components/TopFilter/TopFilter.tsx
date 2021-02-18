@@ -1,4 +1,4 @@
-import React, {useReducer} from 'react';
+import React, {useEffect, useReducer} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import Chip from './Chip';
 import {initialState} from './initialState';
@@ -37,12 +37,31 @@ const TopFilter = () => {
     });
   };
 
+  useEffect(() => {
+    chipPress({
+      key: 'restaurants',
+      rating: 4,
+      checked: !state.filter.restaurants.checked,
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}>
+        <Chip
+          selected={filter.restaurants.checked}
+          onPress={() =>
+            chipPress({
+              key: 'restaurants',
+              rating: 4,
+              checked: !state.filter.restaurants.checked,
+            })
+          }>
+          <Text>Restaurant 4+ </Text>
+        </Chip>
         <Chip>
           <Text>Arrive at: 17:30</Text>
         </Chip>
@@ -62,17 +81,7 @@ const TopFilter = () => {
           }>
           <Text>Going by Car</Text>
         </Chip>
-        <Chip
-          selected={filter.restaurants.checked}
-          onPress={() =>
-            chipPress({
-              key: 'restaurants',
-              rating: 4,
-              checked: !state.filter.restaurants.checked,
-            })
-          }>
-          <Text>Restaurant 4+ </Text>
-        </Chip>
+
         <Chip
           onPress={() =>
             chipPress({key: 'petrol', checked: !state.filter.petrol.checked})

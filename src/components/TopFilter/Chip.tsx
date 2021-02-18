@@ -1,11 +1,10 @@
-import React, { ReactNode } from "react";
+import React, {ReactNode} from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
   GestureResponderEvent,
-} from "react-native";
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 
 interface Props {
   children: ReactNode;
@@ -19,18 +18,24 @@ const Chip = ({
   selected = false,
   onPress = () => {},
 }: Props) => (
-  <TouchableOpacity
-    style={[
-      styles.container,
-      { backgroundColor: selected ? "#dedede" : "white" },
-    ]}
-    onPress={onPress}
-  >
-    <View style={{ flexDirection: "row" }}>
+  <TouchableWithoutFeedback
+    // style={[
+    //   styles.container,
+    //   {backgroundColor: selected ? '#dedede' : 'white'},
+    // ]}
+    onPress={onPress}>
+    <View
+      style={[
+        styles.container,
+        {backgroundColor: selected ? '#dedede' : 'white'},
+        {
+          flexDirection: 'row',
+        },
+      ]}>
       {icon && icon}
       {children}
     </View>
-  </TouchableOpacity>
+  </TouchableWithoutFeedback>
 );
 
 const styles = StyleSheet.create({
@@ -39,7 +44,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 20,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#ddd',
 
     marginHorizontal: 2,
   },
