@@ -324,6 +324,8 @@ PODS:
     - Google-Maps-iOS-Utils (= 2.1.0)
     - GoogleMaps (= 3.5.0)
     - React
+  - react-native-location (2.5.0):
+    - React
   - react-native-maps (0.27.1):
     - React
   - React-RCTActionSheet (0.63.4):
@@ -437,6 +439,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-google-maps (from `../node_modules/react-native-maps`)
+  - react-native-location (from `../node_modules/react-native-location`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -512,6 +515,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-google-maps:
     :path: "../node_modules/react-native-maps"
+  react-native-location:
+    :path: "../node_modules/react-native-location"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
   React-RCTActionSheet:
@@ -581,6 +586,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
   react-native-google-maps: 0a989abda71059db2caa98b9dacca7a8f38a47d0
+  react-native-location: 5a40ec1cc6abf2f6d94df979f98ec76c3a415681
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
@@ -597,6 +603,6 @@ SPEC CHECKSUMS:
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: abec227789328c3662f02da0d5190c14eb20ea64
+PODFILE CHECKSUM: 3373d1ab32ffabac363b3f3ff44a7432a3499680
 
-COCOAPODS: 1.9.2
+COCOAPODS: 1.10.1

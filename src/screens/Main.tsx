@@ -2,30 +2,92 @@ import React, {useEffect, useState} from 'react';
 import {PermissionsAndroid, StyleSheet, View} from 'react-native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 
+import RNLocation, {Location} from 'react-native-location';
+
+RNLocation.configure({
+  distanceFilter: undefined,
+});
+
 const Main = () => {
-  const [location, setLocation] = useState({
-    coords: {
-      latitude: 37.78825,
-      longitude: -122.4324,
-      altitude: null,
-      accuracy: null,
-      altitudeAccuracy: null,
-      heading: null,
-      speed: null,
-    },
+  const [location, setLocation] = useState<Location>({
+    // coords: {
+    // latitude: 37.78825,
+    // longitude: -122.4324,
+    latitude: -33.84795,
+    longitude: 151.0744,
+    altitude: 0,
+    accuracy: 0,
+    altitudeAccuracy: 0,
+    course: 0,
+    // heading:null,
+    speed: 0,
+    // },
     timestamp: 0,
   });
+
+  //   {"accuracy": 5, "altitude": 0, "altitudeAccuracy": -1, "course": -1, "floor": 0, "latitude": 37.785834, "longitude": -122.406417, "speed": -1, "timestamp": 1612052334970.0962}
   const [errorMsg, setErrorMsg] = useState<string>();
 
   useEffect(() => {
     (async () => {
-      let status = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      );
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
+      let permission = await RNLocation.checkPermission({
+        ios: 'whenInUse', // or 'always'
+        android: {
+          detail: 'coarse', // or 'fine'
+          rationale: {
+            title: 'We need to access your location',
+            message: 'We use your location to show where you are on the map',
+            buttonPositive: 'OK',
+            buttonNegative: 'Cancel',
+          },
+        },
+      });
+
+      console.log('here2');
+      console.log('permission', permission);
+
+      if (!permission) {
+        permission = await RNLocation.requestPermission({
+          ios: 'whenInUse', // or 'always'
+          android: {
+            detail: 'coarse', // or 'fine'
+            rationale: {
+              title: 'We need to access your location',
+              message: 'We use your location to show where you are on the map',
+              buttonPositive: 'OK',
+              buttonNegative: 'Cancel',
+            },
+          },
+        });
       }
+
+      const latestLocation = await RNLocation.getLatestLocation({
+        timeout: 60000,
+      });
+      if (latestLocation) {
+        const loc = {
+          coords: {
+            latitude: latestLocation.latitude,
+            longitude: latestLocation.longitude,
+            altitude: latestLocation.altitude,
+            accuracy: latestLocation.accuracy,
+            altitudeAccuracy: latestLocation.altitudeAccuracy,
+            heading: null,
+            speed: latestLocation.speed,
+          },
+          timestamp: latestLocation.timestamp,
+        };
+        // setLocation(loc);
+        // setLocation(latestLocation);
+        console.log('latestLocation', latestLocation);
+      }
+      //   let status = await PermissionsAndroid.request(
+      //     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      //   );
+      //   if (status !== 'granted') {
+      //     setErrorMsg('Permission to access location was denied');
+      //     return;
+      //   }
 
       //   let location = await Location.getCurrentPositionAsync({});
       //   setLocation(location);
@@ -60,8 +122,8 @@ const Main = () => {
         style={styles.map}
         provider={PROVIDER_GOOGLE} // remove if not using Google Maps
         region={{
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
+          latitude: location.latitude,
+          longitude: location.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
