@@ -3,6 +3,7 @@ import {PermissionsAndroid, StyleSheet, View} from 'react-native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 
 import RNLocation, {Location} from 'react-native-location';
+import {TopFilter} from '../components/TopFilter';
 
 RNLocation.configure({
   distanceFilter: undefined,
@@ -129,6 +130,7 @@ const Main = () => {
         }}
         // onPanDrag={closeBottomSheet}
       />
+      <TopFilter />
     </View>
   );
 };

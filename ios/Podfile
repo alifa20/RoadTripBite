@@ -11,7 +11,7 @@ target 'RoadTripBite' do
   config = use_native_modules!
   use_react_native!(:path => config["reactNativePath"])
 
-  pod 'react-native-location', :path => '../node_modules/react-native-location'
+
 
   target 'RoadTripBiteTests' do
     inherit! :complete
@@ -35,5 +35,5 @@ target 'RoadTripBite-tvOS' do
   target 'RoadTripBite-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
-  end
+    end
 end
