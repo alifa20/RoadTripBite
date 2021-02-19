@@ -123,16 +123,16 @@ const TopFilter = () => {
         </Chip>
       </ScrollView>
       <View style={styles.searchRow}>
-        {hasSelected && (
-          <Chip onPress={undoPress}>
-            <Text>Clear filter </Text>
-          </Chip>
-        )}
-        {hasSelected && isDirty && (
-          <Chip onPress={() => searchPress()}>
-            <Text>Search for my trip! </Text>
-          </Chip>
-        )}
+        {/* {hasSelected && ( */}
+        <Chip onPress={undoPress}>
+          <Text>Clear filter </Text>
+        </Chip>
+        {/* )} */}
+        {/* {hasSelected && isDirty && ( */}
+        <Chip onPress={() => searchPress()}>
+          <Text>Search for my trip! </Text>
+        </Chip>
+        {/* )} */}
       </View>
     </View>
   );
