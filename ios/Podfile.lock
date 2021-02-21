@@ -238,6 +238,9 @@ PODS:
   - Firebase/Firestore (7.6.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 7.6.0)
+  - Firebase/Functions (7.6.0):
+    - Firebase/CoreOnly
+    - FirebaseFunctions (~> 7.6.0)
   - FirebaseAnalytics (7.6.0):
     - FirebaseCore (~> 7.0)
     - FirebaseInstallations (~> 7.0)
@@ -268,6 +271,9 @@ PODS:
     - "gRPC-C++ (~> 1.28.0)"
     - leveldb-library (~> 1.22)
     - nanopb (~> 2.30907.0)
+  - FirebaseFunctions (7.6.0):
+    - FirebaseCore (~> 7.0)
+    - GTMSessionFetcher/Core (~> 1.4)
   - FirebaseInstallations (7.6.0):
     - FirebaseCore (~> 7.0)
     - GoogleUtilities/Environment (~> 7.0)
@@ -355,6 +361,7 @@ PODS:
     - BoringSSL-GRPC (= 0.0.7)
     - gRPC-Core/Interface (= 1.28.2)
   - gRPC-Core/Interface (1.28.2)
+  - GTMSessionFetcher/Core (1.5.0)
   - leveldb-library (1.22)
   - nanopb (2.30907.0):
     - nanopb/decode (= 2.30907.0)
@@ -607,6 +614,10 @@ PODS:
     - Firebase/Firestore (~> 7.6.0)
     - React-Core
     - RNFBApp
+  - RNFBFunctions (10.8.0):
+    - Firebase/Functions (~> 7.6.0)
+    - React-Core
+    - RNFBApp
   - RNVectorIcons (8.0.0):
     - React-Core
   - Yoga (1.14.0)
@@ -647,6 +658,7 @@ DEPENDENCIES:
   - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBFirestore (from `../node_modules/@react-native-firebase/firestore`)"
+  - "RNFBFunctions (from `../node_modules/@react-native-firebase/functions`)"
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -660,6 +672,7 @@ SPEC REPOS:
     - FirebaseCore
     - FirebaseCoreDiagnostics
     - FirebaseFirestore
+    - FirebaseFunctions
     - FirebaseInstallations
     - Google-Maps-iOS-Utils
     - GoogleAppMeasurement
@@ -668,6 +681,7 @@ SPEC REPOS:
     - GoogleUtilities
     - "gRPC-C++"
     - gRPC-Core
+    - GTMSessionFetcher
     - leveldb-library
     - nanopb
     - PromisesObjC
@@ -735,6 +749,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBFirestore:
     :path: "../node_modules/@react-native-firebase/firestore"
+  RNFBFunctions:
+    :path: "../node_modules/@react-native-firebase/functions"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
   Yoga:
@@ -752,6 +768,7 @@ SPEC CHECKSUMS:
   FirebaseCore: 0a43b7f1c5b36f3358cd703011ca4c7e0df55870
   FirebaseCoreDiagnostics: ee1184d51da3293335b83355aad20f537acc24cf
   FirebaseFirestore: b860346d5095c741528efac94995bab39275d0bf
+  FirebaseFunctions: 03e30a9506b04786917e0de6d8c85cdc260fb2c8
   FirebaseInstallations: 6e4e77396559bc2ae0504823837ed737b1c7e47f
   Folly: b73c3869541e86821df3c387eb0af5f65addfab4
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
@@ -762,6 +779,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 31c5b01f978a70c6cff2afc6272b3f1921614b43
   "gRPC-C++": 13d8ccef97d5c3c441b7e3c529ef28ebee86fad2
   gRPC-Core: 4afa11bfbedf7cdecd04de535a9e046893404ed5
+  GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: 59221d7f958fb711001e6a449489542d92ae113e
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
@@ -791,6 +809,7 @@ SPEC CHECKSUMS:
   RNFBAnalytics: 90d32a12ca53f8cd6246030b7f1c12615c148f1f
   RNFBApp: 97b618641633d6d23187a9d0537c3893482c483f
   RNFBFirestore: 859fc78b3dc89ef10e430b39cd9f14e07ef4e158
+  RNFBFunctions: 5309ef8d560a841ab8a298e694290bf8a157306e
   RNVectorIcons: f67a1abce2ec73e62fe4606e8110e95a832bc859
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
 

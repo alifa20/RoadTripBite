@@ -6,6 +6,7 @@ import {reducer} from './reducer';
 import {SetFilterPayload} from './types';
 // import { Ionicons } from "@expo/vector-icons";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {getPlaces} from '../../api/places';
 
 const TopFilter = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -16,6 +17,7 @@ const TopFilter = () => {
   );
   // console.log("statestatestate", state.oldFilter);
   const searchPress = () => {
+    getPlaces();
     dispatch({
       type: 'SET_IS_DIRTY',
       payload: {isDirty: false},
