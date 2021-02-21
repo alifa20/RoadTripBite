@@ -8,7 +8,10 @@ import {SetFilterPayload} from './types';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {getPlaces} from '../../api/places';
 
-const TopFilter = () => {
+interface Props {
+  searchFinished: any;
+}
+const TopFilter = ({searchFinished}: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const isDirty = state.isDirty;
   const filter = state.filter;
@@ -16,8 +19,11 @@ const TopFilter = () => {
     (key) => filter[key].checked === true,
   );
   // console.log("statestatestate", state.oldFilter);
-  const searchPress = () => {
-    getPlaces();
+  const searchPress = async () => {
+    const places = await getPlaces();
+    console.log('[places[0]]', [places[0]]);
+
+    searchFinished(places);
     dispatch({
       type: 'SET_IS_DIRTY',
       payload: {isDirty: false},

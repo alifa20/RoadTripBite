@@ -1,6 +1,6 @@
 import {FirebaseFunctionsTypes} from '@react-native-firebase/functions';
 import {functionsForRegion} from './firebaseApp';
-import {Place} from './type';
+import {Place} from './types';
 
 // import functions from '@react-native-firebase/functions';
 
