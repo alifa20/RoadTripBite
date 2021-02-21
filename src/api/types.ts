@@ -38,7 +38,7 @@ export interface Place {
   photos: Photo[];
   place_id: string;
   plus_code: PlusCode;
-  price_level: number;
+  price_level?: number;
   rating: number;
   reference: string;
   scope: string;
