@@ -10,8 +10,9 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
-    "@react-native-firebase/analytics": "^10.5.1",
-    "@react-native-firebase/app": "^10.5.0",
+    "@react-native-firebase/analytics": "^10.8.0",
+    "@react-native-firebase/app": "^10.8.0",
+    "@react-native-firebase/firestore": "^10.8.0",
     "react": "16.13.1",
     "react-native": "0.63.4",
     "react-native-location": "2.5.0",
@@ -30,6 +31,7 @@
     "eslint": "^6.5.1",
     "jest": "^25.1.0",
     "metro-react-native-babel-preset": "^0.59.0",
+    "prop-types": "^15.7.2",
     "react-test-renderer": "16.13.1",
     "typescript": "^3.8.3"
   },
