@@ -1,7 +1,12 @@
 import React, {createRef, useEffect, useRef, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import RNLocation, {Location} from 'react-native-location';
-import MapView, {Marker, PROVIDER_GOOGLE, Region} from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+import MapView, {
+  Circle,
+  Marker,
+  PROVIDER_GOOGLE,
+  Region,
+} from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import {Place} from '../api/types';
 import {TopFilter} from '../components/TopFilter';
 import {tempPlaces} from './tempPlaces';
@@ -14,6 +19,7 @@ const Main = () => {
   // const mapRef = useRef();
   const mapView = createRef<MapView>();
 
+  const circleRadius = 10000;
   const [location, setLocation] = useState<Location>({
     // coords: {
     // latitude: 37.78825,
@@ -153,8 +159,15 @@ const Main = () => {
           latitude: location.latitude,
           longitude: location.longitude,
           latitudeDelta: 0.0922,
+          // latitudeDelta: 1,
           longitudeDelta: 0.0421,
         }}>
+        <Marker
+          coordinate={location}
+          title="Me"
+          pinColor="lime"
+          // description={String(marker.rating)}
+        />
         {markers.map((marker) => (
           <Marker
             key={marker.place_id}
@@ -167,6 +180,12 @@ const Main = () => {
             description={String(marker.rating)}
           />
         ))}
+        <Circle
+          center={location}
+          radius={circleRadius}
+          strokeColor="#ffb996"
+          fillColor="rgba(246, 126, 125, 0.5)"
+        />
       </MapView>
       <TopFilter searchFinished={searchFinished} />
     </View>
