@@ -1,29 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
-  Animated,
   Dimensions,
   Image,
   Linking,
   Platform,
-  ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Fontisto from 'react-native-vector-icons/Fontisto';
-import {mapStandardStyle, markers} from './mapData';
-import StarRating from './StarRating';
-import {getPlaces} from '../../api/places';
-import {TopFilter} from '../TopFilter';
-import {Place} from '../../api/types';
-import {getImageSource} from './imageSource';
 import {getPhotos} from '../../api/photos';
+import {Place} from '../../api/types';
+import StarRating from './StarRating';
 const {width, height} = Dimensions.get('window');
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
@@ -71,56 +61,58 @@ const DetailCard = ({marker, index}: Props) => {
     Linking.openURL(url);
   };
   return (
-    <TouchableOpacity style={styles.card} key={index} onPress={goToMap}>
-      <View style={{height: IMG_HIEIGHT, justifyContent: 'center'}}>
-        {img === null && <ActivityIndicator />}
-        {img !== null && img !== '' && (
-          <Image
-            //   source={marker.image}
-            // source={{uri: getImageSource(marker)}}
-            source={{uri: img}}
-            style={styles.cardImage}
-            resizeMode="cover"
+    <TouchableWithoutFeedback key={index} onPress={goToMap}>
+      <View style={styles.card}>
+        <View style={{height: IMG_HIEIGHT, justifyContent: 'center'}}>
+          {img === null && <ActivityIndicator />}
+          {img !== null && img !== '' && (
+            <Image
+              //   source={marker.image}
+              // source={{uri: getImageSource(marker)}}
+              source={{uri: img}}
+              style={styles.cardImage}
+              resizeMode="cover"
+            />
+          )}
+        </View>
+        <View style={styles.textContent}>
+          <Text numberOfLines={1} style={styles.cardtitle}>
+            {/* {marker.title} */}
+            {marker.name}
+          </Text>
+          <StarRating
+            ratings={marker.rating}
+            //   reviews={marker.reviews}
+            reviews={marker.rating}
           />
-        )}
-      </View>
-      <View style={styles.textContent}>
-        <Text numberOfLines={1} style={styles.cardtitle}>
-          {/* {marker.title} */}
-          {marker.name}
-        </Text>
-        <StarRating
-          ratings={marker.rating}
-          //   reviews={marker.reviews}
-          reviews={marker.rating}
-        />
-        <Text numberOfLines={1} style={styles.cardDescription}>
-          {/* {marker.description} */}
-          {marker.rating}
-        </Text>
-        <View style={styles.button}>
-          <TouchableOpacity
-            onPress={goToMap}
-            style={[
-              styles.signIn,
-              {
-                borderColor: '#FF6347',
-                borderWidth: 1,
-              },
-            ]}>
-            <Text
+          <Text numberOfLines={1} style={styles.cardDescription}>
+            {/* {marker.description} */}
+            {marker.rating}
+          </Text>
+          <View style={styles.button}>
+            <TouchableOpacity
+              onPress={goToMap}
               style={[
-                styles.textSign,
+                styles.signIn,
                 {
-                  color: '#FF6347',
+                  borderColor: '#FF6347',
+                  borderWidth: 1,
                 },
               ]}>
-              Direction
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={[
+                  styles.textSign,
+                  {
+                    color: '#FF6347',
+                  },
+                ]}>
+                Direction
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </TouchableOpacity>
+    </TouchableWithoutFeedback>
   );
 };
 
