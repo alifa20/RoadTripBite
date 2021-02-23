@@ -3,6 +3,7 @@ import {
   Animated,
   Dimensions,
   Image,
+  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -17,6 +18,11 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import {mapStandardStyle, markers} from './mapData';
 import StarRating from './StarRating';
+import {getPlaces} from '../../api/places';
+import {TopFilter} from '../TopFilter';
+import {Place} from '../../api/types';
+import {getImageSource} from './imageSource';
+import DetailCard from './DetailCard';
 
 // import {useTheme} from '@react-navigation/native';
 
@@ -96,10 +102,11 @@ const MyMap2 = () => {
       const regionTimeout = setTimeout(() => {
         if (mapIndex !== index) {
           mapIndex = index;
-          const {coordinate} = state.markers[index];
+          const {geometry} = state.markers[index];
           _map.current.animateToRegion(
             {
-              ...coordinate,
+              latitude: geometry.location.lat,
+              longitude: geometry.location.lng,
               latitudeDelta: state.region.latitudeDelta,
               longitudeDelta: state.region.longitudeDelta,
             },
@@ -137,8 +144,31 @@ const MyMap2 = () => {
     _scrollView.current.scrollTo({x: x, y: 0, animated: true});
   };
 
-  const _map = React.useRef(null);
-  const _scrollView = React.useRef(null);
+  const _map = React.useRef<MapView>(null);
+  const _scrollView = React.useRef<ScrollView>(null);
+
+  const onSearch = async () => {
+    const places = await getPlaces();
+    setState({...state, markers: places});
+
+    _map.current.animateToRegion({
+      latitude: places[0].geometry.location.lat,
+      longitude: places[0].geometry.location.lng,
+      latitudeDelta: state.region.latitudeDelta,
+      longitudeDelta: state.region.longitudeDelta,
+    });
+  };
+
+  const searchFinished = (places: Place[]) => {
+    setState({...state, markers: places});
+
+    _map.current.animateToRegion({
+      latitude: places[0].geometry.location.lat,
+      longitude: places[0].geometry.location.lng,
+      latitudeDelta: state.region.latitudeDelta,
+      longitudeDelta: state.region.longitudeDelta,
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -160,8 +190,13 @@ const MyMap2 = () => {
           return (
             <Marker
               key={index}
-              coordinate={marker.coordinate}
-              onPress={(e) => onMarkerPress(e)}>
+              //   coordinate={marker.coordinate}
+              coordinate={{
+                latitude: marker.geometry.location.lat,
+                longitude: marker.geometry.location.lng,
+              }}
+              onPress={(e) => onMarkerPress(e)}
+              title={marker.name}>
               <Animated.View style={[styles.markerWrap]}>
                 <Animated.Image
                   source={require('./assets/map_marker.png')}
@@ -173,14 +208,14 @@ const MyMap2 = () => {
           );
         })}
       </MapView>
-      <View style={styles.searchBox}>
+      {/* <View style={styles.searchBox}>
         <TextInput
           placeholder="Search here"
           placeholderTextColor="#000"
           autoCapitalize="none"
           style={{flex: 1, padding: 0}}
         />
-        <Ionicons name="ios-search" size={20} />
+        <Ionicons name="ios-search" size={20} onPress={onSearch} />
       </View>
       <ScrollView
         horizontal
@@ -203,7 +238,8 @@ const MyMap2 = () => {
             <Text>{category.name}</Text>
           </TouchableOpacity>
         ))}
-      </ScrollView>
+      </ScrollView> */}
+      <TopFilter searchFinished={searchFinished} />
       <Animated.ScrollView
         ref={_scrollView}
         horizontal
@@ -236,43 +272,66 @@ const MyMap2 = () => {
           {useNativeDriver: true},
         )}>
         {state.markers.map((marker, index) => (
-          <View style={styles.card} key={index}>
-            <Image
-              source={marker.image}
-              style={styles.cardImage}
-              resizeMode="cover"
-            />
-            <View style={styles.textContent}>
-              <Text numberOfLines={1} style={styles.cardtitle}>
-                {marker.title}
-              </Text>
-              <StarRating ratings={marker.rating} reviews={marker.reviews} />
-              <Text numberOfLines={1} style={styles.cardDescription}>
-                {marker.description}
-              </Text>
-              <View style={styles.button}>
-                <TouchableOpacity
-                  onPress={() => {}}
-                  style={[
-                    styles.signIn,
-                    {
-                      borderColor: '#FF6347',
-                      borderWidth: 1,
-                    },
-                  ]}>
-                  <Text
-                    style={[
-                      styles.textSign,
-                      {
-                        color: '#FF6347',
-                      },
-                    ]}>
-                    Order Now
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
+          // <View style={styles.card} key={index}>
+          //   <Image
+          //     //   source={marker.image}
+          //     source={{uri: getImageSource(marker)}}
+          //     style={styles.cardImage}
+          //     resizeMode="cover"
+          //   />
+          //   <View style={styles.textContent}>
+          //     <Text numberOfLines={1} style={styles.cardtitle}>
+          //       {/* {marker.title} */}
+          //       {marker.name}
+          //     </Text>
+          //     <StarRating
+          //       ratings={marker.rating}
+          //       //   reviews={marker.reviews}
+          //       reviews={marker.rating}
+          //     />
+          //     <Text numberOfLines={1} style={styles.cardDescription}>
+          //       {/* {marker.description} */}
+          //       {marker.rating}
+          //     </Text>
+          //     <View style={styles.button}>
+          //       <TouchableOpacity
+          //         onPress={() => {
+          //           const scheme = Platform.select({
+          //             ios: 'maps:0,0?q=',
+          //             android: 'geo:0,0?q=',
+          //           });
+          //           const latLng = `${marker.geometry.location.lat},${marker.geometry.location.lng}`;
+          //           const label = marker.name;
+
+          //           const url = Platform.select({
+          //             ios: `${scheme}${label}@${latLng}`,
+          //             android: `${scheme}${latLng}(${label})`,
+          //             //   android: `${scheme}${label}(${label})`,
+          //           });
+
+          //           Linking.openURL(url);
+          //         }}
+          //         style={[
+          //           styles.signIn,
+          //           {
+          //             borderColor: '#FF6347',
+          //             borderWidth: 1,
+          //           },
+          //         ]}>
+          //         <Text
+          //           style={[
+          //             styles.textSign,
+          //             {
+          //               color: '#FF6347',
+          //             },
+          //           ]}>
+          //           Order Now
+          //         </Text>
+          //       </TouchableOpacity>
+          //     </View>
+          //   </View>
+          // </View>
+          <DetailCard key={marker.place_id} index={index} marker={marker} />
         ))}
       </Animated.ScrollView>
     </View>

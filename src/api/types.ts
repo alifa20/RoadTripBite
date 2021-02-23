@@ -46,3 +46,21 @@ export interface Place {
   user_ratings_total: number;
   vicinity: string;
 }
+
+export interface Photo {
+  business_status: string;
+  geometry: Geometry;
+  icon: string;
+  name: string;
+  opening_hours: OpeningHours;
+  photos: Photo[];
+  place_id: string;
+  plus_code: PlusCode;
+  price_level?: number;
+  rating: number;
+  reference: string;
+  scope: string;
+  types: string[];
+  user_ratings_total: number;
+  vicinity: string;
+}
