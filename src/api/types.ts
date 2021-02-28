@@ -15,6 +15,7 @@ export interface Geometry {
 
 export interface OpeningHours {
   open_now: boolean;
+  weekday_text?: any[];
 }
 
 export interface Photo {
@@ -47,20 +48,22 @@ export interface Place {
   vicinity: string;
 }
 
+/**
+ * Place details
+ */
+
 export interface Photo {
-  business_status: string;
+  height: number;
+  html_attributions: string[];
+  photo_reference: string;
+  width: number;
+}
+
+export interface PlaceDetail {
+  formatted_address: string;
   geometry: Geometry;
-  icon: string;
   name: string;
   opening_hours: OpeningHours;
   photos: Photo[];
-  place_id: string;
-  plus_code: PlusCode;
-  price_level?: number;
   rating: number;
-  reference: string;
-  scope: string;
-  types: string[];
-  user_ratings_total: number;
-  vicinity: string;
 }
