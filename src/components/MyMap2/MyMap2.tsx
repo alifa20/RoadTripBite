@@ -1,28 +1,24 @@
 import React, {useEffect} from 'react';
 import {
   Animated,
+  Button,
   Dimensions,
-  Image,
-  Linking,
   Platform,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Fontisto from 'react-native-vector-icons/Fontisto';
-import {mapStandardStyle, markers} from './mapData';
-import StarRating from './StarRating';
 import {getPlaces} from '../../api/places';
-import {TopFilter} from '../TopFilter';
 import {Place} from '../../api/types';
-import {getImageSource} from './imageSource';
+import BottomSheetContent from '../BottomSheetContent';
+import {TopFilter} from '../TopFilter';
 import DetailCard from './DetailCard';
+import {mapStandardStyle, markers} from './mapData';
 
 // import {useTheme} from '@react-navigation/native';
 
@@ -171,7 +167,7 @@ const MyMap2 = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <MapView
         ref={_map}
         initialRegion={state.region}
@@ -240,6 +236,7 @@ const MyMap2 = () => {
         ))}
       </ScrollView> */}
       <TopFilter searchFinished={searchFinished} />
+
       <Animated.ScrollView
         ref={_scrollView}
         horizontal
@@ -272,69 +269,11 @@ const MyMap2 = () => {
           {useNativeDriver: true},
         )}>
         {state.markers.map((marker, index) => (
-          // <View style={styles.card} key={index}>
-          //   <Image
-          //     //   source={marker.image}
-          //     source={{uri: getImageSource(marker)}}
-          //     style={styles.cardImage}
-          //     resizeMode="cover"
-          //   />
-          //   <View style={styles.textContent}>
-          //     <Text numberOfLines={1} style={styles.cardtitle}>
-          //       {/* {marker.title} */}
-          //       {marker.name}
-          //     </Text>
-          //     <StarRating
-          //       ratings={marker.rating}
-          //       //   reviews={marker.reviews}
-          //       reviews={marker.rating}
-          //     />
-          //     <Text numberOfLines={1} style={styles.cardDescription}>
-          //       {/* {marker.description} */}
-          //       {marker.rating}
-          //     </Text>
-          //     <View style={styles.button}>
-          //       <TouchableOpacity
-          //         onPress={() => {
-          //           const scheme = Platform.select({
-          //             ios: 'maps:0,0?q=',
-          //             android: 'geo:0,0?q=',
-          //           });
-          //           const latLng = `${marker.geometry.location.lat},${marker.geometry.location.lng}`;
-          //           const label = marker.name;
-
-          //           const url = Platform.select({
-          //             ios: `${scheme}${label}@${latLng}`,
-          //             android: `${scheme}${latLng}(${label})`,
-          //             //   android: `${scheme}${label}(${label})`,
-          //           });
-
-          //           Linking.openURL(url);
-          //         }}
-          //         style={[
-          //           styles.signIn,
-          //           {
-          //             borderColor: '#FF6347',
-          //             borderWidth: 1,
-          //           },
-          //         ]}>
-          //         <Text
-          //           style={[
-          //             styles.textSign,
-          //             {
-          //               color: '#FF6347',
-          //             },
-          //           ]}>
-          //           Order Now
-          //         </Text>
-          //       </TouchableOpacity>
-          //     </View>
-          //   </View>
-          // </View>
           <DetailCard key={marker.place_id} index={index} marker={marker} />
         ))}
       </Animated.ScrollView>
-    </View>
+      <BottomSheetContent />
+    </SafeAreaView>
   );
 };
 

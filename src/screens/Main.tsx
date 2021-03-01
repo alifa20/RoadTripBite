@@ -1,11 +1,14 @@
 import React from 'react';
+import BottomSheetTest from '../components/Del/ BottomSheetTest';
 import TestDetails from '../components/Del/TestDetails';
 import MyMap2 from '../components/MyMap2/MyMap2';
 // import MyMapView from '../components/MyMapView';
 
 // const Main = () => <MyMapView />;
 // const Main = () => <AnimatedViews />;
-const Main = () => <MyMap2 />;
+// const Main = () => <MyMap2 />;
+const Main = () => <BottomSheetTest />;
+
 // const Main = () => <TestDetails />;
 
 // const Main = () => <TestImage />;
