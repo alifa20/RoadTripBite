@@ -1,8 +1,9 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Animated,
   Button,
   Dimensions,
+  FlatList,
   Platform,
   SafeAreaView,
   ScrollView,
@@ -10,11 +11,13 @@ import {
   View,
 } from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import ScrollBottomSheet from 'react-native-scroll-bottom-sheet';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {getDetails} from '../../api/details';
 import {getPlaces} from '../../api/places';
-import {Place} from '../../api/types';
+import {Place, PlaceDetail} from '../../api/types';
 import BottomSheetContent from '../BottomSheetContent';
 import {TopFilter} from '../TopFilter';
 import DetailCard from './DetailCard';
@@ -78,10 +81,13 @@ const MyMap2 = () => {
     },
   };
 
-  const [state, setState] = React.useState(initialMapState);
+  const [state, setState] = useState(initialMapState);
+  // const [details, setDetails] = useState<PlaceDetail>(null);
+  const [selectedMarker, setSelectedMarker] = useState<Place | null>(null);
 
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
+  const bottomSheetRef = React.createRef<ScrollBottomSheet<FlatList<string>>>();
 
   useEffect(() => {
     mapAnimation.addListener(({value}) => {
@@ -166,8 +172,13 @@ const MyMap2 = () => {
     });
   };
 
+  const detailPressed = async (marker: Place) => {
+    setSelectedMarker(marker);
+    bottomSheetRef.current?.snapTo(0);
+  };
+
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <MapView
         ref={_map}
         initialRegion={state.region}
@@ -177,11 +188,7 @@ const MyMap2 = () => {
         customMapStyle={mapStandardStyle}>
         {state.markers.map((marker, index) => {
           const scaleStyle = {
-            transform: [
-              {
-                scale: interpolations[index].scale,
-              },
-            ],
+            transform: [{scale: interpolations[index].scale}],
           };
           return (
             <Marker
@@ -269,11 +276,16 @@ const MyMap2 = () => {
           {useNativeDriver: true},
         )}>
         {state.markers.map((marker, index) => (
-          <DetailCard key={marker.place_id} index={index} marker={marker} />
+          <DetailCard
+            key={marker.place_id}
+            index={index}
+            marker={marker}
+            detailPressed={detailPressed}
+          />
         ))}
       </Animated.ScrollView>
-      <BottomSheetContent />
-    </SafeAreaView>
+      <BottomSheetContent ref={bottomSheetRef} marker={selectedMarker} />
+    </View>
   );
 };
 

@@ -67,3 +67,6 @@ export interface PlaceDetail {
   photos: Photo[];
   rating: number;
 }
+
+
+

@@ -24,8 +24,9 @@ const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 interface Props {
   marker: Place;
   index: number;
+  detailPressed: (marker: Place) => void;
 }
-const DetailCard = ({marker, index}: Props) => {
+const DetailCard = ({marker, index, detailPressed}: Props) => {
   const [img, setImg] = useState<string | null>(null);
   useEffect(() => {
     (async () => {
@@ -60,8 +61,11 @@ const DetailCard = ({marker, index}: Props) => {
 
     Linking.openURL(url);
   };
+
+  const handleDetailPressed = () => detailPressed(marker);
+
   return (
-    <TouchableWithoutFeedback key={index} onPress={goToMap}>
+    <TouchableWithoutFeedback key={index} onPress={handleDetailPressed}>
       <View style={styles.card}>
         <View style={{height: IMG_HIEIGHT, justifyContent: 'center'}}>
           {img === null && <ActivityIndicator />}

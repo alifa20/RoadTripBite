@@ -6,8 +6,8 @@ import MyMap2 from '../components/MyMap2/MyMap2';
 
 // const Main = () => <MyMapView />;
 // const Main = () => <AnimatedViews />;
-// const Main = () => <MyMap2 />;
-const Main = () => <BottomSheetTest />;
+const Main = () => <MyMap2 />;
+// const Main = () => <BottomSheetTest />;
 
 // const Main = () => <TestDetails />;
 
