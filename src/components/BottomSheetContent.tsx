@@ -3,12 +3,14 @@ import {Text, Dimensions, FlatList, StyleSheet, View} from 'react-native';
 import ScrollBottomSheet from 'react-native-scroll-bottom-sheet';
 import {getDetails} from '../api/details';
 import {Place, PlaceDetail} from '../api/types';
+import ItemImage from './ItemImage';
 
 const windowHeight = Dimensions.get('window').height;
 
 interface Props {
   marker: Place | null;
 }
+const IMG_HIEIGHT = 120;
 // <any, RefObject<FlatList>>
 const BottomSheetContent = forwardRef<
   // React.RefObject<ScrollBottomSheet<FlatList<string>>>,
@@ -51,8 +53,11 @@ const BottomSheetContent = forwardRef<
       data={details?.photos || []}
       keyExtractor={({photo_reference}) => photo_reference}
       renderItem={({item}: {item: PlaceDetail['photos'][0]}) => (
-        <View style={styles.item}>
-          <Text>{item.photo_reference}</Text>
+        // <View style={styles.item}>
+        //   <Text>{item.photo_reference}</Text>
+        // </View>
+        <View style={{height: IMG_HIEIGHT, justifyContent: 'center'}}>
+          <ItemImage photo_reference={item.photo_reference} />
         </View>
       )}
       contentContainerStyle={styles.contentContainerStyle}

@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import {getPhotos} from '../../api/photos';
 import {Place} from '../../api/types';
+import ItemImage from '../ItemImage';
 import StarRating from './StarRating';
 const {width, height} = Dimensions.get('window');
 const CARD_HEIGHT = 220;
@@ -27,23 +28,23 @@ interface Props {
   detailPressed: (marker: Place) => void;
 }
 const DetailCard = ({marker, index, detailPressed}: Props) => {
-  const [img, setImg] = useState<string | null>(null);
-  useEffect(() => {
-    (async () => {
-      try {
-        const reference = marker.photos[0].photo_reference;
-        if (!reference) return;
-        const photo = await getPhotos(
-          reference,
-          Math.floor(+CARD_WIDTH),
-          IMG_HIEIGHT,
-        );
-        setImg(photo);
-      } catch (err) {
-        console.log('Something happened!', err);
-      }
-    })();
-  }, [marker.place_id]);
+  // const [img, setImg] = useState<string | null>(null);
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       const reference = marker.photos[0].photo_reference;
+  //       if (!reference) return;
+  //       const photo = await getPhotos(
+  //         reference,
+  //         Math.floor(+CARD_WIDTH),
+  //         IMG_HIEIGHT,
+  //       );
+  //       setImg(photo);
+  //     } catch (err) {
+  //       console.log('Something happened!', err);
+  //     }
+  //   })();
+  // }, [marker.place_id]);
 
   const goToMap = () => {
     const scheme = Platform.select({
@@ -68,7 +69,7 @@ const DetailCard = ({marker, index, detailPressed}: Props) => {
     <TouchableWithoutFeedback key={index} onPress={handleDetailPressed}>
       <View style={styles.card}>
         <View style={{height: IMG_HIEIGHT, justifyContent: 'center'}}>
-          {img === null && <ActivityIndicator />}
+          {/* {img === null && <ActivityIndicator />}
           {img !== null && img !== '' && (
             <Image
               //   source={marker.image}
@@ -77,18 +78,14 @@ const DetailCard = ({marker, index, detailPressed}: Props) => {
               style={styles.cardImage}
               resizeMode="cover"
             />
-          )}
+          )} */}
+          <ItemImage photo_reference={marker.photos[0].photo_reference} />
         </View>
         <View style={styles.textContent}>
           <Text numberOfLines={1} style={styles.cardtitle}>
-            {/* {marker.title} */}
             {marker.name}
           </Text>
-          <StarRating
-            ratings={marker.rating}
-            //   reviews={marker.reviews}
-            reviews={marker.rating}
-          />
+          <StarRating ratings={marker.rating} reviews={marker.rating} />
           <Text numberOfLines={1} style={styles.cardDescription}>
             {/* {marker.description} */}
             {marker.rating}
