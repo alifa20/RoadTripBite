@@ -7,7 +7,7 @@ export const initialState: State = {
   isDirty: false,
   arrive: 4,
   direction: ['North'],
-  time: d.toLocaleTimeString(),
+  time: d.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}),
   goingBy: 'car',
   filter: {
     restaurants: {rating: 4, checked: false},
