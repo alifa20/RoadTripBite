@@ -1,23 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import {
   Animated,
-  Button,
   Dimensions,
   FlatList,
   Platform,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import ScrollBottomSheet from 'react-native-scroll-bottom-sheet';
-import Fontisto from 'react-native-vector-icons/Fontisto';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {getDetails} from '../../api/details';
-import {getPlaces} from '../../api/places';
-import {Place, PlaceDetail} from '../../api/types';
+import {Place} from '../../api/types';
 import BottomSheetContent from '../BottomSheetContent';
 import {TopFilter} from '../TopFilter';
 import DetailCard from './DetailCard';
@@ -35,44 +28,44 @@ const MyMap2 = () => {
 
   const initialMapState = {
     markers,
-    categories: [
-      {
-        name: 'Fastfood Center',
-        icon: (
-          <MaterialCommunityIcons
-            style={styles.chipsIcon}
-            name="food-fork-drink"
-            size={18}
-          />
-        ),
-      },
-      {
-        name: 'Restaurant',
-        icon: (
-          <Ionicons name="ios-restaurant" style={styles.chipsIcon} size={18} />
-        ),
-      },
-      {
-        name: 'Dineouts',
-        icon: (
-          <Ionicons name="md-restaurant" style={styles.chipsIcon} size={18} />
-        ),
-      },
-      {
-        name: 'Snacks Corner',
-        icon: (
-          <MaterialCommunityIcons
-            name="food"
-            style={styles.chipsIcon}
-            size={18}
-          />
-        ),
-      },
-      {
-        name: 'Hotel',
-        icon: <Fontisto name="hotel" style={styles.chipsIcon} size={15} />,
-      },
-    ],
+    // categories: [
+    //   {
+    //     name: 'Fastfood Center',
+    //     icon: (
+    //       <MaterialCommunityIcons
+    //         style={styles.chipsIcon}
+    //         name="food-fork-drink"
+    //         size={18}
+    //       />
+    //     ),
+    //   },
+    //   {
+    //     name: 'Restaurant',
+    //     icon: (
+    //       <Ionicons name="ios-restaurant" style={styles.chipsIcon} size={18} />
+    //     ),
+    //   },
+    //   {
+    //     name: 'Dineouts',
+    //     icon: (
+    //       <Ionicons name="md-restaurant" style={styles.chipsIcon} size={18} />
+    //     ),
+    //   },
+    //   {
+    //     name: 'Snacks Corner',
+    //     icon: (
+    //       <MaterialCommunityIcons
+    //         name="food"
+    //         style={styles.chipsIcon}
+    //         size={18}
+    //       />
+    //     ),
+    //   },
+    //   {
+    //     name: 'Hotel',
+    //     icon: <Fontisto name="hotel" style={styles.chipsIcon} size={15} />,
+    //   },
+    // ],
     region: {
       latitude: 22.62938671242907,
       longitude: 88.4354486029795,
@@ -149,17 +142,17 @@ const MyMap2 = () => {
   const _map = React.useRef<MapView>(null);
   const _scrollView = React.useRef<ScrollView>(null);
 
-  const onSearch = async () => {
-    const places = await getPlaces();
-    setState({...state, markers: places});
+  // const onSearch = async () => {
+  //   const places = await getPlaces();
+  //   setState({...state, markers: places});
 
-    _map.current.animateToRegion({
-      latitude: places[0].geometry.location.lat,
-      longitude: places[0].geometry.location.lng,
-      latitudeDelta: state.region.latitudeDelta,
-      longitudeDelta: state.region.longitudeDelta,
-    });
-  };
+  //   _map.current.animateToRegion({
+  //     latitude: places[0].geometry.location.lat,
+  //     longitude: places[0].geometry.location.lng,
+  //     latitudeDelta: state.region.latitudeDelta,
+  //     longitudeDelta: state.region.longitudeDelta,
+  //   });
+  // };
 
   const searchFinished = (places: Place[]) => {
     setState({...state, markers: places});
@@ -242,7 +235,11 @@ const MyMap2 = () => {
           </TouchableOpacity>
         ))}
       </ScrollView> */}
-      <TopFilter searchFinished={searchFinished} />
+      <TopFilter
+        searchFinished={searchFinished}
+        lat={state.region.latitude}
+        lng={state.region.longitude}
+      />
 
       <Animated.ScrollView
         ref={_scrollView}

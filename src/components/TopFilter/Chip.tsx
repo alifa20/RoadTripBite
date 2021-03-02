@@ -2,7 +2,7 @@ import React, {ReactNode} from 'react';
 import {
   GestureResponderEvent,
   StyleSheet,
-  TouchableWithoutFeedback,
+  TouchableHighlight,
   View,
 } from 'react-native';
 
@@ -18,11 +18,14 @@ const Chip = ({
   selected = false,
   onPress = () => {},
 }: Props) => (
-  <TouchableWithoutFeedback
-    // style={[
-    //   styles.container,
-    //   {backgroundColor: selected ? '#dedede' : 'white'},
-    // ]}
+  <TouchableHighlight
+    activeOpacity={0.6}
+    underlayColor="#DDDDDD"
+    style={[
+      {borderRadius: 25},
+      //   styles.container,
+      //   {backgroundColor: selected ? '#dedede' : 'white'},
+    ]}
     onPress={onPress}>
     <View
       style={[
@@ -35,7 +38,7 @@ const Chip = ({
       {icon && icon}
       {children}
     </View>
-  </TouchableWithoutFeedback>
+  </TouchableHighlight>
 );
 
 const styles = StyleSheet.create({

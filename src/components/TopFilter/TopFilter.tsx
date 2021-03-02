@@ -3,24 +3,40 @@ import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import Chip from './Chip';
 import {initialState} from './initialState';
 import {reducer} from './reducer';
-import {SetFilterPayload} from './types';
+import {Filter, SetFilterPayload} from './types';
 // import { Ionicons } from "@expo/vector-icons";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {getPlaces} from '../../api/places';
 
 interface Props {
   searchFinished: any;
+  lat: number;
+  lng: number;
 }
-const TopFilter = ({searchFinished}: Props) => {
+const TopFilter = ({searchFinished, lat, lng}: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  // console.log('statestate', state);
+  // console.log(new Date());
+  console.log('state', state);
+
   const isDirty = state.isDirty;
   const filter = state.filter;
   const hasSelected = (Object.keys(filter) as Array<keyof typeof filter>).find(
     (key) => filter[key].checked === true,
   );
   // console.log("statestatestate", state.oldFilter);
+  const keys = Object.keys(state.filter)
+    .filter((key) => (state.filter as any)[key].checked)
+    .filter(Boolean);
   const searchPress = async () => {
-    const places = await getPlaces();
+    const places = await getPlaces(
+      keys,
+      lat,
+      lng,
+      state.direction,
+      state.goingBy,
+      state.time,
+    );
     console.log('[places[0]]', [places[0]]);
 
     searchFinished(places);
@@ -71,7 +87,8 @@ const TopFilter = ({searchFinished}: Props) => {
           <Text>Restaurant 4+ </Text>
         </Chip>
         <Chip>
-          <Text>Arrive at: 17:30</Text>
+          <Text>Arrive at: {`${state.time}`}</Text>
+          {/* <Text>Arrive at: 17:30</Text> */}
         </Chip>
         <Chip>
           <Text>Direction: North</Text>
@@ -132,9 +149,9 @@ const TopFilter = ({searchFinished}: Props) => {
       </ScrollView>
       <View style={styles.searchRow}>
         {/* {hasSelected && ( */}
-        <Chip onPress={undoPress}>
+        {/* <Chip onPress={undoPress}>
           <Text>Clear filter </Text>
-        </Chip>
+        </Chip> */}
         {/* )} */}
         {/* {hasSelected && isDirty && ( */}
         <Chip onPress={() => searchPress()}>
@@ -160,7 +177,9 @@ const styles = StyleSheet.create({
   searchRow: {
     paddingTop: 5,
     // justifyContent: "space-between",
-    flexDirection: 'row-reverse',
+    // flexDirection: 'row-reverse',
+    // flexDirection: 'row-reverse',
+    alignItems: 'center',
     paddingHorizontal: 10,
   },
 });

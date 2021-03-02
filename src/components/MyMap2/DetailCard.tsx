@@ -28,24 +28,6 @@ interface Props {
   detailPressed: (marker: Place) => void;
 }
 const DetailCard = ({marker, index, detailPressed}: Props) => {
-  // const [img, setImg] = useState<string | null>(null);
-  // useEffect(() => {
-  //   (async () => {
-  //     try {
-  //       const reference = marker.photos[0].photo_reference;
-  //       if (!reference) return;
-  //       const photo = await getPhotos(
-  //         reference,
-  //         Math.floor(+CARD_WIDTH),
-  //         IMG_HIEIGHT,
-  //       );
-  //       setImg(photo);
-  //     } catch (err) {
-  //       console.log('Something happened!', err);
-  //     }
-  //   })();
-  // }, [marker.place_id]);
-
   const goToMap = () => {
     const scheme = Platform.select({
       ios: 'maps:0,0?q=',
@@ -57,7 +39,6 @@ const DetailCard = ({marker, index, detailPressed}: Props) => {
     const url = Platform.select({
       ios: `${scheme}${label}@${latLng}`,
       android: `${scheme}${latLng}(${label})`,
-      //   android: `${scheme}${label}(${label})`,
     }) as string;
 
     Linking.openURL(url);
@@ -69,16 +50,6 @@ const DetailCard = ({marker, index, detailPressed}: Props) => {
     <TouchableWithoutFeedback key={index} onPress={handleDetailPressed}>
       <View style={styles.card}>
         <View style={{height: IMG_HIEIGHT, justifyContent: 'center'}}>
-          {/* {img === null && <ActivityIndicator />}
-          {img !== null && img !== '' && (
-            <Image
-              //   source={marker.image}
-              // source={{uri: getImageSource(marker)}}
-              source={{uri: img}}
-              style={styles.cardImage}
-              resizeMode="cover"
-            />
-          )} */}
           <ItemImage photo_reference={marker.photos[0].photo_reference} />
         </View>
         <View style={styles.textContent}>
@@ -87,7 +58,6 @@ const DetailCard = ({marker, index, detailPressed}: Props) => {
           </Text>
           <StarRating ratings={marker.rating} reviews={marker.rating} />
           <Text numberOfLines={1} style={styles.cardDescription}>
-            {/* {marker.description} */}
             {marker.rating}
           </Text>
           <View style={styles.button}>
@@ -119,7 +89,6 @@ const DetailCard = ({marker, index, detailPressed}: Props) => {
 
 const styles = StyleSheet.create({
   card: {
-    // padding: 10,
     elevation: 2,
     backgroundColor: '#FFF',
     borderTopLeftRadius: 5,
