@@ -10,7 +10,7 @@ const windowHeight = Dimensions.get('window').height;
 interface Props {
   marker: Place | null;
 }
-const IMG_HIEIGHT = 120;
+const IMG_HIEIGHT = 220;
 // <any, RefObject<FlatList>>
 const BottomSheetContent = forwardRef<
   // React.RefObject<ScrollBottomSheet<FlatList<string>>>,
@@ -40,11 +40,12 @@ const BottomSheetContent = forwardRef<
     // <View style={styles.container}>
     //   <Button title="hey" onPress={onPress} />
     <ScrollBottomSheet<PlaceDetail['photos'][0]> // If you are using TS, that'll infer the renderItem `item` type
+      // friction={0}
       // innerRef={ref2}
       ref={ref}
       componentType="FlatList"
-      snapPoints={[128, '50%', '100%']}
-      initialSnapIndex={2}
+      snapPoints={[128, '90%', '100%']}
+      initialSnapIndex={1}
       renderHandle={() => (
         <View style={styles.header}>
           <View style={styles.panelHandle} />
@@ -77,8 +78,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainerStyle: {
-    padding: 16,
-    backgroundColor: '#F3F4F9',
+    // padding: 16,
+    // paddingHorizontal: 5,
+    // backgroundColor: '#F3F4F9',
     // backgroundColor: 'black',
   },
   header: {
