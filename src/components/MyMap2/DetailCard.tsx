@@ -45,12 +45,14 @@ const DetailCard = ({marker, index, detailPressed}: Props) => {
   };
 
   const handleDetailPressed = () => detailPressed(marker);
+  const photos = marker?.photos;
+  const photoReference = photos && photos[0] ? photos[0].photo_reference : '';
 
   return (
     <TouchableWithoutFeedback key={index} onPress={handleDetailPressed}>
       <View style={styles.card}>
         <View style={{height: IMG_HIEIGHT, justifyContent: 'center'}}>
-          <ItemImage photo_reference={marker.photos[0].photo_reference} />
+          <ItemImage photo_reference={photoReference} />
         </View>
         <View style={styles.textContent}>
           <Text numberOfLines={1} style={styles.cardtitle}>

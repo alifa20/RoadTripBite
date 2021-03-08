@@ -45,7 +45,7 @@ const BottomSheetContent = forwardRef<
       ref={ref}
       componentType="FlatList"
       snapPoints={[128, '90%', '100%']}
-      initialSnapIndex={1}
+      initialSnapIndex={2}
       renderHandle={() => (
         <View style={styles.header}>
           <View style={styles.panelHandle} />
