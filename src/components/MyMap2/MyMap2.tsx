@@ -94,13 +94,11 @@ const MyMap2 = () => {
         index = 0;
       }
 
-      clearTimeout(regionTimeout);
-
       const regionTimeout = setTimeout(() => {
         if (mapIndex !== index) {
           mapIndex = index;
           const {geometry} = state.markers[index];
-          _map.current.animateToRegion(
+          _map?.current?.animateToRegion(
             {
               latitude: geometry.location.lat,
               longitude: geometry.location.lng,
@@ -111,6 +109,7 @@ const MyMap2 = () => {
           );
         }
       }, 10);
+      clearTimeout(regionTimeout);
     });
   });
 
@@ -130,7 +129,7 @@ const MyMap2 = () => {
     return {scale};
   });
 
-  const onMarkerPress = (mapEventData) => {
+  const onMarkerPress = (mapEventData: any) => {
     const markerID = mapEventData._targetInst.return.key;
 
     let x = markerID * CARD_WIDTH + markerID * 20;
@@ -138,7 +137,7 @@ const MyMap2 = () => {
       x = x - SPACING_FOR_CARD_INSET;
     }
 
-    _scrollView.current.scrollTo({x: x, y: 0, animated: true});
+    _scrollView?.current?.scrollTo({x: x, y: 0, animated: true});
   };
 
   const _map = React.useRef<MapView>(null);
@@ -158,13 +157,32 @@ const MyMap2 = () => {
 
   const searchFinished = (places: Place[]) => {
     setState({...state, markers: places});
+    _map.current?.fitToSuppliedMarkers(
+      places.map((marker) => marker.place_id),
+      {edgePadding: {top: 50, right: 50, bottom: 50, left: 50}},
+    );
 
-    _map.current.animateToRegion({
-      latitude: places[0].geometry.location.lat,
-      longitude: places[0].geometry.location.lng,
-      latitudeDelta: state.region.latitudeDelta,
-      longitudeDelta: state.region.longitudeDelta,
-    });
+    // _map.current?.fitToCoordinates(
+    //   [
+    //     {
+    //       latitude: places[20].geometry.location.lat,
+    //       longitude: places[20].geometry.location.lng,
+    //     },
+    //   ],
+    //   {
+    //     // markers.map((marker) => ({
+    //     //   latitude: marker.geometry.location.lat,
+    //     //   longitude: marker.geometry.location.lng,
+    //     // })
+    //     // ),
+    //   },
+    // );
+    // _map.current.animateToRegion({
+    //   latitude: places[0].geometry.location.lat,
+    //   longitude: places[0].geometry.location.lng,
+    //   latitudeDelta: state.region.latitudeDelta,
+    //   longitudeDelta: state.region.longitudeDelta,
+    // });
   };
 
   const detailPressed = async (marker: Place) => {
@@ -194,7 +212,8 @@ const MyMap2 = () => {
                 longitude: marker.geometry.location.lng,
               }}
               onPress={(e) => onMarkerPress(e)}
-              title={marker.name}>
+              title={marker.name}
+              identifier={marker.place_id}>
               <Animated.View style={[styles.markerWrap]}>
                 <Animated.Image
                   source={require('./assets/map_marker.png')}
