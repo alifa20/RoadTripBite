@@ -37,6 +37,7 @@ export interface Place {
   name: string;
   opening_hours: OpeningHours;
   photos: Photo[];
+  photos2: {[key: string]: Omit<Photo, 'photo_reference'>};
   place_id: string;
   plus_code: PlusCode;
   price_level?: number;
@@ -56,6 +57,7 @@ export interface Photo {
   height: number;
   html_attributions: string[];
   photo_reference: string;
+  photo_url?: string;
   width: number;
 }
 
@@ -67,6 +69,3 @@ export interface PlaceDetail {
   photos: Photo[];
   rating: number;
 }
-
-
-

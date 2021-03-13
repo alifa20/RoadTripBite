@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Dimensions, Image, StyleSheet} from 'react-native';
 import {getPhotos} from '../api/photos';
+import {Place} from '../api/types';
 
 const {width, height} = Dimensions.get('window');
 const CARD_HEIGHT = 220;
@@ -10,16 +11,27 @@ const IMG_HIEIGHT = 120;
 interface Props {
   //   img: string | null;
   photo_reference: string;
+  place_id: string;
+  photos2: Place['photos2'];
+  lat: number;
+  lng: number;
 }
 
-const ItemImage = ({photo_reference}: Props) => {
+const ItemImage = ({photo_reference, photos2, place_id, lat, lng}: Props) => {
   const [img, setImg] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
         if (!photo_reference) return;
+        if (photos2[photo_reference].photo_url) {
+          setImg(photos2[photo_reference].photo_url ?? null);
+          return;
+        }
         const photo = await getPhotos(
+          lat,
+          lng,
+          place_id,
           photo_reference,
           Math.floor(+CARD_WIDTH),
           IMG_HIEIGHT,

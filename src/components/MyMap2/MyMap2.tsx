@@ -69,8 +69,11 @@ const MyMap2 = () => {
     region: {
       // latitude: 22.62938671242907,
       // longitude: 88.4354486029795,
+      // latitude: -33.84795,
       latitude: -33.84795,
       longitude: 151.0744,
+      // latitude: -33.86795,
+      // longitude: 151.2744,
       latitudeDelta: 0.04864195044303443,
       longitudeDelta: 0.040142817690068,
     },

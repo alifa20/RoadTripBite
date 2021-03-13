@@ -25,7 +25,7 @@ const MyMapView = () => {
     // latitude: 37.78825,
     // longitude: -122.4324,
     latitude: -33.84795,
-    longitude: 151.0744,
+    longitude: 151.0844,
     // latitude: -33.86706373913634,
     // longitude: 151.2025172263384,
     altitude: 0,

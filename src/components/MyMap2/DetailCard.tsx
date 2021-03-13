@@ -52,7 +52,12 @@ const DetailCard = ({marker, index, detailPressed}: Props) => {
     <TouchableWithoutFeedback key={index} onPress={handleDetailPressed}>
       <View style={styles.card}>
         <View style={{height: IMG_HIEIGHT, justifyContent: 'center'}}>
-          <ItemImage photo_reference={photoReference} />
+          <ItemImage
+            photo_reference={photoReference}
+            lat={marker.geometry.location.lat}
+            lng={marker.geometry.location.lng}
+            place_id={marker.place_id}
+          />
         </View>
         <View style={styles.textContent}>
           <Text numberOfLines={1} style={styles.cardtitle}>
@@ -99,7 +104,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowRadius: 5,
     shadowOpacity: 0.3,
-    shadowOffset: {x: 2, y: -2},
+    shadowOffset: {width: 2, height: -2},
     height: CARD_HEIGHT,
     width: CARD_WIDTH,
     overflow: 'hidden',
