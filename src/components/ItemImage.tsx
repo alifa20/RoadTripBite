@@ -20,14 +20,17 @@ interface Props {
 const ItemImage = ({photo_reference, photos2, place_id, lat, lng}: Props) => {
   const [img, setImg] = useState<string | null>(null);
 
+  console.log('photos2', photo_reference, photos2[photo_reference]);
+
   useEffect(() => {
     (async () => {
       try {
         if (!photo_reference) return;
-        if (photos2[photo_reference].photo_url) {
-          setImg(photos2[photo_reference].photo_url ?? null);
+        if (photos2[photo_reference].photoUrl) {
+          setImg(photos2[photo_reference].photoUrl ?? null);
           return;
         }
+
         const photo = await getPhotos(
           lat,
           lng,

@@ -296,14 +296,18 @@ const MyMap2 = () => {
           ],
           {useNativeDriver: true},
         )}>
-        {state.markers.map((marker, index) => (
-          <DetailCard
-            key={marker.place_id}
-            index={index}
-            marker={marker}
-            detailPressed={detailPressed}
-          />
-        ))}
+        {state.markers
+          // .filter((m) => m.place_id === 'ChIJU_6wmx2nEmsRNBvwlTI4Ebk')
+          // .filter((m) => m.place_id === 'ChIJKdwmeBOuEmsR0a8Bg2SiHzU')
+          // .filter((m) => m.place_id === 'ChIJj-9AKP6wEmsRDkCSB5INALQ')
+          .map((marker, index) => (
+            <DetailCard
+              key={marker.place_id}
+              index={index}
+              marker={marker}
+              detailPressed={detailPressed}
+            />
+          ))}
       </Animated.ScrollView>
       <BottomSheetContent ref={bottomSheetRef} marker={selectedMarker} />
     </View>

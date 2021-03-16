@@ -17,8 +17,6 @@ const TopFilter = ({searchFinished, lat, lng}: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   // console.log('statestate', state);
   // console.log(new Date());
-  console.log('state', state);
-
   const isDirty = state.isDirty;
   const filter = state.filter;
   const hasSelected = (Object.keys(filter) as Array<keyof typeof filter>).find(
@@ -37,7 +35,6 @@ const TopFilter = ({searchFinished, lat, lng}: Props) => {
       state.goingBy,
       state.time,
     );
-    console.log('[places[0]]', [places[0]]);
 
     searchFinished(places);
     dispatch({

@@ -57,7 +57,7 @@ export interface Photo {
   height: number;
   html_attributions: string[];
   photo_reference: string;
-  photo_url?: string;
+  photoUrl?: string;
   width: number;
 }
 

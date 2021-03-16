@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import {Marker} from 'react-native-maps';
 import {getPhotos} from '../../api/photos';
 import {Place} from '../../api/types';
 import ItemImage from '../ItemImage';
@@ -57,6 +58,7 @@ const DetailCard = ({marker, index, detailPressed}: Props) => {
             lat={marker.geometry.location.lat}
             lng={marker.geometry.location.lng}
             place_id={marker.place_id}
+            photos2={marker.photos2}
           />
         </View>
         <View style={styles.textContent}>
