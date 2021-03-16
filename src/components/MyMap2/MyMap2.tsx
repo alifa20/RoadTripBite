@@ -3,12 +3,17 @@ import {
   Animated,
   Dimensions,
   FlatList,
+  PermissionsAndroid,
   Platform,
   ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, {
+  EventUserLocation,
+  Marker,
+  PROVIDER_GOOGLE,
+} from 'react-native-maps';
 import ScrollBottomSheet from 'react-native-scroll-bottom-sheet';
 import {Place} from '../../api/types';
 import BottomSheetContent from '../BottomSheetContent';
@@ -25,6 +30,7 @@ const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 const MyMap2 = () => {
   //   const theme = useTheme();
+  const [direction, setDirection] = useState(12);
 
   const initialMapState = {
     markers,
@@ -87,6 +93,10 @@ const MyMap2 = () => {
   let mapAnimation = new Animated.Value(0);
   const bottomSheetRef = React.createRef<ScrollBottomSheet<FlatList<string>>>();
 
+  const onUserLocationChange = (event: EventUserLocation) => {
+    console.log('event', event.nativeEvent.coordinate.heading);
+    setDirection(event.nativeEvent.coordinate.heading);
+  };
   useEffect(() => {
     mapAnimation.addListener(({value}) => {
       let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
@@ -193,15 +203,44 @@ const MyMap2 = () => {
     bottomSheetRef.current?.snapTo(0);
   };
 
+  const [mapWidth, setMapWidth] = useState('99%');
+
+  // Update map style to force a re-render to make sure the geolocation button appears
+  const updateMapStyle = () => {
+    setMapWidth('100%');
+  };
+
+  // Request geolocation in Android since it's not done automatically
+  const requestGeoLocationPermission = () => {
+    if (Platform.OS === 'android') {
+      PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+    }
+  };
+
   return (
     <View style={styles.container}>
       <MapView
         ref={_map}
         initialRegion={state.region}
-        style={styles.container}
+        style={[styles.container, {width: mapWidth}]}
         provider={PROVIDER_GOOGLE}
         // customMapStyle={theme.dark ? mapDarkStyle : mapStandardStyle}
-        customMapStyle={mapStandardStyle}>
+        customMapStyle={mapStandardStyle}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
+        showsCompass={true}
+        followsUserLocation={true}
+        loadingEnabled={true}
+        toolbarEnabled={true}
+        zoomEnabled={true}
+        rotateEnabled={true}
+        onUserLocationChange={onUserLocationChange}
+        onMapReady={() => {
+          requestGeoLocationPermission();
+          updateMapStyle();
+        }}>
         {state.markers.map((marker, index) => {
           const scaleStyle = {
             transform: [{scale: interpolations[index].scale}],
@@ -263,6 +302,7 @@ const MyMap2 = () => {
         searchFinished={searchFinished}
         lat={state.region.latitude}
         lng={state.region.longitude}
+        direction={direction}
       />
 
       <Animated.ScrollView
@@ -319,6 +359,7 @@ export default MyMap2;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    zIndex: -1,
   },
   searchBox: {
     position: 'absolute',

@@ -12,8 +12,9 @@ interface Props {
   searchFinished: any;
   lat: number;
   lng: number;
+  direction: number;
 }
-const TopFilter = ({searchFinished, lat, lng}: Props) => {
+const TopFilter = ({searchFinished, lat, lng, direction}: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   // console.log('statestate', state);
   // console.log(new Date());
@@ -87,8 +88,26 @@ const TopFilter = ({searchFinished, lat, lng}: Props) => {
           <Text>Arrive at: {`${state.time}`}</Text>
           {/* <Text>Arrive at: 17:30</Text> */}
         </Chip>
-        <Chip>
-          <Text>Direction: North</Text>
+        <Chip
+          icon={
+            <MaterialCommunityIcons
+              // name="walk"
+              name="lock-open-variant-outline"
+              // name="car-hatchback"
+              size={16}
+              color="green"
+              style={{marginRight: 5}}
+            />
+          }>
+          <Text>{direction} Direction: North</Text>
+          <MaterialCommunityIcons
+            // name="walk"
+            name="arrow-down"
+            // name="car-hatchback"
+            size={16}
+            color="green"
+            style={{marginRight: 5}}
+          />
         </Chip>
         <Chip
           icon={
