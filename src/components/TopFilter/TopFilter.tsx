@@ -7,14 +7,17 @@ import {Filter, SetFilterPayload} from './types';
 // import { Ionicons } from "@expo/vector-icons";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {getPlaces} from '../../api/places';
+import {getNewTimeFormatted} from '../../utils/timeUtil';
 
 interface Props {
   searchFinished: any;
   lat: number;
   lng: number;
   direction: number;
+  km: number;
+  goByPressed: () => void;
 }
-const TopFilter = ({searchFinished, lat, lng, direction}: Props) => {
+const TopFilter = ({searchFinished, lat, lng, km, goByPressed}: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   // console.log('statestate', state);
   // console.log(new Date());
@@ -73,6 +76,25 @@ const TopFilter = ({searchFinished, lat, lng, direction}: Props) => {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}>
+        <View>
+          <Chip
+            icon={
+              <MaterialCommunityIcons
+                // name="walk"
+                // name="bike"
+                name="car-hatchback"
+                size={16}
+                color="green"
+                style={{marginRight: 5}}
+              />
+            }
+            onPress={goByPressed}>
+            <Text>Going by Car</Text>
+          </Chip>
+          <Chip selected={true}>
+            <Text>Arrive at ~ {getNewTimeFormatted(km, 30)}</Text>
+          </Chip>
+        </View>
         <Chip
           selected={filter.restaurants.checked}
           onPress={() =>
@@ -84,16 +106,15 @@ const TopFilter = ({searchFinished, lat, lng, direction}: Props) => {
           }>
           <Text>Restaurant 4+ </Text>
         </Chip>
-        <Chip>
+
+        {/* <Chip>
           <Text>Arrive at: {`${state.time}`}</Text>
-          {/* <Text>Arrive at: 17:30</Text> */}
+
         </Chip>
-        <Chip
+       <Chip
           icon={
             <MaterialCommunityIcons
-              // name="walk"
               name="lock-open-variant-outline"
-              // name="car-hatchback"
               size={16}
               color="green"
               style={{marginRight: 5}}
@@ -101,27 +122,12 @@ const TopFilter = ({searchFinished, lat, lng, direction}: Props) => {
           }>
           <Text>{direction} Direction: North</Text>
           <MaterialCommunityIcons
-            // name="walk"
             name="arrow-down"
-            // name="car-hatchback"
             size={16}
             color="green"
             style={{marginRight: 5}}
           />
-        </Chip>
-        <Chip
-          icon={
-            <MaterialCommunityIcons
-              // name="walk"
-              name="bike"
-              // name="car-hatchback"
-              size={16}
-              color="green"
-              style={{marginRight: 5}}
-            />
-          }>
-          <Text>Going by Car</Text>
-        </Chip>
+        </Chip>   */}
 
         <Chip
           onPress={() =>
@@ -187,8 +193,8 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     justifyContent: 'center',
-    alignItems: 'center',
-    height: 50,
+    alignItems: 'flex-start',
+    height: 70,
   },
   searchRow: {
     paddingTop: 5,

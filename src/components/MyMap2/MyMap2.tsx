@@ -13,10 +13,13 @@ import MapView, {
   EventUserLocation,
   Marker,
   PROVIDER_GOOGLE,
+  Region,
 } from 'react-native-maps';
 import ScrollBottomSheet from 'react-native-scroll-bottom-sheet';
 import {Place} from '../../api/types';
+import {getDistanceFromLatLonInKm} from '../../utils/getDistanceFromLatLonInKm';
 import BottomSheetContent from '../BottomSheetContent';
+import GoBySelector from '../GoBySelector';
 import {TopFilter} from '../TopFilter';
 import DetailCard from './DetailCard';
 import {mapStandardStyle, markers} from './mapData';
@@ -31,7 +34,7 @@ const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 const MyMap2 = () => {
   //   const theme = useTheme();
   const [direction, setDirection] = useState(12);
-
+  const [km, setKm] = useState(0);
   const initialMapState = {
     markers,
     // categories: [
@@ -76,8 +79,8 @@ const MyMap2 = () => {
       // latitude: 22.62938671242907,
       // longitude: 88.4354486029795,
       // latitude: -33.84795,
-      latitude: -33.84795,
-      longitude: 151.0744,
+      latitude: -33.84796,
+      longitude: 151.07443,
       // latitude: -33.86795,
       // longitude: 151.2744,
       latitudeDelta: 0.04864195044303443,
@@ -89,14 +92,39 @@ const MyMap2 = () => {
   // const [details, setDetails] = useState<PlaceDetail>(null);
   const [selectedMarker, setSelectedMarker] = useState<Place | null>(null);
 
+  const [current, setCurrent] = useState<
+    EventUserLocation['nativeEvent']['coordinate']
+  >({
+    latitude: initialMapState.region.latitude,
+    longitude: initialMapState.region.longitude,
+    altitude: 0,
+    timestamp: 0,
+    accuracy: 0,
+    speed: 0,
+    heading: 0,
+    isFromMockProvider: true,
+  });
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
   const bottomSheetRef = React.createRef<ScrollBottomSheet<FlatList<string>>>();
+  const goBySheetRef = React.createRef<ScrollBottomSheet<ScrollView>>();
 
   const onUserLocationChange = (event: EventUserLocation) => {
     console.log('event', event.nativeEvent.coordinate.heading);
     setDirection(event.nativeEvent.coordinate.heading);
+    // setCurrent(event.nativeEvent.coordinate);
+    // setCurrent({
+    //   latitude: initialMapState.region.latitude,
+    //   longitude: initialMapState.region.longitude,
+    //   altitude: 0,
+    //   timestamp: 0,
+    //   accuracy: 0,
+    //   speed: 0,
+    //   heading: 0,
+    //   isFromMockProvider: true,
+    // });
   };
+
   useEffect(() => {
     mapAnimation.addListener(({value}) => {
       let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
@@ -219,6 +247,27 @@ const MyMap2 = () => {
     }
   };
 
+  const onRegionChangeComplete = (region: Region) => {
+    // const st = `${region.latitude}, ${region.longitude}`;
+    // const st = Math.round(
+    //   getDistanceFromLatLonInKm(
+    //     current.latitude,
+    //     current.longitude,
+    //     region.latitude,
+    //     region.longitude,
+    //   ) * 1000,
+    // );
+    const st = getDistanceFromLatLonInKm(
+      current.latitude,
+      current.longitude,
+      region.latitude,
+      region.longitude,
+    );
+    setKm(st);
+  };
+  const goByPressed = () => {
+    goBySheetRef.current?.snapTo(0);
+  };
   return (
     <View style={styles.container}>
       <MapView
@@ -240,7 +289,8 @@ const MyMap2 = () => {
         onMapReady={() => {
           requestGeoLocationPermission();
           updateMapStyle();
-        }}>
+        }}
+        onRegionChangeComplete={onRegionChangeComplete}>
         {state.markers.map((marker, index) => {
           const scaleStyle = {
             transform: [{scale: interpolations[index].scale}],
@@ -303,6 +353,8 @@ const MyMap2 = () => {
         lat={state.region.latitude}
         lng={state.region.longitude}
         direction={direction}
+        km={km}
+        goByPressed={goByPressed}
       />
 
       <Animated.ScrollView
@@ -350,6 +402,7 @@ const MyMap2 = () => {
           ))}
       </Animated.ScrollView>
       <BottomSheetContent ref={bottomSheetRef} marker={selectedMarker} />
+      <GoBySelector ref={goBySheetRef} />
     </View>
   );
 };
