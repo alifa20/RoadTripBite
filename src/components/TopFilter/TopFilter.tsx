@@ -16,8 +16,16 @@ interface Props {
   direction: number;
   km: number;
   goByPressed: () => void;
+  travelTool?: {icon: string; value: string};
 }
-const TopFilter = ({searchFinished, lat, lng, km, goByPressed}: Props) => {
+const TopFilter = ({
+  searchFinished,
+  lat,
+  lng,
+  km,
+  goByPressed,
+  travelTool = {icon: 'car-hatchback', value: 'Going by Car'},
+}: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   // console.log('statestate', state);
   // console.log(new Date());
@@ -82,14 +90,15 @@ const TopFilter = ({searchFinished, lat, lng, km, goByPressed}: Props) => {
               <MaterialCommunityIcons
                 // name="walk"
                 // name="bike"
-                name="car-hatchback"
+                // name="car-hatchback"
+                name={travelTool.icon}
                 size={16}
                 color="green"
                 style={{marginRight: 5}}
               />
             }
             onPress={goByPressed}>
-            <Text>Going by Car</Text>
+            <Text>{travelTool.value}</Text>
           </Chip>
           <Chip selected={true}>
             <Text>Arrive at ~ {getNewTimeFormatted(km, 30)}</Text>

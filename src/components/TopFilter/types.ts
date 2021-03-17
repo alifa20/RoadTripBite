@@ -37,3 +37,5 @@ export type Action =
   | {
       type: 'CLEAR_FILTER';
     };
+
+export type TravelTool = {icon: string; value: string; speed: number};

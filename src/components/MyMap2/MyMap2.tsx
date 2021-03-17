@@ -88,9 +88,10 @@ const MyMap2 = () => {
     },
   };
 
-  const [state, setState] = useState(initialMapState);
+  const [mapState, setMapState] = useState(initialMapState);
   // const [details, setDetails] = useState<PlaceDetail>(null);
   const [selectedMarker, setSelectedMarker] = useState<Place | null>(null);
+  const [travelTool, setTravelTool] = useState<{icon: string; value: string}>();
 
   const [current, setCurrent] = useState<
     EventUserLocation['nativeEvent']['coordinate']
@@ -128,8 +129,8 @@ const MyMap2 = () => {
   useEffect(() => {
     mapAnimation.addListener(({value}) => {
       let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
-      if (index >= state.markers.length) {
-        index = state.markers.length - 1;
+      if (index >= mapState.markers.length) {
+        index = mapState.markers.length - 1;
       }
       if (index <= 0) {
         index = 0;
@@ -138,13 +139,13 @@ const MyMap2 = () => {
       const regionTimeout = setTimeout(() => {
         if (mapIndex !== index) {
           mapIndex = index;
-          const {geometry} = state.markers[index];
+          const {geometry} = mapState.markers[index];
           _map?.current?.animateToRegion(
             {
               latitude: geometry.location.lat,
               longitude: geometry.location.lng,
-              latitudeDelta: state.region.latitudeDelta,
-              longitudeDelta: state.region.longitudeDelta,
+              latitudeDelta: mapState.region.latitudeDelta,
+              longitudeDelta: mapState.region.longitudeDelta,
             },
             350,
           );
@@ -154,7 +155,7 @@ const MyMap2 = () => {
     });
   });
 
-  const interpolations = state.markers.map((marker, index) => {
+  const interpolations = mapState.markers.map((marker, index) => {
     const inputRange = [
       (index - 1) * CARD_WIDTH,
       index * CARD_WIDTH,
@@ -197,7 +198,7 @@ const MyMap2 = () => {
   // };
 
   const searchFinished = (places: Place[]) => {
-    setState({...state, markers: places});
+    setMapState({...mapState, markers: places});
     _map.current?.fitToSuppliedMarkers(
       places.map((marker) => marker.place_id),
       {edgePadding: {top: 50, right: 50, bottom: 50, left: 50}},
@@ -268,11 +269,17 @@ const MyMap2 = () => {
   const goByPressed = () => {
     goBySheetRef.current?.snapTo(0);
   };
+
+  const onTravelToolPress = (value: {icon: string; value: string}) => {
+    goBySheetRef.current?.snapTo(1);
+    setTravelTool(value);
+  };
+
   return (
     <View style={styles.container}>
       <MapView
         ref={_map}
-        initialRegion={state.region}
+        initialRegion={mapState.region}
         style={[styles.container, {width: mapWidth}]}
         provider={PROVIDER_GOOGLE}
         // customMapStyle={theme.dark ? mapDarkStyle : mapStandardStyle}
@@ -291,7 +298,7 @@ const MyMap2 = () => {
           updateMapStyle();
         }}
         onRegionChangeComplete={onRegionChangeComplete}>
-        {state.markers.map((marker, index) => {
+        {mapState.markers.map((marker, index) => {
           const scaleStyle = {
             transform: [{scale: interpolations[index].scale}],
           };
@@ -350,11 +357,12 @@ const MyMap2 = () => {
       </ScrollView> */}
       <TopFilter
         searchFinished={searchFinished}
-        lat={state.region.latitude}
-        lng={state.region.longitude}
+        lat={mapState.region.latitude}
+        lng={mapState.region.longitude}
         direction={direction}
         km={km}
         goByPressed={goByPressed}
+        travelTool={travelTool}
       />
 
       <Animated.ScrollView
@@ -388,7 +396,7 @@ const MyMap2 = () => {
           ],
           {useNativeDriver: true},
         )}>
-        {state.markers
+        {mapState.markers
           // .filter((m) => m.place_id === 'ChIJU_6wmx2nEmsRNBvwlTI4Ebk')
           // .filter((m) => m.place_id === 'ChIJKdwmeBOuEmsR0a8Bg2SiHzU')
           // .filter((m) => m.place_id === 'ChIJj-9AKP6wEmsRDkCSB5INALQ')
@@ -402,7 +410,7 @@ const MyMap2 = () => {
           ))}
       </Animated.ScrollView>
       <BottomSheetContent ref={bottomSheetRef} marker={selectedMarker} />
-      <GoBySelector ref={goBySheetRef} />
+      <GoBySelector ref={goBySheetRef} onTravelToolPress={onTravelToolPress} />
     </View>
   );
 };

@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableHighlight,
   View,
+  ViewStyle,
 } from 'react-native';
 
 interface Props {
@@ -11,12 +12,14 @@ interface Props {
   selected?: boolean;
   onPress?: (event: GestureResponderEvent) => void;
   icon?: ReactNode;
+  style?: ViewStyle;
 }
 const Chip = ({
   children,
   icon,
   selected = false,
   onPress = () => {},
+  style,
 }: Props) => (
   <TouchableHighlight
     activeOpacity={0.6}
@@ -25,6 +28,7 @@ const Chip = ({
       {borderRadius: 25},
       //   styles.container,
       //   {backgroundColor: selected ? '#dedede' : 'white'},
+      style,
     ]}
     onPress={onPress}>
     <View
@@ -48,7 +52,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderWidth: 1,
     borderColor: '#ddd',
-
+    // justifyContent: 'center',
     marginHorizontal: 2,
   },
 });
