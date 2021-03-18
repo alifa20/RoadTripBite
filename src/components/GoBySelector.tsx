@@ -7,10 +7,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {TravelTool} from './TopFilter/types';
 
 const windowHeight = Dimensions.get('window').height;
-
 interface Props {
   onTravelToolPress: (value: TravelTool) => void;
 }
+
 const GoBySelector = forwardRef<ScrollBottomSheet<ScrollView>, Props>(
   ({onTravelToolPress}, ref) => {
     return (
@@ -19,7 +19,7 @@ const GoBySelector = forwardRef<ScrollBottomSheet<ScrollView>, Props>(
         ref={ref}
         componentType="ScrollView"
         snapPoints={['60%', windowHeight]}
-        initialSnapIndex={0}
+        initialSnapIndex={1}
         renderHandle={() => (
           <View style={styles.header}>
             <View style={styles.panelHandle} />
@@ -31,8 +31,6 @@ const GoBySelector = forwardRef<ScrollBottomSheet<ScrollView>, Props>(
           <Chip
             icon={
               <MaterialCommunityIcons
-                // name="walk"
-                // name="bike"
                 name="bus-school"
                 size={16}
                 color="green"
@@ -52,8 +50,6 @@ const GoBySelector = forwardRef<ScrollBottomSheet<ScrollView>, Props>(
           <Chip
             icon={
               <MaterialCommunityIcons
-                // name="walk"
-                // name="bike"
                 name="car-sports"
                 size={16}
                 color="green"
@@ -74,8 +70,6 @@ const GoBySelector = forwardRef<ScrollBottomSheet<ScrollView>, Props>(
             style={styles.chip}
             icon={
               <MaterialCommunityIcons
-                // name="walk"
-                // name="bike"
                 name="train"
                 size={16}
                 color="green"
@@ -95,8 +89,6 @@ const GoBySelector = forwardRef<ScrollBottomSheet<ScrollView>, Props>(
             style={styles.chip}
             icon={
               <MaterialCommunityIcons
-                // name="walk"
-                // name="bike"
                 name="bike"
                 size={16}
                 color="green"
@@ -107,7 +99,7 @@ const GoBySelector = forwardRef<ScrollBottomSheet<ScrollView>, Props>(
               onTravelToolPress({
                 icon: 'bike',
                 value: 'Go by bicycle',
-                speed: 10,
+                speed: 15,
               })
             }>
             <Text>Go by bicycle</Text>
@@ -116,8 +108,6 @@ const GoBySelector = forwardRef<ScrollBottomSheet<ScrollView>, Props>(
             style={styles.chip}
             icon={
               <MaterialCommunityIcons
-                // name="walk"
-                // name="bike"
                 name="walk"
                 size={16}
                 color="green"
@@ -125,7 +115,7 @@ const GoBySelector = forwardRef<ScrollBottomSheet<ScrollView>, Props>(
               />
             }
             onPress={() =>
-              onTravelToolPress({icon: 'walk', value: 'Walking', speed: 2})
+              onTravelToolPress({icon: 'walk', value: 'Walking', speed: 5})
             }>
             <Text>Walk</Text>
           </Chip>

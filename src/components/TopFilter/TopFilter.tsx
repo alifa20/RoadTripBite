@@ -16,7 +16,8 @@ interface Props {
   direction: number;
   km: number;
   goByPressed: () => void;
-  travelTool?: {icon: string; value: string};
+  travelTool?: {icon: string; value: string; speed: number};
+  showSearch: boolean;
 }
 const TopFilter = ({
   searchFinished,
@@ -24,7 +25,8 @@ const TopFilter = ({
   lng,
   km,
   goByPressed,
-  travelTool = {icon: 'car-hatchback', value: 'Going by Car'},
+  travelTool = {icon: 'car-hatchback', value: 'Going by Car', speed: 30},
+  showSearch,
 }: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   // console.log('statestate', state);
@@ -101,7 +103,7 @@ const TopFilter = ({
             <Text>{travelTool.value}</Text>
           </Chip>
           <Chip selected={true}>
-            <Text>Arrive at ~ {getNewTimeFormatted(km, 30)}</Text>
+            <Text>Arrive at ~ {getNewTimeFormatted(km, travelTool.speed)}</Text>
           </Chip>
         </View>
         <Chip
@@ -185,9 +187,11 @@ const TopFilter = ({
         </Chip> */}
         {/* )} */}
         {/* {hasSelected && isDirty && ( */}
-        <Chip onPress={() => searchPress()}>
-          <Text>Search for my trip! </Text>
-        </Chip>
+        {showSearch && (
+          <Chip onPress={() => searchPress()}>
+            <Text>Search for my trip! </Text>
+          </Chip>
+        )}
         {/* )} */}
       </View>
     </View>

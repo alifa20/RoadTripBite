@@ -21,6 +21,7 @@ import {getDistanceFromLatLonInKm} from '../../utils/getDistanceFromLatLonInKm';
 import BottomSheetContent from '../BottomSheetContent';
 import GoBySelector from '../GoBySelector';
 import {TopFilter} from '../TopFilter';
+import {TravelTool} from '../TopFilter/types';
 import DetailCard from './DetailCard';
 import {mapStandardStyle, markers} from './mapData';
 
@@ -91,7 +92,8 @@ const MyMap2 = () => {
   const [mapState, setMapState] = useState(initialMapState);
   // const [details, setDetails] = useState<PlaceDetail>(null);
   const [selectedMarker, setSelectedMarker] = useState<Place | null>(null);
-  const [travelTool, setTravelTool] = useState<{icon: string; value: string}>();
+  const [travelTool, setTravelTool] = useState<TravelTool>();
+  const [showSearch, setShowSearch] = useState(false);
 
   const [current, setCurrent] = useState<
     EventUserLocation['nativeEvent']['coordinate']
@@ -265,14 +267,20 @@ const MyMap2 = () => {
       region.longitude,
     );
     setKm(st);
+    if (st > 0.5) setShowSearch(true);
   };
   const goByPressed = () => {
     goBySheetRef.current?.snapTo(0);
   };
 
-  const onTravelToolPress = (value: {icon: string; value: string}) => {
+  const onTravelToolPress = (value: TravelTool) => {
     goBySheetRef.current?.snapTo(1);
     setTravelTool(value);
+  };
+
+  const onMapPress = () => {
+    goBySheetRef.current?.snapTo(1);
+    bottomSheetRef.current?.snapTo(2);
   };
 
   return (
@@ -293,6 +301,7 @@ const MyMap2 = () => {
         zoomEnabled={true}
         rotateEnabled={true}
         onUserLocationChange={onUserLocationChange}
+        onPress={onMapPress}
         onMapReady={() => {
           requestGeoLocationPermission();
           updateMapStyle();
@@ -363,6 +372,7 @@ const MyMap2 = () => {
         km={km}
         goByPressed={goByPressed}
         travelTool={travelTool}
+        showSearch={showSearch}
       />
 
       <Animated.ScrollView

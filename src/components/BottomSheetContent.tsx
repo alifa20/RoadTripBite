@@ -14,7 +14,7 @@ const IMG_HIEIGHT = 220;
 // <any, RefObject<FlatList>>
 const BottomSheetContent = forwardRef<
   // React.RefObject<ScrollBottomSheet<FlatList<string>>>,
-  ScrollBottomSheet<FlatList>,
+  ScrollBottomSheet<PlaceDetail['photos'][0]>,
   Props
 >(({marker}, ref) => {
   const [details, setDetails] = useState<PlaceDetail | null>(null);
