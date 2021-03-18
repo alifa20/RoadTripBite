@@ -268,18 +268,21 @@ const MyMap2 = () => {
     //   ) * 1000,
     // );
 
-    const rad = region.latitudeDelta * 69000; // 69 is for km
+    const rad = (region.latitudeDelta * 69000) / 2; // 69 is for km
     console.log('radius', radius);
 
     const st = getDistanceFromLatLonInKm(
-      current.latitude,
-      current.longitude,
+      // current.latitude,
+      // current.longitude,
+      mapState.region.latitude,
+      mapState.region.longitude,
       region.latitude,
       region.longitude,
     );
     setKm(st);
     setRadius(rad);
     if (st > 0.5) setShowSearch(true);
+    setMapState({...mapState, region});
   };
   const goByPressed = () => {
     goBySheetRef.current?.snapTo(0);
