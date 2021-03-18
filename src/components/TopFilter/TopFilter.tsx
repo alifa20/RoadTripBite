@@ -8,6 +8,7 @@ import {Filter, SetFilterPayload} from './types';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {getPlaces} from '../../api/places';
 import {getNewTimeFormatted} from '../../utils/timeUtil';
+import {useTickTime} from '../MyMap2/useTickTime';
 
 interface Props {
   searchFinished: any;
@@ -35,6 +36,9 @@ const TopFilter = ({
   // console.log(new Date());
   const isDirty = state.isDirty;
   const filter = state.filter;
+  const {date} = useTickTime();
+  const estimatedTime = getNewTimeFormatted(date, km, travelTool.speed);
+
   const hasSelected = (Object.keys(filter) as Array<keyof typeof filter>).find(
     (key) => filter[key].checked === true,
   );
@@ -106,7 +110,7 @@ const TopFilter = ({
             <Text>{travelTool.value}</Text>
           </Chip>
           <Chip selected={true}>
-            <Text>Arrive at ~ {getNewTimeFormatted(km, travelTool.speed)}</Text>
+            <Text>Arrive at ~ {estimatedTime}</Text>
           </Chip>
         </View>
         <Chip

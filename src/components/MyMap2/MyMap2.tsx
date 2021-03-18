@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {
   Animated,
   Dimensions,
-  FlatList,
   PermissionsAndroid,
   Platform,
   ScrollView,
@@ -16,7 +15,7 @@ import MapView, {
   Region,
 } from 'react-native-maps';
 import ScrollBottomSheet from 'react-native-scroll-bottom-sheet';
-import {Place} from '../../api/types';
+import {Place, PlaceDetail} from '../../api/types';
 import {getDistanceFromLatLonInKm} from '../../utils/getDistanceFromLatLonInKm';
 import BottomSheetContent from '../BottomSheetContent';
 import GoBySelector from '../GoBySelector';
@@ -110,7 +109,9 @@ const MyMap2 = () => {
   });
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
-  const bottomSheetRef = React.createRef<ScrollBottomSheet<FlatList<string>>>();
+  const bottomSheetRef = React.createRef<
+    ScrollBottomSheet<PlaceDetail['photos'][0]>
+  >();
   const goBySheetRef = React.createRef<ScrollBottomSheet<ScrollView>>();
 
   const onUserLocationChange = (event: EventUserLocation) => {
@@ -130,8 +131,6 @@ const MyMap2 = () => {
     //   isFromMockProvider: true,
     // });
   };
-
-  const onRegionChange = () => {};
 
   useEffect(() => {
     mapAnimation.addListener(({value}) => {
