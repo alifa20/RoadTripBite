@@ -12,6 +12,7 @@ export const getPlaces = (
   direction: string[],
   goingBy: string,
   time: string,
+  radius: number,
 ): Promise<Place[]> =>
   places({
     entities,
@@ -20,5 +21,6 @@ export const getPlaces = (
     direction,
     goingBy,
     time,
+    radius,
   }).then((response) => response.data);
 // : Promise<FirebaseFunctionsTypes.HttpsCallableResult>

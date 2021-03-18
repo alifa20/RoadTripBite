@@ -94,6 +94,7 @@ const MyMap2 = () => {
   const [selectedMarker, setSelectedMarker] = useState<Place | null>(null);
   const [travelTool, setTravelTool] = useState<TravelTool>();
   const [showSearch, setShowSearch] = useState(false);
+  const [radius, setRadius] = useState(1000);
 
   const [current, setCurrent] = useState<
     EventUserLocation['nativeEvent']['coordinate']
@@ -115,6 +116,8 @@ const MyMap2 = () => {
   const onUserLocationChange = (event: EventUserLocation) => {
     console.log('event', event.nativeEvent.coordinate.heading);
     setDirection(event.nativeEvent.coordinate.heading);
+    // latitudeDelta * 69
+
     // setCurrent(event.nativeEvent.coordinate);
     // setCurrent({
     //   latitude: initialMapState.region.latitude,
@@ -127,6 +130,8 @@ const MyMap2 = () => {
     //   isFromMockProvider: true,
     // });
   };
+
+  const onRegionChange = () => {};
 
   useEffect(() => {
     mapAnimation.addListener(({value}) => {
@@ -200,11 +205,14 @@ const MyMap2 = () => {
   // };
 
   const searchFinished = (places: Place[]) => {
-    setMapState({...mapState, markers: places});
-    _map.current?.fitToSuppliedMarkers(
-      places.map((marker) => marker.place_id),
-      {edgePadding: {top: 50, right: 50, bottom: 50, left: 50}},
-    );
+    setShowSearch(false);
+    if (places.length > 0) {
+      setMapState({...mapState, markers: places});
+      _map.current?.fitToSuppliedMarkers(
+        places.map((marker) => marker.place_id),
+        {edgePadding: {top: 50, right: 50, bottom: 50, left: 50}},
+      );
+    }
 
     // _map.current?.fitToCoordinates(
     //   [
@@ -260,6 +268,10 @@ const MyMap2 = () => {
     //     region.longitude,
     //   ) * 1000,
     // );
+
+    const rad = region.latitudeDelta * 69000; // 69 is for km
+    console.log('radius', radius);
+
     const st = getDistanceFromLatLonInKm(
       current.latitude,
       current.longitude,
@@ -267,6 +279,7 @@ const MyMap2 = () => {
       region.longitude,
     );
     setKm(st);
+    setRadius(rad);
     if (st > 0.5) setShowSearch(true);
   };
   const goByPressed = () => {
@@ -373,6 +386,7 @@ const MyMap2 = () => {
         goByPressed={goByPressed}
         travelTool={travelTool}
         showSearch={showSearch}
+        radius={radius}
       />
 
       <Animated.ScrollView
@@ -409,7 +423,7 @@ const MyMap2 = () => {
         {mapState.markers
           // .filter((m) => m.place_id === 'ChIJU_6wmx2nEmsRNBvwlTI4Ebk')
           // .filter((m) => m.place_id === 'ChIJKdwmeBOuEmsR0a8Bg2SiHzU')
-          // .filter((m) => m.place_id === 'ChIJj-9AKP6wEmsRDkCSB5INALQ')
+          // .filter((m) => m.place_id === 'ChIJ2XHdn9CkEmsRCGTtHaIao70')
           .map((marker, index) => (
             <DetailCard
               key={marker.place_id}

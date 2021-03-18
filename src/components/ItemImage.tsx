@@ -20,7 +20,7 @@ interface Props {
 const ItemImage = ({photo_reference, photos2, place_id, lat, lng}: Props) => {
   const [img, setImg] = useState<string | null>(null);
 
-  console.log('photos2', photo_reference, photos2[photo_reference]);
+  // console.log('photos2', place_id, photo_reference, photos2[photo_reference]);
 
   useEffect(() => {
     (async () => {
