@@ -17,12 +17,15 @@ import MapView, {
 import ScrollBottomSheet from 'react-native-scroll-bottom-sheet';
 import {Place, PlaceDetail} from '../../api/types';
 import {getDistanceFromLatLonInKm} from '../../utils/getDistanceFromLatLonInKm';
+import {getNewTimeFormatted} from '../../utils/timeUtil';
 import BottomSheetContent from '../BottomSheetContent';
+import CurrentLocationBeacon from '../CurrentLocationBeacon';
 import GoBySelector from '../GoBySelector';
 import {TopFilter} from '../TopFilter';
 import {TravelTool} from '../TopFilter/types';
 import DetailCard from './DetailCard';
 import {mapStandardStyle, markers} from './mapData';
+import {useTickTime} from './useTickTime';
 
 // import {useTheme} from '@react-navigation/native';
 
@@ -94,6 +97,9 @@ const MyMap2 = () => {
   const [travelTool, setTravelTool] = useState<TravelTool>();
   const [showSearch, setShowSearch] = useState(false);
   const [radius, setRadius] = useState(1000);
+  const {date} = useTickTime();
+
+  const estimatedTime = getNewTimeFormatted(date, km, travelTool?.speed);
 
   const [current, setCurrent] = useState<
     EventUserLocation['nativeEvent']['coordinate']
@@ -322,6 +328,7 @@ const MyMap2 = () => {
           updateMapStyle();
         }}
         onRegionChangeComplete={onRegionChangeComplete}>
+        <CurrentLocationBeacon coordinate={mapState.region} km={km} />
         {mapState.markers.map((marker, index) => {
           const scaleStyle = {
             transform: [{scale: interpolations[index].scale}],
@@ -436,7 +443,11 @@ const MyMap2 = () => {
           ))}
       </Animated.ScrollView>
       <BottomSheetContent ref={bottomSheetRef} marker={selectedMarker} />
-      <GoBySelector ref={goBySheetRef} onTravelToolPress={onTravelToolPress} />
+      <GoBySelector
+        ref={goBySheetRef}
+        onTravelToolPress={onTravelToolPress}
+        selected={travelTool?.value}
+      />
     </View>
   );
 };
@@ -539,6 +550,13 @@ const styles = StyleSheet.create({
   marker: {
     width: 30,
     height: 30,
+  },
+  markerTooltip: {
+    width: 150,
+    alignItems: 'center',
+    marginBottom: 10,
+    position: 'relative',
+    top: 10,
   },
   button: {
     alignItems: 'center',

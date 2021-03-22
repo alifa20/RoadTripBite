@@ -36,8 +36,8 @@ const TopFilter = ({
   // console.log(new Date());
   const isDirty = state.isDirty;
   const filter = state.filter;
-  const {date} = useTickTime();
-  const estimatedTime = getNewTimeFormatted(date, km, travelTool.speed);
+  // const {date} = useTickTime();
+  // const estimatedTime = getNewTimeFormatted(date, km, travelTool.speed);
 
   const hasSelected = (Object.keys(filter) as Array<keyof typeof filter>).find(
     (key) => filter[key].checked === true,
@@ -109,9 +109,9 @@ const TopFilter = ({
             onPress={goByPressed}>
             <Text>{travelTool.value}</Text>
           </Chip>
-          <Chip selected={true}>
+          {/* <Chip selected={true}>
             <Text>Arrive at ~ {estimatedTime}</Text>
-          </Chip>
+          </Chip> */}
         </View>
         <Chip
           selected={filter.restaurants.checked}
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     justifyContent: 'center',
     alignItems: 'flex-start',
-    height: 70,
+    // height: 70,
   },
   searchRow: {
     paddingTop: 5,

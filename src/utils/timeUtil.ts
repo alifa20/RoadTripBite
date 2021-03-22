@@ -66,7 +66,12 @@ const minRound = (curr: number) => {};
 
 const getMinuteFromDistance = (km: number, speed: number) => (km / speed) * 60;
 
-export const getNewTimeFormatted = (d: Date, km: number, speed: number) => {
+export const getNewTimeFormatted = (
+  d: Date,
+  km: number,
+  rawSpeed: number | undefined,
+) => {
+  const speed = rawSpeed ? rawSpeed : 0;
   const min = getMinuteFromDistance(km, speed);
 
   // const d = new Date('2021-03-17T07:00:00Z');

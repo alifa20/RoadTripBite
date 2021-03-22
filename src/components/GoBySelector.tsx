@@ -8,13 +8,46 @@ import {TravelTool} from './TopFilter/types';
 
 const windowHeight = Dimensions.get('window').height;
 interface Props {
+  selected?: string;
   onTravelToolPress: (value: TravelTool) => void;
 }
 
+const items = [
+  {
+    icon: 'bus-school',
+    value: 'In/on a car/bus',
+    text: 'Am in/on a car/bus',
+    speed: 30,
+  },
+
+  {
+    icon: 'car-sports',
+    value: 'On a highway',
+    text: 'Driving on a high way',
+    speed: 80,
+  },
+  {
+    icon: 'train',
+    value: 'Am on a train',
+    text: 'Am on a train',
+    speed: 60,
+  },
+  {
+    icon: 'bike',
+    value: 'Going by bicycle',
+    text: 'Am cycling',
+    speed: 15,
+  },
+  {
+    icon: 'walk',
+    value: 'Walking',
+    text: 'I am walking',
+    speed: 15,
+  },
+];
 const GoBySelector = forwardRef<ScrollBottomSheet<ScrollView>, Props>(
-  ({onTravelToolPress}, ref) => {
+  ({onTravelToolPress, selected = ''}, ref) => {
     return (
-      //   <View style={styles.container}>
       <ScrollBottomSheet
         ref={ref}
         componentType="ScrollView"
@@ -28,100 +61,30 @@ const GoBySelector = forwardRef<ScrollBottomSheet<ScrollView>, Props>(
         data={Array.from({length: 200}).map((_, i) => String(i))}
         contentContainerStyle={styles.contentContainerStyle}>
         <View>
-          <Chip
-            icon={
-              <MaterialCommunityIcons
-                name="bus-school"
-                size={16}
-                color="green"
-                style={{marginRight: 5}}
-              />
-            }
-            selected={true}
-            onPress={() =>
-              onTravelToolPress({
-                icon: 'bus-school',
-                value: 'Go by car',
-                speed: 30,
-              })
-            }>
-            <Text>Go by car/bus</Text>
-          </Chip>
-          <Chip
-            icon={
-              <MaterialCommunityIcons
-                name="car-sports"
-                size={16}
-                color="green"
-                style={{marginRight: 5}}
-              />
-            }
-            style={styles.chip}
-            onPress={() =>
-              onTravelToolPress({
-                icon: 'car-sports',
-                value: 'On a highway',
-                speed: 80,
-              })
-            }>
-            <Text>Drive on a high way</Text>
-          </Chip>
-          <Chip
-            style={styles.chip}
-            icon={
-              <MaterialCommunityIcons
-                name="train"
-                size={16}
-                color="green"
-                style={{marginRight: 5}}
-              />
-            }
-            onPress={() =>
-              onTravelToolPress({
-                icon: 'train',
-                value: 'Go by train',
-                speed: 60,
-              })
-            }>
-            <Text>Go by train</Text>
-          </Chip>
-          <Chip
-            style={styles.chip}
-            icon={
-              <MaterialCommunityIcons
-                name="bike"
-                size={16}
-                color="green"
-                style={{marginRight: 5}}
-              />
-            }
-            onPress={() =>
-              onTravelToolPress({
-                icon: 'bike',
-                value: 'Go by bicycle',
-                speed: 15,
-              })
-            }>
-            <Text>Go by bicycle</Text>
-          </Chip>
-          <Chip
-            style={styles.chip}
-            icon={
-              <MaterialCommunityIcons
-                name="walk"
-                size={16}
-                color="green"
-                style={{marginRight: 5}}
-              />
-            }
-            onPress={() =>
-              onTravelToolPress({icon: 'walk', value: 'Walking', speed: 5})
-            }>
-            <Text>Walk</Text>
-          </Chip>
+          {items.map((item, i) => (
+            <Chip
+              icon={
+                <MaterialCommunityIcons
+                  name={item.icon}
+                  size={16}
+                  color="green"
+                  style={{marginRight: 5}}
+                />
+              }
+              selected={selected === item.value}
+              onPress={() =>
+                onTravelToolPress({
+                  icon: item.icon,
+                  value: item.value,
+                  speed: item.speed,
+                })
+              }
+              {...(i > 0 && {...{style: styles.chip}})}>
+              <Text>{item.text}</Text>
+            </Chip>
+          ))}
         </View>
       </ScrollBottomSheet>
-      //   </View>
     );
   },
 );
