@@ -20,6 +20,7 @@ import {getDistanceFromLatLonInKm} from '../../utils/getDistanceFromLatLonInKm';
 import {getNewTimeFormatted} from '../../utils/timeUtil';
 import BottomSheetContent from '../BottomSheetContent';
 import CurrentLocationBeacon from '../CurrentLocationBeacon';
+import EstimatedArrival from '../EstimatedArrival';
 import GoBySelector from '../GoBySelector';
 import {TopFilter} from '../TopFilter';
 import {TravelTool} from '../TopFilter/types';
@@ -386,6 +387,7 @@ const MyMap2 = () => {
           </TouchableOpacity>
         ))}
       </ScrollView> */}
+      <EstimatedArrival coordinate={mapState.region} km={km} />
       <TopFilter
         searchFinished={searchFinished}
         lat={mapState.region.latitude}
