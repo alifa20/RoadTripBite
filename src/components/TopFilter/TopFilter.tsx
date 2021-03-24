@@ -47,7 +47,7 @@ const TopFilter = ({
     .filter((key) => (state.filter as any)[key].checked)
     .filter(Boolean);
   const searchPress = async () => {
-    const places = await getPlaces(
+    const {places} = await getPlaces(
       keys,
       lat,
       lng,

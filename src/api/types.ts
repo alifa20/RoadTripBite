@@ -49,6 +49,10 @@ export interface Place {
   vicinity: string;
 }
 
+export interface PlaceWithArrival extends Place {
+  arriveAt: string;
+}
+
 /**
  * Place details
  */

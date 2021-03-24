@@ -15,7 +15,7 @@ import MapView, {
   Region,
 } from 'react-native-maps';
 import ScrollBottomSheet from 'react-native-scroll-bottom-sheet';
-import {Place, PlaceDetail} from '../../api/types';
+import {Place, PlaceDetail, PlaceWithArrival} from '../../api/types';
 import {getDistanceFromLatLonInKm} from '../../utils/getDistanceFromLatLonInKm';
 import {getNewTimeFormatted} from '../../utils/timeUtil';
 import BottomSheetContent from '../BottomSheetContent';
@@ -210,7 +210,10 @@ const MyMap2 = () => {
   //   });
   // };
 
-  const searchFinished = (places: Place[]) => {
+  const searchFinished = (
+    places: Place[],
+    placeWithArrivalTime: PlaceWithArrival,
+  ) => {
     setShowSearch(false);
     if (places.length > 0) {
       setMapState({...mapState, markers: places});
@@ -276,7 +279,6 @@ const MyMap2 = () => {
     // );
 
     const rad = (region.latitudeDelta * 69000) / 2; // 69 is for km
-    console.log('radius', radius);
 
     const st = getDistanceFromLatLonInKm(
       // current.latitude,

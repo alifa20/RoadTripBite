@@ -63,6 +63,7 @@ const GoBySelector = forwardRef<ScrollBottomSheet<ScrollView>, Props>(
         <View>
           {items.map((item, i) => (
             <Chip
+              key={item.icon}
               icon={
                 <MaterialCommunityIcons
                   name={item.icon}

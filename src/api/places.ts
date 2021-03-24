@@ -13,7 +13,7 @@ export const getPlaces = (
   goingBy: string,
   time: string,
   radius: number,
-): Promise<Place[]> =>
+): Promise<{places: Place[]}> =>
   places({
     entities,
     lat,
