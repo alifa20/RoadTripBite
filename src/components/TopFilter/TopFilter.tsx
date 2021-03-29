@@ -20,6 +20,10 @@ interface Props {
   travelTool?: {icon: string; value: string; speed: number};
   showSearch: boolean;
   radius: number;
+  currentPosition: {
+    lat: number;
+    lng: number;
+  };
 }
 const TopFilter = ({
   searchFinished,
@@ -30,6 +34,7 @@ const TopFilter = ({
   travelTool = {icon: 'car-hatchback', value: 'Going by Car', speed: 30},
   showSearch,
   radius,
+  currentPosition,
 }: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   // console.log('statestate', state);
@@ -55,6 +60,7 @@ const TopFilter = ({
       state.goingBy,
       state.time,
       radius,
+      currentPosition,
     );
 
     searchFinished(places);

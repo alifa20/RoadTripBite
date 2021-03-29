@@ -400,6 +400,10 @@ const MyMap2 = () => {
         travelTool={travelTool}
         showSearch={showSearch}
         radius={radius}
+        currentPosition={{
+          lat: mapState.region.latitude,
+          lng: mapState.region.longitude,
+        }}
       />
 
       <Animated.ScrollView
