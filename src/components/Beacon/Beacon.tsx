@@ -1,8 +1,7 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
-
-import Animated, {Easing} from 'react-native-reanimated';
+import Animated, {EasingNode, interpolateNode} from 'react-native-reanimated';
 import {useMemoOne} from 'use-memo-one';
 
 interface Props {
@@ -43,7 +42,7 @@ const runTiming = (clock: Animated.Clock, max = 2) => {
   const config = {
     toValue: new Value(1),
     duration: 1000,
-    easing: Easing.linear,
+    easing: EasingNode.linear,
   };
 
   return block([
@@ -92,19 +91,19 @@ const Beacon = ({
     [],
   );
 
-  const scale = interpolate(progress, {
+  const scale = interpolateNode(progress, {
     inputRange: [0, 0.75, 1],
     outputRange: [1, 30.3, 30.4],
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const scale2 = interpolate(progress, {
+  const scale2 = interpolateNode(progress, {
     inputRange: [0, 0.3, 0.75, 1],
     outputRange: [1, 1, 1.3, 1.4],
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const opacity = interpolate(progress, {
+  const opacity = interpolateNode(progress, {
     inputRange: [0, 1],
     outputRange: [1, 0],
     extrapolate: Extrapolate.CLAMP,
