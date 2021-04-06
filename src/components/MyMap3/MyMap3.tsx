@@ -24,11 +24,17 @@ import {Place, PlaceDetail, PlaceWithArrival} from '../../api/types';
 import {getDistanceFromLatLonInKm} from '../../utils/getDistanceFromLatLonInKm';
 import {getNewTimeFormatted} from '../../utils/timeUtil';
 import CurrentLocationBeacon from '../CurrentLocationBeacon';
+import EstimatedArrival from '../EstimatedArrival';
+import DetailCard from '../MyMap2/DetailCard';
+import {TopFilter} from '../TopFilter';
 import {TravelTool} from '../TopFilter/types';
 import Card from './Card';
 import {mapStandardStyle, markers} from './mapData';
 import {places} from './mockData';
 import {useTickTime} from './useTickTime';
+// import normalMarker from './assets/map_marker.png';
+const normalMarker = require('./assets/map_marker.png');
+const mainMarker = require('./assets/main_marker.png');
 
 // import {useTheme} from '@react-navigation/nativ
 // = Dimensions.get('screen').width / 2;
@@ -109,23 +115,25 @@ const MyMap3 = () => {
     setDirection(event.nativeEvent.coordinate.heading);
   };
 
-  const interpolations = mapState.markers.map((marker, index) => {
-    const inputRange = [
-      (index - 1) * CARD_WIDTH,
-      index * CARD_WIDTH,
-      (index + 1) * CARD_WIDTH,
-    ];
+  // const interpolations = mapState.markers.map((marker, index) => {
+  //   const inputRange = [
+  //     (index - 1) * CARD_WIDTH,
+  //     index * CARD_WIDTH,
+  //     (index + 1) * CARD_WIDTH,
+  //   ];
 
-    const scale = mapAnimation.interpolate({
-      inputRange,
-      outputRange: [1, 1.5, 1],
-      extrapolate: Extrapolate.CLAMP,
-    });
+  //   const scale = mapAnimation.interpolate({
+  //     inputRange,
+  //     outputRange: [1, 1.5, 1],
+  //     extrapolate: Extrapolate.CLAMP,
+  //   });
 
-    return {scale};
-  });
+  //   return {scale};
+  // });
 
   const onMarkerPress = (mapEventData: any) => {
+    console.log('press');
+
     const markerID = mapEventData._targetInst.return.key;
 
     let x = markerID * CARD_WIDTH + markerID * 20;
@@ -133,12 +141,13 @@ const MyMap3 = () => {
       x = x - SPACING_FOR_CARD_INSET;
     }
 
-    _scrollView?.current?.scrollTo({x: x, y: 0, animated: true});
+    const node = _scrollView.current?.getNode();
+    if (node) node.scrollTo({x: x, y: 0, animated: true});
   };
 
   const _map = React.useRef<MapView>(null);
 
-  const _scrollView = React.useRef<ScrollView>(null);
+  const _scrollView = React.useRef<Animated.ScrollView>(null);
 
   const searchFinished = (
     places: Place[],
@@ -238,24 +247,29 @@ const MyMap3 = () => {
         onRegionChangeComplete={onRegionChangeComplete}>
         <CurrentLocationBeacon coordinate={mapState.region} km={km} />
         {mapState.markers.map((marker, index) => {
-          const scaleStyle = {
-            transform: [{scale: interpolations[index].scale}],
-          };
+          // const scaleStyle = {
+          //   transform: [{scale: interpolations[index].scale}],
+          // };
+          const isSelected = index === scrolledCardIndex.value;
           return (
             <Marker
               key={index}
-              //   coordinate={marker.coordinate}
               coordinate={{
                 latitude: marker.geometry.location.lat,
                 longitude: marker.geometry.location.lng,
               }}
+              style={isSelected ? styles.specialMarker : null}
               onPress={(e) => onMarkerPress(e)}
               title={marker.name}
               identifier={marker.place_id}>
               <Animated.View style={[styles.markerWrap]}>
                 <Animated.Image
-                  source={require('./assets/map_marker.png')}
-                  style={[styles.marker, scaleStyle]}
+                  // source={require('./assets/map_marker.png')}
+                  source={isSelected ? mainMarker : normalMarker}
+                  style={[
+                    styles.marker,
+                    // scaleStyle
+                  ]}
                   resizeMode="cover"
                 />
               </Animated.View>
@@ -263,8 +277,25 @@ const MyMap3 = () => {
           );
         })}
       </MapView>
+      <EstimatedArrival coordinate={mapState.region} km={km} />
+      <TopFilter
+        searchFinished={searchFinished}
+        lat={mapState.region.latitude}
+        lng={mapState.region.longitude}
+        direction={direction}
+        km={km}
+        goByPressed={goByPressed}
+        travelTool={travelTool}
+        showSearch={showSearch}
+        radius={radius}
+        currentPosition={{
+          lat: mapState.region.latitude,
+          lng: mapState.region.longitude,
+        }}
+      />
       <View style={styles.bottom}>
         <Animated.ScrollView
+          ref={_scrollView}
           horizontal
           scrollEventThrottle={1}
           showsHorizontalScrollIndicator={false}
@@ -284,12 +315,18 @@ const MyMap3 = () => {
               Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0,
           }}>
           {(places as Place[]).map((place, index) => (
-            <Card
-              key={place.name}
-              width={cardWidth}
-              place={place}
+            // <Card
+            //   key={place.name}
+            //   width={cardWidth}
+            //   place={place}
+            //   index={index}
+            //   marginRight={padding}
+            // />
+            <DetailCard
+              key={place.place_id}
               index={index}
-              marginRight={padding}
+              marker={place}
+              detailPressed={detailPressed}
             />
           ))}
         </Animated.ScrollView>
@@ -301,13 +338,13 @@ const MyMap3 = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    // padding: 10,
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
   },
   top: {flex: 0.5},
   bottom: {
-    flex: 0.2,
+    flex: 0.4,
     padding: 10,
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
@@ -321,6 +358,9 @@ const styles = StyleSheet.create({
   marker: {
     width: 30,
     height: 30,
+  },
+  specialMarker: {
+    zIndex: 1,
   },
 });
 export default MyMap3;
