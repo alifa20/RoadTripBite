@@ -45,7 +45,9 @@ const DetailCard = ({marker, index, detailPressed}: Props) => {
     Linking.openURL(url);
   };
 
-  const handleDetailPressed = () => detailPressed(marker);
+  // const handleDetailPressed = () => detailPressed(marker);
+  const handleDetailPressed = () => goToMap();
+
   const photos = marker?.photos;
   const photoReference = photos && photos[0] ? photos[0].photo_reference : '';
 
@@ -102,7 +104,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderTopLeftRadius: 5,
     borderTopRightRadius: 5,
-    marginHorizontal: 10,
+    // marginHorizontal: 10,
+    paddingHorizontal: 10,
     shadowColor: '#000',
     shadowRadius: 5,
     shadowOpacity: 0.3,

@@ -51,7 +51,7 @@ const MyMap3 = () => {
   const [direction, setDirection] = useState(12);
   const [km, setKm] = useState(0);
   const initialMapState = {
-    markers,
+    markers: [],
     region: {
       latitude: -33.84796,
       longitude: 151.07443,
@@ -314,7 +314,8 @@ const MyMap3 = () => {
             paddingHorizontal:
               Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0,
           }}>
-          {(places as Place[]).map((place, index) => (
+          {/* {(places as Place[]) */}
+          {mapState.markers.map((place, index) => (
             // <Card
             //   key={place.name}
             //   width={cardWidth}

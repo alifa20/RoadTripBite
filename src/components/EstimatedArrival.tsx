@@ -35,6 +35,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     top: '45%',
+    left: 0,
     // justifyContent: 'flex-end',
     // alignItems: 'center',
     // paddingBottom: 20,
