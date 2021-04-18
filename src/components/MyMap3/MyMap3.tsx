@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Dimensions,
   PermissionsAndroid,
@@ -14,8 +14,6 @@ import MapView, {
   Region,
 } from 'react-native-maps';
 import Animated, {
-  Extrapolate,
-  useAnimatedRef,
   useAnimatedScrollHandler,
   useSharedValue,
 } from 'react-native-reanimated';
@@ -28,9 +26,7 @@ import EstimatedArrival from '../EstimatedArrival';
 import DetailCard from '../MyMap2/DetailCard';
 import {TopFilter} from '../TopFilter';
 import {TravelTool} from '../TopFilter/types';
-import Card from './Card';
-import {mapStandardStyle, markers} from './mapData';
-import {places} from './mockData';
+import {mapStandardStyle} from './mapData';
 import {useTickTime} from './useTickTime';
 // import normalMarker from './assets/map_marker.png';
 const normalMarker = require('./assets/map_marker.png');
@@ -41,6 +37,8 @@ const mainMarker = require('./assets/main_marker.png');
 const padding = 10;
 
 const {width, height} = Dimensions.get('window');
+// const footerHeight = height / 3;
+const footerHeight = 260;
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
 const cardWidth = CARD_WIDTH;
@@ -51,7 +49,7 @@ const MyMap3 = () => {
   const [direction, setDirection] = useState(12);
   const [km, setKm] = useState(0);
   const initialMapState = {
-    markers: [],
+    markers: [] as Place[],
     region: {
       latitude: -33.84796,
       longitude: 151.07443,
@@ -277,7 +275,11 @@ const MyMap3 = () => {
           );
         })}
       </MapView>
-      <EstimatedArrival coordinate={mapState.region} km={km} />
+      <EstimatedArrival
+        coordinate={mapState.region}
+        km={km}
+        footerHeight={footerHeight}
+      />
       <TopFilter
         searchFinished={searchFinished}
         lat={mapState.region.latitude}
@@ -345,7 +347,8 @@ const styles = StyleSheet.create({
   },
   top: {flex: 0.5},
   bottom: {
-    flex: 0.4,
+    // flex: 0.4,
+    height: footerHeight,
     padding: 10,
     alignItems: 'flex-end',
     justifyContent: 'flex-end',

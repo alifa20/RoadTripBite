@@ -8,25 +8,32 @@ import {useTickTime} from './MyMap2/useTickTime';
 interface Props {
   coordinate: LatLng;
   km: number;
+  footerHeight: number;
   travelTool?: {icon: string; value: string; speed: number};
 }
 const EstimatedArrival = ({
   coordinate,
   km,
+  footerHeight,
   travelTool = {icon: 'car-hatchback', value: 'Going by Car', speed: 30},
 }: Props) => {
   const {date} = useTickTime();
   const estimatedTime = getNewTimeFormatted(date, km, travelTool.speed);
   return (
-    <View style={styles.container}>
-      <View style={[styles.markerTooltip, {width: 150}]}>
-        <Text style={styles.textStyle}>Estimated arrival</Text>
+    <View style={[styles.container, {bottom: footerHeight + 20}]}>
+      <View
+        style={[
+          styles.markerTooltip,
+          // {width: 250}
+        ]}>
+        <Text style={styles.textStyle}>Estimated arrival {estimatedTime}</Text>
+        {/* <Text style={styles.textStyle}>{estimatedTime} </Text> */}
       </View>
-      <View style={styles.timeContainer}>
+      {/* <View style={styles.timeContainer}>
         <View style={styles.time}>
           <Text style={styles.textStyle}>{estimatedTime} </Text>
         </View>
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -34,11 +41,15 @@ const EstimatedArrival = ({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: '45%',
-    left: 0,
+    // position: 'relative',
+    // top: '45%',
+    left: '30%',
     // justifyContent: 'flex-end',
     // alignItems: 'center',
     // paddingBottom: 20,
+    // bottom: 20,
+    // right: '20%',
+    // alignSelf: 'flex-end',
   },
   markerTooltip: {
     paddingHorizontal: 10,
