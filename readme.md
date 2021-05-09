@@ -10,7 +10,9 @@
 
 ✅ navigate to map for the restaurants
 
-✅
+- Need to publish the app to the app store.
+
+- Ads needs to be on production.
 
 ## Remaining
 
