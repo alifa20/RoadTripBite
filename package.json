@@ -10,6 +10,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "@react-native-firebase/admob": "^11.3.0",
     "@react-native-firebase/analytics": "^10.8.0",
     "@react-native-firebase/app": "^10.8.0",
     "@react-native-firebase/firestore": "^10.8.0",

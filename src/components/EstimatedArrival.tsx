@@ -20,7 +20,7 @@ const EstimatedArrival = ({
   const {date} = useTickTime();
   const estimatedTime = getNewTimeFormatted(date, km, travelTool.speed);
   return (
-    <View style={[styles.container, {bottom: footerHeight + 20}]}>
+    <View style={[styles.container, {bottom: footerHeight + 70}]}>
       <View
         style={[
           styles.markerTooltip,

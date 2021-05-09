@@ -26,6 +26,8 @@ import EstimatedArrival from '../EstimatedArrival';
 import DetailCard from '../MyMap2/DetailCard';
 import {TopFilter} from '../TopFilter';
 import {TravelTool} from '../TopFilter/types';
+import BigAddCard from './Ads/BigAddCard';
+import Ad from './Ads/SmallAd';
 import {mapStandardStyle} from './mapData';
 import {useTickTime} from './useTickTime';
 // import normalMarker from './assets/map_marker.png';
@@ -38,10 +40,11 @@ const padding = 10;
 
 const {width, height} = Dimensions.get('window');
 // const footerHeight = height / 3;
-const footerHeight = 260;
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
-const cardWidth = CARD_WIDTH;
+const footerHeight = CARD_HEIGHT + 40;
+
+// const cardWidth = CARD_WIDTH;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 const MyMap3 = () => {
@@ -220,6 +223,8 @@ const MyMap3 = () => {
     bottomSheetRef.current?.snapTo(2);
   };
 
+  const hasMarker = mapState.markers.length > 0;
+
   return (
     <View style={styles.container}>
       <MapView
@@ -295,44 +300,45 @@ const MyMap3 = () => {
           lng: mapState.region.longitude,
         }}
       />
+      <Ad />
+
       <View style={styles.bottom}>
-        <Animated.ScrollView
-          ref={_scrollView}
-          horizontal
-          scrollEventThrottle={1}
-          showsHorizontalScrollIndicator={false}
-          onScroll={onScroll}
-          decelerationRate={0}
-          snapToInterval={cardWidth} //your element width
-          snapToAlignment={'center'}
-          onMomentumScrollEnd={onMomentumScrollEnd}
-          contentInset={{
-            top: 0,
-            left: SPACING_FOR_CARD_INSET,
-            bottom: 0,
-            right: SPACING_FOR_CARD_INSET,
-          }}
-          contentContainerStyle={{
-            paddingHorizontal:
-              Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0,
-          }}>
-          {/* {(places as Place[]) */}
-          {mapState.markers.map((place, index) => (
-            // <Card
-            //   key={place.name}
-            //   width={cardWidth}
-            //   place={place}
-            //   index={index}
-            //   marginRight={padding}
-            // />
-            <DetailCard
-              key={place.place_id}
-              index={index}
-              marker={place}
-              detailPressed={detailPressed}
-            />
-          ))}
-        </Animated.ScrollView>
+        {!hasMarker && (
+          <BigAddCard
+            size={`${Math.floor(CARD_WIDTH)}x${Math.floor(CARD_HEIGHT)}`}
+          />
+        )}
+        {hasMarker && (
+          <Animated.ScrollView
+            ref={_scrollView}
+            horizontal
+            scrollEventThrottle={1}
+            showsHorizontalScrollIndicator={false}
+            onScroll={onScroll}
+            decelerationRate={0}
+            snapToInterval={CARD_WIDTH} //your element width
+            snapToAlignment={'center'}
+            onMomentumScrollEnd={onMomentumScrollEnd}
+            contentInset={{
+              top: 0,
+              left: SPACING_FOR_CARD_INSET,
+              bottom: 0,
+              right: SPACING_FOR_CARD_INSET,
+            }}
+            contentContainerStyle={{
+              paddingHorizontal:
+                Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0,
+            }}>
+            {mapState.markers.map((place, index) => (
+              <DetailCard
+                key={place.place_id}
+                index={index}
+                marker={place}
+                detailPressed={detailPressed}
+              />
+            ))}
+          </Animated.ScrollView>
+        )}
       </View>
     </View>
   );
@@ -342,7 +348,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // padding: 10,
-    alignItems: 'flex-end',
+    alignItems: 'center',
     justifyContent: 'flex-end',
   },
   top: {flex: 0.5},
