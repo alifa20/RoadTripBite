@@ -132,13 +132,14 @@ const TopFilter = ({
           <Text>Restaurant 4+ </Text>
         </Chip>
 
-        <Chip
+        {/* TODO // We might want to include more options in future
+         <Chip
           onPress={() =>
             chipPress({key: 'petrol', checked: !state.filter.petrol.checked})
           }
           selected={filter.petrol.checked}>
           <Text>Petrol </Text>
-        </Chip>
+        </Chip> */}
         <Chip
           onPress={() =>
             chipPress({
@@ -160,6 +161,7 @@ const TopFilter = ({
           selected={filter.coffee.checked}>
           <Text>Coffee 3+</Text>
         </Chip>
+        {/* TODO // We might want to include more options in future
         <Chip
           onPress={() =>
             chipPress({
@@ -170,7 +172,7 @@ const TopFilter = ({
           }
           selected={filter.hotels.checked}>
           <Text>Hotels 3+</Text>
-        </Chip>
+        </Chip> */}
       </ScrollView>
       <View style={styles.searchRow}>
         {showSearch && (
@@ -178,7 +180,6 @@ const TopFilter = ({
             <Text>Search for my trip! </Text>
           </Chip>
         )}
-        {/* )} */}
       </View>
     </View>
   );
