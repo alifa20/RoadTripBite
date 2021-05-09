@@ -5,6 +5,7 @@ import {
   TouchableHighlight,
   View,
   ViewStyle,
+  ActivityIndicator,
 } from 'react-native';
 
 interface Props {
@@ -13,37 +14,42 @@ interface Props {
   onPress?: (event: GestureResponderEvent) => void;
   icon?: ReactNode;
   style?: ViewStyle;
+  loading?: boolean;
 }
 const Chip = ({
   children,
   icon,
   selected = false,
   onPress = () => {},
+  loading = false,
   style,
-}: Props) => (
-  <TouchableHighlight
-    activeOpacity={0.6}
-    underlayColor="#DDDDDD"
-    style={[
-      {borderRadius: 25},
-      //   styles.container,
-      //   {backgroundColor: selected ? '#dedede' : 'white'},
-      style,
-    ]}
-    onPress={onPress}>
-    <View
-      style={[
-        styles.container,
-        {backgroundColor: selected ? '#dedede' : 'white'},
-        {
-          flexDirection: 'row',
-        },
-      ]}>
-      {icon && icon}
-      {children}
-    </View>
-  </TouchableHighlight>
-);
+}: Props) => {
+  // if (loading) return <ActivityIndicator />;
+
+  const showIcon = !loading && icon;
+  const showChildren = !loading;
+
+  return (
+    <TouchableHighlight
+      activeOpacity={0.6}
+      underlayColor="#DDDDDD"
+      style={[{borderRadius: 25}, style]}
+      {...(!loading && {onPress})}>
+      <View
+        style={[
+          styles.container,
+          {backgroundColor: selected ? '#dedede' : 'white'},
+          {
+            flexDirection: 'row',
+          },
+        ]}>
+        {loading && <ActivityIndicator />}
+        {showIcon && icon}
+        {showChildren && children}
+      </View>
+    </TouchableHighlight>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

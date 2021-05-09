@@ -12,6 +12,7 @@ export type State = {
   time: string;
   goingBy: 'car' | 'bike' | 'walk';
   filter: Filter;
+  isSearching: boolean;
 };
 
 export type SetFilterPayload =
@@ -27,8 +28,12 @@ export type SetFilterPayload =
 
 export type Action =
   | {
+      type: 'SET_IS_SEARCHING';
+      payload: {isSearching: boolean};
+    }
+  | {
       type: 'SET_IS_DIRTY';
-      payload: {isDirty: boolean};
+      payload: {isDirty: boolean; isSearching: boolean};
     }
   | {
       type: 'UPDATE_FILTER';

@@ -16,4 +16,5 @@ export const initialState: State = {
     coffee: {rating: 4, checked: false},
     hotels: {rating: 4, checked: false},
   },
+  isSearching: false,
 };
