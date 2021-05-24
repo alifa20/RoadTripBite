@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native';
-import {PredictionType} from '../MyMap4';
+import {PredictionType} from './types';
 
 type SearchBarProps = {
   value: string;
@@ -19,9 +19,7 @@ type SearchBarProps = {
   onPredictionTapped: (placeId: string, description: string) => void;
 };
 
-const SearchBarWithAutocomplete: FunctionComponent<SearchBarProps> = (
-  props,
-) => {
+export const SearchBarWithAutocomplete = (props: SearchBarProps) => {
   const [inputSize, setInputSize] = useState({width: 0, height: 0});
 
   const {
@@ -96,6 +94,7 @@ const SearchBarWithAutocomplete: FunctionComponent<SearchBarProps> = (
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
+    // width: 400,
   },
   inputStyle: {
     paddingVertical: 16,
@@ -118,5 +117,3 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
 });
-
-export default SearchBarWithAutocomplete;

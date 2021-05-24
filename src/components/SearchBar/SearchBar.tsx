@@ -1,8 +1,7 @@
-import React, {useState} from 'react';
-import {SafeAreaView, StyleSheet, StatusBar, View} from 'react-native';
-import SearchBarWithAutocomplete from './components/SearchBarWithAutocomplete';
 import axios from 'axios';
+import React, {useState} from 'react';
 import {useDebounce} from '../../hooks/useDebounce';
+import {SearchBarWithAutocomplete} from './SearchBarWithAutocomplete';
 
 const GOOGLE_PACES_API_BASE_URL = 'https://maps.googleapis.com/maps/api/place';
 const GOOGLE_API_KEY = 'AIzaSyCwTHpLD23nVmwcVdIFqCj40EiTus7zh8M';
@@ -21,14 +20,20 @@ export type PredictionType = {
   types: string[];
 };
 
-const MyMap4 = () => {
+interface Props {
+  searchTerm?: string;
+  onComplete: (address: string) => void;
+}
+
+export const SearchBar = ({searchTerm = '', onComplete}: Props) => {
   const latitude = -33.84796;
   const longitude = 151.07443;
-  const [search, setSearch] = useState({term: '', fetchPredictions: false});
+  const [search, setSearch] = useState({
+    term: searchTerm,
+    fetchPredictions: false,
+  });
   const [showPredictions, setShowPredictions] = useState(false);
   const [predictions, setPredictions] = useState<PredictionType[]>([]);
-
-  const {container, body} = styles;
 
   /**
    * Grab predictions on entering text
@@ -89,30 +94,14 @@ const MyMap4 = () => {
   };
 
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView style={container}>
-        <View style={body}>
-          <SearchBarWithAutocomplete
-            value={search.term}
-            onChangeText={(text) => {
-              setSearch({term: text, fetchPredictions: true});
-            }}
-            showPredictions={showPredictions}
-            predictions={predictions}
-            onPredictionTapped={onPredictionTapped}
-          />
-        </View>
-      </SafeAreaView>
-    </>
+    <SearchBarWithAutocomplete
+      value={search.term}
+      onChangeText={(text: string) => {
+        setSearch({term: text, fetchPredictions: true});
+      }}
+      showPredictions={showPredictions}
+      predictions={predictions}
+      onPredictionTapped={onPredictionTapped}
+    />
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  body: {
-    paddingHorizontal: 20,
-  },
-});
-export default MyMap4;

@@ -8,11 +8,18 @@
  * @format
  */
 
+import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
-import Main from './src/screens/Main';
+import {AppStack} from './src/Stack';
 
 declare const global: {HermesInternal: null | {}};
 
-const App = () => <Main />;
+// const App = () => <Main />;
+
+const App = () => (
+  <NavigationContainer>
+    <AppStack />
+  </NavigationContainer>
+);
 
 export default App;
