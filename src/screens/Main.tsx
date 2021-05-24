@@ -1,14 +1,15 @@
 import React from 'react';
-import BottomSheetTest from '../components/Del/ BottomSheetTest';
-import TestDetails from '../components/Del/TestDetails';
-import MyMap2 from '../components/MyMap2/MyMap2';
-import MyMap3 from '../components/MyMap3';
+import {SafeAreaView} from 'react-native';
+import {GooglePlacesInput} from '../components/MyMap3/GooglePlacesInput';
+import MyMap4 from '../components/MyMap4/MyMap4';
 // import MyMapView from '../components/MyMapView';
 
 // const Main = () => <MyMapView />;
 // const Main = () => <AnimatedViews />;
 // const Main = () => <MyMap2 />;
-const Main = () => <MyMap3 />;
+// const Main = () => <MyMap3 />;
+const Main = () => <MyMap4 />;
+
 // const Main = () => <BottomSheetTest />;
 
 // const Main = () => <TestDetails />;
