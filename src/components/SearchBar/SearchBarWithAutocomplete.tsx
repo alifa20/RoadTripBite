@@ -1,12 +1,12 @@
-import React, {FunctionComponent, useState} from 'react';
+import React, {ForwardedRef, forwardRef, useState} from 'react';
 import {
-  StyleSheet,
-  View,
-  TextInput,
-  ViewStyle,
   FlatList,
-  TouchableOpacity,
+  StyleSheet,
   Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ViewStyle,
 } from 'react-native';
 import {PredictionType} from './types';
 
@@ -19,77 +19,80 @@ type SearchBarProps = {
   onPredictionTapped: (placeId: string, description: string) => void;
 };
 
-export const SearchBarWithAutocomplete = (props: SearchBarProps) => {
-  const [inputSize, setInputSize] = useState({width: 0, height: 0});
+export const SearchBarWithAutocomplete = forwardRef(
+  (props: SearchBarProps, ref: ForwardedRef<TextInput>) => {
+    const [inputSize, setInputSize] = useState({width: 0, height: 0});
 
-  const {
-    value,
-    style,
-    onChangeText,
-    onPredictionTapped,
-    predictions,
-    showPredictions,
-  } = props;
+    const {
+      value,
+      style,
+      onChangeText,
+      onPredictionTapped,
+      predictions,
+      showPredictions,
+    } = props;
 
-  const {container, inputStyle} = styles;
-  const passedStyles = Array.isArray(style)
-    ? Object.assign({}, ...style)
-    : style;
-  const inputBottomRadius = showPredictions
-    ? {
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
-      }
-    : {
-        borderBottomLeftRadius: 20,
-        borderBottomRightRadius: 20,
+    const {container, inputStyle} = styles;
+    const passedStyles = Array.isArray(style)
+      ? Object.assign({}, ...style)
+      : style;
+    const inputBottomRadius = showPredictions
+      ? {
+          borderBottomLeftRadius: 0,
+          borderBottomRightRadius: 0,
+        }
+      : {
+          borderBottomLeftRadius: 20,
+          borderBottomRightRadius: 20,
+        };
+
+    const _renderPredictions = (predictions: PredictionType[]) => {
+      const {predictionsContainer, predictionRow} = styles;
+      const calculatedStyle = {
+        width: inputSize.width,
       };
 
-  const _renderPredictions = (predictions: PredictionType[]) => {
-    const {predictionsContainer, predictionRow} = styles;
-    const calculatedStyle = {
-      width: inputSize.width,
+      return (
+        <FlatList
+          data={predictions}
+          renderItem={({item, index}) => {
+            return (
+              <TouchableOpacity
+                style={predictionRow}
+                onPress={() =>
+                  onPredictionTapped(item.place_id, item.description)
+                }>
+                <Text numberOfLines={1}>{item.description}</Text>
+              </TouchableOpacity>
+            );
+          }}
+          keyExtractor={(item) => item.place_id}
+          keyboardShouldPersistTaps="handled"
+          style={[predictionsContainer, calculatedStyle]}
+        />
+      );
     };
 
     return (
-      <FlatList
-        data={predictions}
-        renderItem={({item, index}) => {
-          return (
-            <TouchableOpacity
-              style={predictionRow}
-              onPress={() =>
-                onPredictionTapped(item.place_id, item.description)
-              }>
-              <Text numberOfLines={1}>{item.description}</Text>
-            </TouchableOpacity>
-          );
-        }}
-        keyExtractor={(item) => item.place_id}
-        keyboardShouldPersistTaps="handled"
-        style={[predictionsContainer, calculatedStyle]}
-      />
+      <View style={[container, {...passedStyles}]}>
+        <TextInput
+          ref={ref}
+          style={[inputStyle, inputBottomRadius]}
+          placeholder="End destination"
+          placeholderTextColor="gray"
+          value={value}
+          onChangeText={onChangeText}
+          returnKeyType="search"
+          onLayout={(event) => {
+            const {height, width} = event.nativeEvent.layout;
+            setInputSize({height, width});
+          }}
+        />
+        {showPredictions && _renderPredictions(predictions)}
+      </View>
     );
-  };
-
-  return (
-    <View style={[container, {...passedStyles}]}>
-      <TextInput
-        style={[inputStyle, inputBottomRadius]}
-        placeholder="End destination"
-        placeholderTextColor="gray"
-        value={value}
-        onChangeText={onChangeText}
-        returnKeyType="search"
-        onLayout={(event) => {
-          const {height, width} = event.nativeEvent.layout;
-          setInputSize({height, width});
-        }}
-      />
-      {showPredictions && _renderPredictions(predictions)}
-    </View>
-  );
-};
+  },
+);
 
 const styles = StyleSheet.create({
   container: {
