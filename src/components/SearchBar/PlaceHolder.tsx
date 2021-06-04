@@ -24,7 +24,7 @@ export const PlaceHolder = ({text, onPress}: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
+    // flex: 1,`
     // height: 151,
     justifyContent: 'center',
     paddingVertical: 14,
