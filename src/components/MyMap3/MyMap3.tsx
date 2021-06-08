@@ -248,7 +248,7 @@ const MyMap3 = () => {
           updateMapStyle();
         }}
         onRegionChangeComplete={onRegionChangeComplete}>
-        <CurrentLocationBeacon coordinate={mapState.region} km={km} />
+        {/* <CurrentLocationBeacon coordinate={mapState.region} km={km} /> */}
         {mapState.markers.map((marker, index) => {
           // const scaleStyle = {
           //   transform: [{scale: interpolations[index].scale}],

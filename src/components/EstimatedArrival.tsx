@@ -1,8 +1,8 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {LatLng, Marker} from 'react-native-maps';
+import {StyleSheet, Text, View} from 'react-native';
+import {LatLng} from 'react-native-maps';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {getNewTimeFormatted} from '../utils/timeUtil';
-import {Beacon} from './Beacon';
 import {useTickTime} from './MyMap2/useTickTime';
 
 interface Props {
@@ -21,19 +21,16 @@ const EstimatedArrival = ({
   const estimatedTime = getNewTimeFormatted(date, km, travelTool.speed);
   return (
     <View style={[styles.container, {bottom: footerHeight + 70}]}>
-      <View
-        style={[
-          styles.markerTooltip,
-          // {width: 250}
-        ]}>
+      <View style={[styles.markerTooltip]}>
         <Text style={styles.textStyle}>Estimated arrival {estimatedTime}</Text>
-        {/* <Text style={styles.textStyle}>{estimatedTime} </Text> */}
+        {/* <MaterialCommunityIcons
+          name="chevron-down"
+          size={28}
+          color="black"
+          style={styles.icon}
+        /> */}
+        <View style={StyleSheet.flatten([styles.triangle, styles.down])} />
       </View>
-      {/* <View style={styles.timeContainer}>
-        <View style={styles.time}>
-          <Text style={styles.textStyle}>{estimatedTime} </Text>
-        </View>
-      </View> */}
     </View>
   );
 };
@@ -44,6 +41,7 @@ const styles = StyleSheet.create({
     // position: 'relative',
     // top: '45%',
     left: '30%',
+    top: '30%',
     // justifyContent: 'flex-end',
     // alignItems: 'center',
     // paddingBottom: 20,
@@ -78,6 +76,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   textStyle: {textAlign: 'center'},
+  icon: {
+    position: 'absolute',
+  },
+  triangle: {
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 8,
+    borderRightWidth: 8,
+    borderBottomWidth: 15,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: 'white',
+    position: 'absolute',
+    bottom: -15,
+  },
+  down: {transform: [{rotate: '180deg'}]},
 });
 
 export default EstimatedArrival;

@@ -1,9 +1,7 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {LatLng, Marker} from 'react-native-maps';
-import {getNewTimeFormatted} from '../utils/timeUtil';
 import {Beacon} from './Beacon';
-import {useTickTime} from './MyMap2/useTickTime';
 
 interface Props {
   coordinate: LatLng;
