@@ -1,13 +1,12 @@
 import React, {useEffect, useReducer} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {getPlaces} from '../../api/places';
 import Chip from './Chip';
 import {initialState} from './initialState';
 import {reducer} from './reducer';
-import {Filter, SetFilterPayload} from './types';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {getPlaces} from '../../api/places';
-import {getNewTimeFormatted} from '../../utils/timeUtil';
-import {useTickTime} from '../MyMap2/useTickTime';
+import {SearchLocationRow} from './SearchLocationRow';
+import {SetFilterPayload} from './types';
 
 interface Props {
   searchFinished: any;
@@ -36,7 +35,6 @@ const TopFilter = ({
   currentPosition,
 }: Props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-
   const isDirty = state.isDirty;
   const filter = state.filter;
   const isSearching = state.isSearching;
@@ -102,6 +100,7 @@ const TopFilter = ({
 
   return (
     <View style={styles.container}>
+      <SearchLocationRow />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -188,7 +187,7 @@ const TopFilter = ({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 70,
+    top: 0,
     width: '100%',
   },
   scrollContainer: {

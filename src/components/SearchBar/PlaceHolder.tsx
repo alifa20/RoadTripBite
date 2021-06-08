@@ -27,10 +27,10 @@ const styles = StyleSheet.create({
     // flex: 1,`
     // height: 151,
     justifyContent: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
     marginVertical: 5,
-    backgroundColor: '#e6e6e6',
+    backgroundColor: 'white',
     borderRadius: 20,
   },
   text: {

@@ -23,23 +23,6 @@ const Main = ({route, navigation}: Props) => {
   const {searchTerm} = route.params;
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.body}>
-        <MaterialCommunityIcons
-          name="chevron-left"
-          size={32}
-          color="green"
-          style={{marginRight: 5}}
-          onPress={() => navigation.navigate('Home', {})}
-        />
-        <View style={{flex: 1}}>
-          <PlaceHolder
-            text={searchTerm}
-            onPress={() =>
-              navigation.navigate('Search', {onKeyboard: true, searchTerm})
-            }
-          />
-        </View>
-      </View>
       <MyMap3 />
     </SafeAreaView>
   );
@@ -64,11 +47,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginVertical: 50,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   body: {
     paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 1)',
   },
 });
 
