@@ -176,7 +176,7 @@ const TopFilter = ({
       <View style={styles.searchRow}>
         {showSearch && (
           <Chip onPress={() => searchPress()} loading={isSearching}>
-            <Text>Search for my trip! </Text>
+            <Text>Search around this area! </Text>
           </Chip>
         )}
       </View>

@@ -13,13 +13,13 @@ export const SearchLocationRow = () => {
 
   return (
     <View style={styles.body}>
-      {/* <MaterialCommunityIcons
+      <MaterialCommunityIcons
         name="chevron-left"
         size={28}
         color="white"
         style={styles.icon}
         onPress={() => navigation.navigate('Home', {})}
-      /> */}
+      />
       <View style={{flex: 1}}>
         <PlaceHolder
           text={searchTerm}

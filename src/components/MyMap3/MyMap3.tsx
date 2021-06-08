@@ -265,17 +265,13 @@ const MyMap3 = () => {
               onPress={(e) => onMarkerPress(e)}
               title={marker.name}
               identifier={marker.place_id}>
-              <Animated.View style={[styles.markerWrap]}>
+              {/* <Animated.View style={[styles.markerWrap]}>
                 <Animated.Image
-                  // source={require('./assets/map_marker.png')}
                   source={isSelected ? mainMarker : normalMarker}
-                  style={[
-                    styles.marker,
-                    // scaleStyle
-                  ]}
+                  style={[styles.marker]}
                   resizeMode="cover"
                 />
-              </Animated.View>
+              </Animated.View> */}
             </Marker>
           );
         })}
@@ -349,7 +345,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // padding: 10,
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    // justifyContent: 'flex-end',
   },
   top: {flex: 0.5},
   bottom: {

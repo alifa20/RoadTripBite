@@ -20,7 +20,11 @@ const EstimatedArrival = ({
   const {date} = useTickTime();
   const estimatedTime = getNewTimeFormatted(date, km, travelTool.speed);
   return (
-    <View style={[styles.container, {bottom: footerHeight + 70}]}>
+    <View
+      style={[
+        styles.container,
+        // {bottom: footerHeight + 70}
+      ]}>
       <View style={[styles.markerTooltip]}>
         <Text style={styles.textStyle}>Estimated arrival {estimatedTime}</Text>
         {/* <MaterialCommunityIcons
@@ -38,7 +42,7 @@ const EstimatedArrival = ({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    // position: 'relative',
+    // osition: 'relative',
     // top: '45%',
     left: '30%',
     top: '30%',
@@ -48,6 +52,9 @@ const styles = StyleSheet.create({
     // bottom: 20,
     // right: '20%',
     // alignSelf: 'flex-end',
+    backgroundColor: 'grey',
+    borderRadius: 15,
+    padding: 1,
   },
   markerTooltip: {
     paddingHorizontal: 10,
@@ -89,7 +96,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 15,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: 'white',
+    borderBottomColor: 'grey',
     position: 'absolute',
     bottom: -15,
   },
