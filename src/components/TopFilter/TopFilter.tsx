@@ -1,5 +1,6 @@
 import React, {useEffect, useReducer} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {getPlaces} from '../../api/places';
 import Chip from './Chip';
@@ -97,9 +98,10 @@ const TopFilter = ({
       checked: !state.filter.restaurants.checked,
     });
   }, []);
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {top: insets.top}]}>
       <SearchLocationRow />
       <ScrollView
         horizontal
@@ -187,7 +189,6 @@ const TopFilter = ({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 0,
     width: '100%',
   },
   scrollContainer: {

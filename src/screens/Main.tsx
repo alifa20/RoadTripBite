@@ -2,6 +2,7 @@ import {RouteProp} from '@react-navigation/core';
 import {StackNavigationProp} from '@react-navigation/stack';
 import React from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MyMap3 from '../components/MyMap3';
 import {PlaceHolder, SearchBar} from '../components/SearchBar';
@@ -22,9 +23,11 @@ const Main = ({route, navigation}: Props) => {
   const onSearchComplete = () => {};
   const {searchTerm} = route.params;
   return (
-    <SafeAreaView style={styles.container}>
-      <MyMap3 />
-    </SafeAreaView>
+    // <SafeAreaView style={styles.container}>
+
+    <MyMap3 />
+
+    // </SafeAreaView>
   );
 };
 

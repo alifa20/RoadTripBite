@@ -17,6 +17,7 @@ import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
 } from 'react-native-reanimated';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import ScrollBottomSheet from 'react-native-scroll-bottom-sheet';
 import {Place, PlaceDetail, PlaceWithArrival} from '../../api/types';
 import {getDistanceFromLatLonInKm} from '../../utils/getDistanceFromLatLonInKm';
@@ -50,6 +51,7 @@ const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 const MyMap3 = () => {
   //   const theme = useTheme();
   const [direction, setDirection] = useState(12);
+
   const [km, setKm] = useState(0);
   const initialMapState = {
     markers: [] as Place[],
@@ -226,7 +228,7 @@ const MyMap3 = () => {
   const hasMarker = mapState.markers.length > 0;
 
   return (
-    <View style={styles.container}>
+    <View style={styles.mainContainer}>
       <MapView
         ref={_map}
         initialRegion={mapState.region}
@@ -341,10 +343,18 @@ const MyMap3 = () => {
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+
+    alignItems: 'center',
+
+    // justifyContent: 'flex-end',
+  },
   container: {
     flex: 1,
+
     // padding: 10,
-    alignItems: 'center',
+    // alignItems: 'center',
     // justifyContent: 'flex-end',
   },
   top: {flex: 0.5},

@@ -10,6 +10,7 @@
 
 import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {AppStack} from './src/Stack';
 
 declare const global: {HermesInternal: null | {}};
@@ -17,9 +18,11 @@ declare const global: {HermesInternal: null | {}};
 // const App = () => <Main />;
 
 const App = () => (
-  <NavigationContainer>
-    <AppStack />
-  </NavigationContainer>
+  <SafeAreaProvider>
+    <NavigationContainer>
+      <AppStack />
+    </NavigationContainer>
+  </SafeAreaProvider>
 );
 
 export default App;

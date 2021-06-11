@@ -110,9 +110,11 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOpacity: 0.3,
     shadowOffset: {width: 2, height: -2},
-    height: CARD_HEIGHT,
+    height: CARD_HEIGHT + 5,
     width: CARD_WIDTH,
     overflow: 'hidden',
+    marginHorizontal: 10,
+    padding: 5,
   },
   cardImage: {
     flex: 3,
