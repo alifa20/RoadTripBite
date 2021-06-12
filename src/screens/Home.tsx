@@ -29,27 +29,41 @@ const Search = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.body}>
           <SearchBar onComplete={onSearchComplete} ref={ref} />
-          <GooglePlacesInput />
+          {/* <GooglePlacesInput /> */}
           <Button
-            title="test"
+            title="Sydney"
             onPress={() => {
-              navigate.navigate('Main', {searchTerm: 'Olympic'});
+              navigate.navigate('Main', {searchTerm: 'Sydney'});
             }}
           />
 
           <Button
-            title="test"
+            title="Melbourne"
             onPress={() => {
               navigate.navigate('Main', {searchTerm: 'Melbourne'});
             }}
           />
 
           <Button
+            title="Epping"
+            onPress={() => {
+              navigate.navigate('Main', {searchTerm: 'Epping NSW, Australia'});
+            }}
+          />
+
+          <Button
+            title="Bondi"
+            onPress={() => {
+              navigate.navigate('Main', {searchTerm: 'Bondi'});
+            }}
+          />
+          {/* 
+          <Button
             title="focus"
             onPress={() => {
               ref.current?.focus();
             }}
-          />
+          /> */}
         </View>
 
         <BigAddCard

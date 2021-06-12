@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import React, {ForwardedRef, forwardRef, useState} from 'react';
 import {TextInput} from 'react-native';
@@ -36,6 +37,7 @@ export const SearchBar = forwardRef(
     });
     const [showPredictions, setShowPredictions] = useState(false);
     const [predictions, setPredictions] = useState<PredictionType[]>([]);
+    const navigate = useNavigation();
 
     /**
      * Grab predictions on entering text
@@ -89,6 +91,7 @@ export const SearchBar = forwardRef(
           const {lat, lng} = location;
           setShowPredictions(false);
           setSearch({term: description, fetchPredictions: false});
+          navigate.navigate('Main', {searchTerm: description});
         }
       } catch (e) {
         console.log(e);

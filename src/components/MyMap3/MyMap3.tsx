@@ -1,3 +1,4 @@
+import {RouteProp, useRoute} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {
   Dimensions,
@@ -13,16 +14,16 @@ import MapView, {
   PROVIDER_GOOGLE,
   Region,
 } from 'react-native-maps';
+import MapViewDirections from 'react-native-maps-directions';
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
 } from 'react-native-reanimated';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import ScrollBottomSheet from 'react-native-scroll-bottom-sheet';
 import {Place, PlaceDetail, PlaceWithArrival} from '../../api/types';
+import {AppStackParamList} from '../../types';
 import {getDistanceFromLatLonInKm} from '../../utils/getDistanceFromLatLonInKm';
 import {getNewTimeFormatted} from '../../utils/timeUtil';
-import CurrentLocationBeacon from '../CurrentLocationBeacon';
 import EstimatedArrival from '../EstimatedArrival';
 import DetailCard from '../MyMap2/DetailCard';
 import {TopFilter} from '../TopFilter';
@@ -31,6 +32,13 @@ import BigAddCard from './Ads/BigAddCard';
 import Ad from './Ads/SmallAd';
 import {mapStandardStyle} from './mapData';
 import {useTickTime} from './useTickTime';
+
+// const origin = {latitude: -33.8439069, longitude: 151.0775536};
+// const destination = {latitude: -33.9174438, longitude: 151.2217491};
+const origin = 'Sydney Olympic Park';
+const destination = 'Manly';
+const GOOGLE_MAPS_API_KEY = 'AIzaSyCwTHpLD23nVmwcVdIFqCj40EiTus7zh8M';
+
 // import normalMarker from './assets/map_marker.png';
 const normalMarker = require('./assets/map_marker.png');
 const mainMarker = require('./assets/main_marker.png');
@@ -70,7 +78,21 @@ const MyMap3 = () => {
   const [radius, setRadius] = useState(1000);
   const {date} = useTickTime();
 
+  const route: RouteProp<AppStackParamList, 'Main'> = useRoute();
+
+  const {searchTerm} = route.params;
+
   const estimatedTime = getNewTimeFormatted(date, km, travelTool?.speed);
+
+  const onDirectionReady = (e: {
+    distance: Number;
+    duration: Number;
+    coordinates: [];
+    fare: Object;
+    waypointOrder: [[]];
+  }) => {
+    console.log({distance: e.distance, duration: e.duration});
+  };
 
   const [current, setCurrent] = useState<
     EventUserLocation['nativeEvent']['coordinate']
@@ -277,6 +299,15 @@ const MyMap3 = () => {
             </Marker>
           );
         })}
+        <MapViewDirections
+          // origin={origin}
+          origin={{latitude: current.latitude, longitude: current.longitude}}
+          destination={searchTerm}
+          apikey={GOOGLE_MAPS_API_KEY}
+          strokeWidth={3}
+          strokeColor="green"
+          onReady={onDirectionReady}
+        />
       </MapView>
       <EstimatedArrival
         coordinate={mapState.region}
