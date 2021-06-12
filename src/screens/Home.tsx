@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import BigAddCard from '../components/MyMap3/Ads/BigAddCard';
+import {GooglePlacesInput} from '../components/MyMap3/GooglePlacesInput';
 import {SearchBar} from '../components/SearchBar';
 
 const {width} = Dimensions.get('window');
@@ -28,6 +29,7 @@ const Search = () => {
       <SafeAreaView style={styles.container}>
         <View style={styles.body}>
           <SearchBar onComplete={onSearchComplete} ref={ref} />
+          <GooglePlacesInput />
           <Button
             title="test"
             onPress={() => {
