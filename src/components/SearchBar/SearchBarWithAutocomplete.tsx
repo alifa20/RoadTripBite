@@ -98,6 +98,8 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     // width: 400,
+    flex: 1,
+    marginRight: 5,
   },
   inputStyle: {
     paddingVertical: 16,
@@ -110,13 +112,20 @@ const styles = StyleSheet.create({
   predictionsContainer: {
     backgroundColor: '#e6e6e6',
     padding: 10,
-    borderBottomLeftRadius: 7,
-    borderBottomRightRadius: 7,
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
   },
   predictionRow: {
     paddingBottom: 15,
-    marginBottom: 15,
-    borderBottomColor: '#8a8a8a',
-    borderBottomWidth: 1,
+    // marginBottom: 15,
+    paddingTop: 15,
+    // borderBottomColor: '#8a8a8a',
+    // borderStyle: 'dashed',
+    borderTopWidth: 1,
+    // borderWidth: 1,
+    // borderRadius: 1,
+
+    borderTopColor: '#ccc',
+    // borderStyle: 'dashed',
   },
 });

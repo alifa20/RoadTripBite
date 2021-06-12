@@ -1,7 +1,8 @@
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import React, {ForwardedRef, forwardRef, useState} from 'react';
-import {TextInput} from 'react-native';
+import {StyleSheet, TextInput, View} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDebounce} from '../../hooks/useDebounce';
 import {SearchBarWithAutocomplete} from './SearchBarWithAutocomplete';
 
@@ -37,7 +38,7 @@ export const SearchBar = forwardRef(
     });
     const [showPredictions, setShowPredictions] = useState(false);
     const [predictions, setPredictions] = useState<PredictionType[]>([]);
-    const navigate = useNavigation();
+    const navigation = useNavigation();
 
     /**
      * Grab predictions on entering text
@@ -91,7 +92,7 @@ export const SearchBar = forwardRef(
           const {lat, lng} = location;
           setShowPredictions(false);
           setSearch({term: description, fetchPredictions: false});
-          navigate.navigate('Main', {searchTerm: description});
+          navigation.navigate('Main', {searchTerm: description});
         }
       } catch (e) {
         console.log(e);
@@ -99,16 +100,41 @@ export const SearchBar = forwardRef(
     };
 
     return (
-      <SearchBarWithAutocomplete
-        value={search.term}
-        onChangeText={(text: string) => {
-          setSearch({term: text, fetchPredictions: true});
-        }}
-        showPredictions={showPredictions}
-        predictions={predictions}
-        onPredictionTapped={onPredictionTapped}
-        ref={ref}
-      />
+      <View style={styles.container}>
+        <SearchBarWithAutocomplete
+          value={search.term}
+          onChangeText={(text: string) => {
+            setSearch({term: text, fetchPredictions: true});
+          }}
+          showPredictions={showPredictions}
+          predictions={predictions}
+          onPredictionTapped={onPredictionTapped}
+          ref={ref}
+        />
+        <MaterialCommunityIcons
+          name="chevron-right"
+          size={28}
+          color="white"
+          style={styles.icon}
+          onPress={() => navigation.navigate('Main', {searchTerm: search.term})}
+        />
+      </View>
     );
   },
 );
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  icon: {
+    marginRight: 5,
+    padding: 5,
+    borderRadius: 20,
+    // borderWidth: 5,
+    overflow: 'hidden',
+    backgroundColor: 'green',
+    borderColor: 'white',
+  },
+});
