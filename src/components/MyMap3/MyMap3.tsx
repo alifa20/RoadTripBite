@@ -34,6 +34,7 @@ import {TravelTool} from '../TopFilter/types';
 import BigAddCard from './Ads/BigAddCard';
 import Ad from './Ads/SmallAd';
 import {mapStandardStyle} from './mapData';
+import {places} from './mockData';
 import {mockDirection} from './mockDirection';
 import {useTickTime} from './useTickTime';
 
@@ -79,6 +80,7 @@ const MyMap3 = () => {
   const [km, setKm] = useState(0);
   const initialMapState = {
     markers: [] as Place[],
+    // markers: places,
     region: {
       latitude: -33.84796,
       longitude: 151.07443,
@@ -100,12 +102,10 @@ const MyMap3 = () => {
   const route: RouteProp<AppStackParamList, 'Main'> = useRoute();
 
   const {searchTerm} = route.params;
-  console.log('searchTerm', searchTerm);
 
   // const estimatedTime = getNewTimeFormatted(date, km, travelTool?.speed);
 
   const onDirectionReady = (e: DirectionReady) => {
-    console.log(JSON.stringify(e));
     if (e.coordinates.length < 1) return;
 
     setDirection({
@@ -252,7 +252,6 @@ const MyMap3 = () => {
     details: {isGesture: boolean},
   ) => {
     const {isGesture} = details;
-    console.log('details ', details);
 
     if (isGesture !== undefined) setUserGesture(isGesture);
     // const st = `${region.latitude}, ${region.longitude}`;
@@ -278,9 +277,7 @@ const MyMap3 = () => {
     setKm(st);
     setRadius(rad);
     if (st > 0.5) setShowSearch(true);
-    console.log({region});
     const zoom = Math.round(Math.log(360 / region.longitudeDelta) / Math.LN2);
-    console.log('zoom', zoom);
 
     const newRegion = {
       latitude: region.latitude - region.latitudeDelta / 5,
@@ -344,7 +341,7 @@ const MyMap3 = () => {
           updateMapStyle();
         }}
         onRegionChangeComplete={onRegionChangeComplete as any}>
-        <CurrentLocationBeacon coordinate={mapState.region} km={km} />
+        {/* <CurrentLocationBeacon coordinate={mapState.region} km={km} /> */}
         {mapState.markers.map((marker: Place, index: number) => {
           // const scaleStyle = {
           //   transform: [{scale: interpolations[index].scale}],
@@ -360,15 +357,7 @@ const MyMap3 = () => {
               style={isSelected ? styles.specialMarker : null}
               onPress={(e) => onMarkerPress(e)}
               title={marker.name}
-              identifier={marker.place_id}>
-              {/* <Animated.View style={[styles.markerWrap]}>
-                <Animated.Image
-                  source={isSelected ? mainMarker : normalMarker}
-                  style={[styles.marker]}
-                  resizeMode="cover"
-                />
-              </Animated.View> */}
-            </Marker>
+              identifier={marker.place_id}></Marker>
           );
         })}
         <MapViewDirections
@@ -405,20 +394,9 @@ const MyMap3 = () => {
           lng: mapState.region.longitude,
         }}
       />
-      <View style={[{paddingBottom: insets.bottom}]}>
-        {!hasMarker && (
-          <BigAddCard
-            size={`${Math.floor(CARD_WIDTH)}x${Math.floor(CARD_HEIGHT)}`}
-          />
-        )}
-        <Ad />
-      </View>
-      {/* {(!hasMarker || (hasMarker && !showCafesScroll)) && (
-        <View
-          style={[styles.adsContainer, {bottom: insets.bottom + 170}]}></View>
-      )} */}
-      <View style={[styles.bottom, {bottom: insets.bottom + 70}]}>
-        {showCafesScroll && (
+
+      <View style={[styles.bottom]}>
+        {hasMarker && (
           <Animated.ScrollView
             ref={_scrollView}
             horizontal
@@ -450,6 +428,21 @@ const MyMap3 = () => {
           </Animated.ScrollView>
         )}
       </View>
+      <View
+        style={[
+          {
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingBottom: insets.bottom,
+          },
+        ]}>
+        {!hasMarker && (
+          <BigAddCard
+            size={`${Math.floor(CARD_WIDTH)}x${Math.floor(CARD_HEIGHT)}`}
+          />
+        )}
+        <Ad />
+      </View>
     </View>
   );
 };
@@ -458,13 +451,12 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
 
-    alignItems: 'center',
+    // alignItems: 'center',
 
     // justifyContent: 'flex-end',
   },
   container: {
     flex: 1,
-
     // padding: 10,
     // alignItems: 'center',
     // justifyContent: 'flex-end',
@@ -472,10 +464,10 @@ const styles = StyleSheet.create({
   top: {flex: 0.5},
   bottom: {
     // flex: 0.4,
-    position: 'absolute',
-
+    // position: 'absolute',
+    backgroundColor: 'white',
     // height: footerHeight,
-    padding: 10,
+    // padding: 10,
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
   },

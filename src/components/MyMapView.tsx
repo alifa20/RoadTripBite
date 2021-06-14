@@ -46,9 +46,6 @@ const MyMapView = () => {
     setMarkers(places);
   };
 
-  const onRegionChange = (region: Region) => {
-    console.log('region', region);
-  };
   useEffect(() => {
     (async () => {
       let permission = await RNLocation.checkPermission({
@@ -63,9 +60,6 @@ const MyMapView = () => {
           },
         },
       });
-
-      console.log('here2');
-      console.log('permission', permission);
 
       if (!permission) {
         permission = await RNLocation.requestPermission({
@@ -100,7 +94,6 @@ const MyMapView = () => {
         };
         // setLocation(loc);
         // setLocation(latestLocation);
-        console.log('latestLocation', latestLocation);
       }
       //   let status = await PermissionsAndroid.request(
       //     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,

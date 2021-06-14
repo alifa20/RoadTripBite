@@ -26,8 +26,6 @@ const BottomSheetContent = forwardRef<
     })();
   }, [marker]);
 
-  // console.log('dddddd', JSON.stringify(details?.photos));
-
   // if (ref === null) return null;
   // const ref = useRef();
   // const ref = React.useRef(null);

@@ -122,7 +122,6 @@ const MyMap2 = () => {
   const goBySheetRef = React.createRef<ScrollBottomSheet<ScrollView>>();
 
   const onUserLocationChange = (event: EventUserLocation) => {
-    console.log('event', event.nativeEvent.coordinate.heading);
     setDirection(event.nativeEvent.coordinate.heading);
     // latitudeDelta * 69
 
