@@ -13,7 +13,6 @@ interface Props {
   searchFinished: any;
   lat: number;
   lng: number;
-  direction: number;
   km: number;
   goByPressed: () => void;
   travelTool?: {icon: string; value: string; speed: number};

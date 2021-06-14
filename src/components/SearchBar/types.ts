@@ -1,3 +1,5 @@
+import {LatLng} from 'react-native-maps';
+
 export type PredictionType = {
   description: string;
   place_id: string;
@@ -6,4 +8,12 @@ export type PredictionType = {
   tructured_formatting: Object;
   terms: Object[];
   types: string[];
+};
+
+export type DirectionReady = {
+  distance: number;
+  duration: number;
+  coordinates: LatLng[];
+  fare: [null];
+  waypointOrder: [[]];
 };

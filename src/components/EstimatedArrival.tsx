@@ -9,30 +9,26 @@ interface Props {
   coordinate: LatLng;
   km: number;
   footerHeight: number;
+  startSource: LatLng;
+  endDestination: LatLng;
+  duration: number;
+  distance: number;
   travelTool?: {icon: string; value: string; speed: number};
 }
 const EstimatedArrival = ({
   coordinate,
   km,
-  footerHeight,
+  endDestination,
+  duration,
+  distance,
   travelTool = {icon: 'car-hatchback', value: 'Going by Car', speed: 30},
 }: Props) => {
   const {date} = useTickTime();
   const estimatedTime = getNewTimeFormatted(date, km, travelTool.speed);
   return (
-    <View
-      style={[
-        styles.container,
-        // {bottom: footerHeight + 70}
-      ]}>
+    <View style={[styles.container]}>
       <View style={[styles.markerTooltip]}>
         <Text style={styles.textStyle}>Estimated arrival {estimatedTime}</Text>
-        {/* <MaterialCommunityIcons
-          name="chevron-down"
-          size={28}
-          color="black"
-          style={styles.icon}
-        /> */}
         <View style={StyleSheet.flatten([styles.triangle, styles.down])} />
       </View>
     </View>
@@ -42,16 +38,10 @@ const EstimatedArrival = ({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    // osition: 'relative',
-    // top: '45%',
+
     left: '30%',
-    top: '30%',
-    // justifyContent: 'flex-end',
-    // alignItems: 'center',
-    // paddingBottom: 20,
-    // bottom: 20,
-    // right: '20%',
-    // alignSelf: 'flex-end',
+    top: '50%',
+
     backgroundColor: 'grey',
     borderRadius: 15,
     padding: 1,
@@ -59,9 +49,7 @@ const styles = StyleSheet.create({
   markerTooltip: {
     paddingHorizontal: 10,
     alignItems: 'center',
-    // marginBottom: 10,
-    // position: 'relative',
-    // top: -100,
+
     backgroundColor: 'white',
     borderRadius: 50,
     paddingVertical: 5,
@@ -74,9 +62,6 @@ const styles = StyleSheet.create({
   time: {
     paddingHorizontal: 10,
     alignItems: 'center',
-    // marginBottom: 10,
-    // position: 'relative',
-    // top: -100,
     backgroundColor: 'white',
     borderRadius: 50,
     paddingVertical: 5,

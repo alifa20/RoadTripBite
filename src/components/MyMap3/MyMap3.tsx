@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import MapView, {
   EventUserLocation,
+  LatLng,
   Marker,
   PROVIDER_GOOGLE,
   Region,
@@ -24,13 +25,16 @@ import {Place, PlaceDetail, PlaceWithArrival} from '../../api/types';
 import {AppStackParamList} from '../../types';
 import {getDistanceFromLatLonInKm} from '../../utils/getDistanceFromLatLonInKm';
 import {getNewTimeFormatted} from '../../utils/timeUtil';
+import CurrentLocationBeacon from '../CurrentLocationBeacon';
 import EstimatedArrival from '../EstimatedArrival';
 import DetailCard from '../MyMap2/DetailCard';
+import {DirectionReady} from '../SearchBar/types';
 import {TopFilter} from '../TopFilter';
 import {TravelTool} from '../TopFilter/types';
 import BigAddCard from './Ads/BigAddCard';
 import Ad from './Ads/SmallAd';
 import {mapStandardStyle} from './mapData';
+import {mockDirection} from './mockDirection';
 import {useTickTime} from './useTickTime';
 
 // const origin = {latitude: -33.8439069, longitude: 151.0775536};
@@ -58,7 +62,18 @@ const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 const MyMap3 = () => {
   //   const theme = useTheme();
-  const [direction, setDirection] = useState(12);
+  const [direction, setDirection] = useState<{
+    source: LatLng;
+    destination: LatLng;
+    duration: number;
+    distance: number;
+  } | null>({
+    source: mockDirection.coordinates[0],
+    destination:
+      mockDirection.coordinates[mockDirection.coordinates.length - 1],
+    distance: mockDirection.distance,
+    duration: mockDirection.duration,
+  });
 
   const [km, setKm] = useState(0);
   const initialMapState = {
@@ -66,8 +81,11 @@ const MyMap3 = () => {
     region: {
       latitude: -33.84796,
       longitude: 151.07443,
-      latitudeDelta: 0.04864195044303443,
-      longitudeDelta: 0.040142817690068,
+      // latitudeDelta: 0.04864195044303443,
+      // longitudeDelta: 0.040142817690068,
+
+      latitudeDelta: 0.4874179061757644,
+      longitudeDelta: 0.27110159397125244,
     },
   };
 
@@ -81,17 +99,38 @@ const MyMap3 = () => {
   const route: RouteProp<AppStackParamList, 'Main'> = useRoute();
 
   const {searchTerm} = route.params;
+  console.log('searchTerm', searchTerm);
 
   const estimatedTime = getNewTimeFormatted(date, km, travelTool?.speed);
 
-  const onDirectionReady = (e: {
-    distance: Number;
-    duration: Number;
-    coordinates: [];
-    fare: Object;
-    waypointOrder: [[]];
-  }) => {
-    console.log({distance: e.distance, duration: e.duration});
+  const onDirectionReady = (e: DirectionReady) => {
+    console.log(JSON.stringify(e));
+    if (e.coordinates.length < 1) return;
+
+    setDirection({
+      source: e.coordinates[0],
+      destination: e.coordinates[e.coordinates.length - 1],
+      duration: e.duration,
+      distance: e.distance,
+    });
+
+    _map?.current?.fitToCoordinates(
+      e.coordinates.slice(0, e.coordinates.length / 2),
+      {
+        edgePadding: {
+          right: width / 20,
+          bottom: height / 20,
+          left: width / 20,
+          top: height / 20,
+        },
+      },
+    );
+
+    // console.log({
+    //   distance: e.distance,
+    //   duration: e.duration,
+    //   waypointOrder: JSON.stringify(e.waypointOrder),
+    // });
   };
 
   const [current, setCurrent] = useState<
@@ -136,9 +175,10 @@ const MyMap3 = () => {
       350,
     );
   };
-  const onUserLocationChange = (event: EventUserLocation) => {
-    setDirection(event.nativeEvent.coordinate.heading);
-  };
+
+  // const onUserLocationChange = (event: EventUserLocation) => {
+  //   setDirection(event.nativeEvent.coordinate.heading);
+  // };
 
   // const interpolations = mapState.markers.map((marker, index) => {
   //   const inputRange = [
@@ -231,7 +271,16 @@ const MyMap3 = () => {
     setKm(st);
     setRadius(rad);
     if (st > 0.5) setShowSearch(true);
-    setMapState({...mapState, region});
+    console.log({region});
+    const zoom = Math.round(Math.log(360 / region.longitudeDelta) / Math.LN2);
+    console.log('zoom', zoom);
+
+    const newRegion = {
+      latitude: region.latitude - region.latitudeDelta / 5,
+      longitude: region.longitude,
+      //  + region.longitudeDelta / 2
+    };
+    setMapState({...mapState, region: {...region, ...newRegion}});
   };
   const goByPressed = () => {
     goBySheetRef.current?.snapTo(0);
@@ -260,19 +309,23 @@ const MyMap3 = () => {
         showsUserLocation={true}
         showsMyLocationButton={true}
         showsCompass={true}
+        showsScale={true}
         followsUserLocation={true}
         loadingEnabled={true}
         toolbarEnabled={true}
         zoomEnabled={true}
         rotateEnabled={true}
-        onUserLocationChange={onUserLocationChange}
+        // onUserLocationChange={onUserLocationChange}
         onPress={onMapPress}
+        // minZoomLevel={10}
+        minZoomLevel={6}
+        // maxZoomLevel={13}
         onMapReady={() => {
           requestGeoLocationPermission();
           updateMapStyle();
         }}
         onRegionChangeComplete={onRegionChangeComplete}>
-        {/* <CurrentLocationBeacon coordinate={mapState.region} km={km} /> */}
+        <CurrentLocationBeacon coordinate={mapState.region} km={km} />
         {mapState.markers.map((marker, index) => {
           // const scaleStyle = {
           //   transform: [{scale: interpolations[index].scale}],
@@ -299,7 +352,7 @@ const MyMap3 = () => {
             </Marker>
           );
         })}
-        <MapViewDirections
+        {/* <MapViewDirections
           // origin={origin}
           origin={{latitude: current.latitude, longitude: current.longitude}}
           destination={searchTerm}
@@ -307,18 +360,23 @@ const MyMap3 = () => {
           strokeWidth={3}
           strokeColor="green"
           onReady={onDirectionReady}
-        />
+        /> */}
       </MapView>
-      <EstimatedArrival
-        coordinate={mapState.region}
-        km={km}
-        footerHeight={footerHeight}
-      />
+      {direction && (
+        <EstimatedArrival
+          coordinate={mapState.region}
+          km={km}
+          distance={direction.distance}
+          startSource={direction.source}
+          footerHeight={footerHeight}
+          endDestination={direction.destination}
+          duration={direction.duration}
+        />
+      )}
       <TopFilter
         searchFinished={searchFinished}
         lat={mapState.region.latitude}
         lng={mapState.region.longitude}
-        direction={direction}
         km={km}
         goByPressed={goByPressed}
         travelTool={travelTool}
@@ -329,7 +387,7 @@ const MyMap3 = () => {
           lng: mapState.region.longitude,
         }}
       />
-      <Ad />
+      {/* <Ad />
 
       <View style={styles.bottom}>
         {!hasMarker && (
@@ -368,7 +426,7 @@ const MyMap3 = () => {
             ))}
           </Animated.ScrollView>
         )}
-      </View>
+      </View> */}
     </View>
   );
 };
