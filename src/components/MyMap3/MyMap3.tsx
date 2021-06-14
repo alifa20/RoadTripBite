@@ -20,6 +20,7 @@ import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
 } from 'react-native-reanimated';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import ScrollBottomSheet from 'react-native-scroll-bottom-sheet';
 import {Place, PlaceDetail, PlaceWithArrival} from '../../api/types';
 import {AppStackParamList} from '../../types';
@@ -75,6 +76,7 @@ const MyMap3 = () => {
     duration: mockDirection.duration,
   });
 
+  const [userGesture, setUserGesture] = useState(false);
   const [km, setKm] = useState(0);
   const initialMapState = {
     markers: [] as Place[],
@@ -195,10 +197,9 @@ const MyMap3 = () => {
 
   //   return {scale};
   // });
+  const insets = useSafeAreaInsets();
 
   const onMarkerPress = (mapEventData: any) => {
-    console.log('press');
-
     const markerID = mapEventData._targetInst.return.key;
 
     let x = markerID * CARD_WIDTH + markerID * 20;
@@ -247,7 +248,14 @@ const MyMap3 = () => {
     }
   };
 
-  const onRegionChangeComplete = (region: Region) => {
+  const onRegionChangeComplete = (
+    region: Region,
+    details: {isGesture: boolean},
+  ) => {
+    const {isGesture} = details;
+    console.log('details ', details);
+
+    if (isGesture !== undefined) setUserGesture(isGesture);
     // const st = `${region.latitude}, ${region.longitude}`;
     // const st = Math.round(
     //   getDistanceFromLatLonInKm(
@@ -280,7 +288,18 @@ const MyMap3 = () => {
       longitude: region.longitude,
       //  + region.longitudeDelta / 2
     };
-    setMapState({...mapState, region: {...region, ...newRegion}});
+    // setMapState({...mapState, region: {...region, ...newRegion}});
+    _map?.current?.coordinateForPoint({x: 185, y: 380}).then((coords) => {
+      // alert('lon: ' + coords.longitude + ', lat: ' + coords.latitude),
+      setMapState({
+        ...mapState,
+        region: {
+          ...region,
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+        },
+      });
+    });
   };
   const goByPressed = () => {
     goBySheetRef.current?.snapTo(0);
@@ -297,6 +316,7 @@ const MyMap3 = () => {
   };
 
   const hasMarker = mapState.markers.length > 0;
+  const showCafesScroll = hasMarker && !userGesture;
 
   return (
     <View style={styles.mainContainer}>
@@ -324,9 +344,9 @@ const MyMap3 = () => {
           requestGeoLocationPermission();
           updateMapStyle();
         }}
-        onRegionChangeComplete={onRegionChangeComplete}>
+        onRegionChangeComplete={onRegionChangeComplete as any}>
         <CurrentLocationBeacon coordinate={mapState.region} km={km} />
-        {mapState.markers.map((marker, index) => {
+        {mapState.markers.map((marker: Place, index: number) => {
           // const scaleStyle = {
           //   transform: [{scale: interpolations[index].scale}],
           // };
@@ -387,15 +407,20 @@ const MyMap3 = () => {
           lng: mapState.region.longitude,
         }}
       />
-      {/* <Ad />
-
-      <View style={styles.bottom}>
+      <View style={[{paddingBottom: insets.bottom}]}>
         {!hasMarker && (
           <BigAddCard
             size={`${Math.floor(CARD_WIDTH)}x${Math.floor(CARD_HEIGHT)}`}
           />
         )}
-        {hasMarker && (
+        <Ad />
+      </View>
+      {/* {(!hasMarker || (hasMarker && !showCafesScroll)) && (
+        <View
+          style={[styles.adsContainer, {bottom: insets.bottom + 170}]}></View>
+      )} */}
+      <View style={[styles.bottom, {bottom: insets.bottom + 70}]}>
+        {showCafesScroll && (
           <Animated.ScrollView
             ref={_scrollView}
             horizontal
@@ -426,7 +451,7 @@ const MyMap3 = () => {
             ))}
           </Animated.ScrollView>
         )}
-      </View> */}
+      </View>
     </View>
   );
 };
@@ -449,10 +474,17 @@ const styles = StyleSheet.create({
   top: {flex: 0.5},
   bottom: {
     // flex: 0.4,
-    height: footerHeight,
+    position: 'absolute',
+
+    // height: footerHeight,
     padding: 10,
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
+  },
+  adsContainer: {
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   markerWrap: {
     alignItems: 'center',

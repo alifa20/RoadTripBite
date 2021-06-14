@@ -102,8 +102,9 @@ const styles = StyleSheet.create({
   card: {
     elevation: 2,
     backgroundColor: '#FFF',
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
+    borderRadius: 10,
+    // borderTopLeftRadius: 10,
+    // borderTopRightRadius: 10,
     // marginHorizontal: 10,
     paddingHorizontal: 10,
     shadowColor: '#000',

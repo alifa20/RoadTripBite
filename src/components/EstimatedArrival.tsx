@@ -39,9 +39,11 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
 
-    left: '30%',
-    top: '50%',
+    // left: '30%',
+    // top: '50%',
 
+    left: 100,
+    top: 200,
     backgroundColor: 'grey',
     borderRadius: 15,
     padding: 1,

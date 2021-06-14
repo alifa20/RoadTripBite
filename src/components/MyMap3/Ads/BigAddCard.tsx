@@ -24,7 +24,7 @@ const BigAddCard = ({size}: Props) => {
         backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
-        paddingBottom: insets.bottom,
+        // marginBottom: insets.bottom + 100,
       }}>
       <BannerAd
         unitId={TestIds.BANNER}
