@@ -1,8 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {LatLng} from 'react-native-maps';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {getNewTimeFormatted} from '../utils/timeUtil';
+import {estimateArrival} from '../utils/timeUtil';
 import {useTickTime} from './MyMap2/useTickTime';
 
 interface Props {
@@ -10,7 +9,6 @@ interface Props {
   km: number;
   footerHeight: number;
   startSource: LatLng;
-  endDestination: LatLng;
   duration: number;
   distance: number;
   travelTool?: {icon: string; value: string; speed: number};
@@ -18,13 +16,20 @@ interface Props {
 const EstimatedArrival = ({
   coordinate,
   km,
-  endDestination,
+  startSource,
   duration,
   distance,
   travelTool = {icon: 'car-hatchback', value: 'Going by Car', speed: 30},
 }: Props) => {
   const {date} = useTickTime();
-  const estimatedTime = getNewTimeFormatted(date, km, travelTool.speed);
+  const estimatedTime = estimateArrival({
+    date,
+    coordinate,
+    startSource,
+    duration,
+    distance,
+  });
+
   return (
     <View style={[styles.container]}>
       <View style={[styles.markerTooltip]}>
@@ -52,7 +57,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     alignItems: 'center',
 
-    backgroundColor: 'white',
+    backgroundColor: 'palegreen',
     borderRadius: 50,
     paddingVertical: 5,
     justifyContent: 'center',

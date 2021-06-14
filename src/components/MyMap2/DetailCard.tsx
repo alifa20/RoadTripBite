@@ -52,49 +52,49 @@ const DetailCard = ({marker, index, detailPressed}: Props) => {
   const photoReference = photos && photos[0] ? photos[0].photo_reference : '';
 
   return (
-    <TouchableWithoutFeedback key={index} onPress={handleDetailPressed}>
-      <View style={styles.card}>
-        <View style={{height: IMG_HIEIGHT, justifyContent: 'center'}}>
-          <ItemImage
-            photo_reference={photoReference}
-            lat={marker.geometry.location.lat}
-            lng={marker.geometry.location.lng}
-            place_id={marker.place_id}
-            photos2={marker.photos2}
-          />
-        </View>
-        <View style={styles.textContent}>
-          <Text numberOfLines={1} style={styles.cardtitle}>
-            {marker.name}
-          </Text>
-          <StarRating ratings={marker.rating} reviews={marker.rating} />
-          <Text numberOfLines={1} style={styles.cardDescription}>
-            {marker.rating}
-          </Text>
-          <View style={styles.button}>
-            <TouchableOpacity
-              onPress={goToMap}
+    // <TouchableWithoutFeedback key={index} onPress={handleDetailPressed}>
+    <View style={styles.card}>
+      <View style={{height: IMG_HIEIGHT, justifyContent: 'center'}}>
+        <ItemImage
+          photo_reference={photoReference}
+          lat={marker.geometry.location.lat}
+          lng={marker.geometry.location.lng}
+          place_id={marker.place_id}
+          photos2={marker.photos2}
+        />
+      </View>
+      <View style={styles.textContent}>
+        <Text numberOfLines={1} style={styles.cardtitle}>
+          {marker.name}
+        </Text>
+        <StarRating ratings={marker.rating} reviews={marker.rating} />
+        {/* <Text numberOfLines={1} style={styles.cardDescription}>
+          {marker.rating}
+        </Text> */}
+        <View style={styles.button}>
+          <TouchableOpacity
+            onPress={goToMap}
+            style={[
+              styles.signIn,
+              {
+                borderColor: '#FF6347',
+                borderWidth: 1,
+              },
+            ]}>
+            <Text
               style={[
-                styles.signIn,
+                styles.textSign,
                 {
-                  borderColor: '#FF6347',
-                  borderWidth: 1,
+                  color: '#FF6347',
                 },
               ]}>
-              <Text
-                style={[
-                  styles.textSign,
-                  {
-                    color: '#FF6347',
-                  },
-                ]}>
-                Direction
-              </Text>
-            </TouchableOpacity>
-          </View>
+              Direction
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
-    </TouchableWithoutFeedback>
+    </View>
+    // </TouchableWithoutFeedback>
   );
 };
 
@@ -106,7 +106,6 @@ const styles = StyleSheet.create({
     // borderTopLeftRadius: 10,
     // borderTopRightRadius: 10,
     // marginHorizontal: 10,
-    paddingHorizontal: 10,
     shadowColor: '#000',
     shadowRadius: 5,
     shadowOpacity: 0.3,
@@ -115,7 +114,6 @@ const styles = StyleSheet.create({
     width: CARD_WIDTH,
     overflow: 'hidden',
     marginHorizontal: 10,
-    padding: 5,
   },
   cardImage: {
     flex: 3,
@@ -137,9 +135,12 @@ const styles = StyleSheet.create({
     color: '#444',
   },
   button: {
+    flex: 1,
     alignItems: 'center',
     marginTop: 5,
+    justifyContent: 'center',
   },
+
   signIn: {
     width: '100%',
     padding: 5,

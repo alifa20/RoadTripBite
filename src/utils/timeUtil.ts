@@ -1,3 +1,6 @@
+import {LatLng} from 'react-native-maps';
+import {getDistanceFromLatLonInKm} from './getDistanceFromLatLonInKm';
+
 /**
  * Adds time to a date. Modelled after MySQL DATE_ADD function.
  * Example: dateAdd(new Date(), 'minutes', 30)  //returns 30 minutes from now.
@@ -66,7 +69,7 @@ const minRound = (curr: number) => {};
 
 const getMinuteFromDistance = (km: number, speed: number) => (km / speed) * 60;
 
-export const getNewTimeFormatted = (
+export const getNewTimeFormatted_OLD = (
   d: Date,
   km: number,
   rawSpeed: number | undefined,
@@ -81,6 +84,35 @@ export const getNewTimeFormatted = (
 
   const date = dateAdd(d, 'minute', (min + 10) * 1.1);
 
+  //   const newMin = ('0' + getMinute(date?.getMinutes())).slice(-2);
+  const newMin = ('0' + date?.getMinutes()).slice(-2);
+  const hour = ('0' + date?.getHours()).slice(-2);
+  return `${hour}:${newMin}`;
+};
+
+type Params = {
+  coordinate: LatLng;
+  date: Date;
+  startSource: LatLng;
+  duration: number;
+  distance: number;
+};
+
+export const estimateArrival = ({
+  date: d,
+  coordinate,
+  startSource,
+  duration,
+  distance,
+}: Params) => {
+  const calculatedDist = getDistanceFromLatLonInKm(
+    coordinate.latitude,
+    coordinate.longitude,
+    startSource.latitude,
+    startSource.longitude,
+  );
+  const calcDuration = (calculatedDist * distance) / duration;
+  const date = dateAdd(d, 'minute', calcDuration);
   //   const newMin = ('0' + getMinute(date?.getMinutes())).slice(-2);
   const newMin = ('0' + date?.getMinutes()).slice(-2);
   const hour = ('0' + date?.getHours()).slice(-2);

@@ -25,7 +25,6 @@ import ScrollBottomSheet from 'react-native-scroll-bottom-sheet';
 import {Place, PlaceDetail, PlaceWithArrival} from '../../api/types';
 import {AppStackParamList} from '../../types';
 import {getDistanceFromLatLonInKm} from '../../utils/getDistanceFromLatLonInKm';
-import {getNewTimeFormatted} from '../../utils/timeUtil';
 import CurrentLocationBeacon from '../CurrentLocationBeacon';
 import EstimatedArrival from '../EstimatedArrival';
 import DetailCard from '../MyMap2/DetailCard';
@@ -103,7 +102,7 @@ const MyMap3 = () => {
   const {searchTerm} = route.params;
   console.log('searchTerm', searchTerm);
 
-  const estimatedTime = getNewTimeFormatted(date, km, travelTool?.speed);
+  // const estimatedTime = getNewTimeFormatted(date, km, travelTool?.speed);
 
   const onDirectionReady = (e: DirectionReady) => {
     console.log(JSON.stringify(e));
@@ -337,9 +336,9 @@ const MyMap3 = () => {
         rotateEnabled={true}
         // onUserLocationChange={onUserLocationChange}
         onPress={onMapPress}
-        // minZoomLevel={10}
-        minZoomLevel={6}
-        // maxZoomLevel={13}
+        minZoomLevel={10}
+        // minZoomLevel={6}
+        maxZoomLevel={13}
         onMapReady={() => {
           requestGeoLocationPermission();
           updateMapStyle();
@@ -372,7 +371,7 @@ const MyMap3 = () => {
             </Marker>
           );
         })}
-        {/* <MapViewDirections
+        <MapViewDirections
           // origin={origin}
           origin={{latitude: current.latitude, longitude: current.longitude}}
           destination={searchTerm}
@@ -380,7 +379,7 @@ const MyMap3 = () => {
           strokeWidth={3}
           strokeColor="green"
           onReady={onDirectionReady}
-        /> */}
+        />
       </MapView>
       {direction && (
         <EstimatedArrival
@@ -389,7 +388,6 @@ const MyMap3 = () => {
           distance={direction.distance}
           startSource={direction.source}
           footerHeight={footerHeight}
-          endDestination={direction.destination}
           duration={direction.duration}
         />
       )}
