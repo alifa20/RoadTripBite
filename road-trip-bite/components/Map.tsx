@@ -10,6 +10,13 @@ import {
 } from "react-native";
 import MapView, { Callout, Marker, Polygon, Region } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Animated, {
+    useAnimatedStyle,
+    useSharedValue,
+    withRepeat,
+    withTiming,
+    Easing,
+} from 'react-native-reanimated';
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -71,7 +78,7 @@ const Map = () => {
   // Calculate the position of the end marker
   const endMarkerPosition1 = beaconPoints[Math.round(beaconPoints.length / 3.5)]; // Second to last point
   const endMarkerPosition2 = beaconPoints[Math.round(beaconPoints.length / 2)]; // Second to last point
-  const endMarkerPosition3 = beaconPoints[Math.round(beaconPoints.length / 1.5)]; // Second to last point
+  // const endMarkerPosition3 = beaconPoints[Math.round(beaconPoints.length / 1.5)]; // Second to last point
   console.log("endMarkerPosition", endMarkerPosition2);
 
   const onRegionChangeComplete = (newRegion: Region) => {
@@ -87,8 +94,43 @@ const Map = () => {
 
   const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},11z`;
   const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},11z`;
-  const calloutLink3 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition3.latitude},${endMarkerPosition3.longitude},11z`;
+  // const calloutLink3 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition3.latitude},${endMarkerPosition3.longitude},11z`;
   console.log("calloutLink", calloutLink2);
+
+  const AnimatedBeacon = ({ coordinate, children }) => {
+    const scale = useSharedValue(1);
+    const opacity = useSharedValue(1);
+
+    React.useEffect(() => {
+      scale.value = withRepeat(
+        withTiming(1.5, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+        -1,
+        true
+      );
+      opacity.value = withRepeat(
+        withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+        -1,
+        true
+      );
+    }, []);
+
+    const animatedStyle = useAnimatedStyle(() => {
+      return {
+        transform: [{ scale: scale.value }],
+        opacity: opacity.value,
+      };
+    });
+
+    return (
+      <Marker coordinate={coordinate}>
+        <View style={styles.beaconContainer}>
+          <Animated.View style={[styles.beacon, animatedStyle]} />
+          <View style={styles.beaconCenter} />
+        </View>
+        {children}
+      </Marker>
+    );
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -115,7 +157,7 @@ const Map = () => {
           title="End of Beacon"
           description="60km from your location"
         /> */}
-          <Marker coordinate={endMarkerPosition1}>
+          <AnimatedBeacon coordinate={endMarkerPosition1}>
             <Callout onPress={() => Linking.openURL(calloutLink1)}>
               <View>
                 <Text>End of Beacon</Text>
@@ -123,8 +165,8 @@ const Map = () => {
                 <Text style={styles.linkText}>Tap to open Google</Text>
               </View>
             </Callout>
-          </Marker>
-          <Marker coordinate={endMarkerPosition2}>
+          </AnimatedBeacon>
+          <AnimatedBeacon coordinate={endMarkerPosition2}>
             <Callout onPress={() => Linking.openURL(calloutLink2)}>
               <View>
                 <Text>End of Beacon</Text>
@@ -132,8 +174,8 @@ const Map = () => {
                 <Text style={styles.linkText}>Tap to open Google</Text>
               </View>
             </Callout>
-          </Marker>
-          <Marker coordinate={endMarkerPosition3}>
+          </AnimatedBeacon>
+          {/* <AnimatedBeacon coordinate={endMarkerPosition3}>
             <Callout onPress={() => Linking.openURL(calloutLink3)}>
               <View>
                 <Text>End of Beacon</Text>
@@ -141,7 +183,7 @@ const Map = () => {
                 <Text style={styles.linkText}>Tap to open Google</Text>
               </View>
             </Callout>
-          </Marker>
+          </AnimatedBeacon> */}
         </MapView>
         <View style={styles.categoriesWrapper}>
           <ScrollView
@@ -213,6 +255,25 @@ const styles = StyleSheet.create({
   linkText: {
     color: "blue",
     textDecorationLine: "underline",
+  },
+  beaconContainer: {
+    width: 100,
+    height: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  beacon: {
+    position: 'absolute',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255, 140, 0, 0.3)', // Changed to semi-transparent orange
+  },
+  beaconCenter: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgb(255, 140, 0)', // Changed to solid orange
   },
 });
 
