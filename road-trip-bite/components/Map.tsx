@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import {
-  Dimensions,
-  Linking,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Dimensions,
+    Linking,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
-import MapView, { Callout, Marker, Polygon } from "react-native-maps";
+import MapView, { Callout, Marker, Polygon, Region } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width, height } = Dimensions.get("window");
@@ -19,7 +19,9 @@ const INITIAL_LONGITUDE_DELTA = INITIAL_LATITUDE_DELTA * ASPECT_RATIO;
 const categories = ["Restaurants", "Coffee", "Groceries", "Chemists"];
 
 const Map = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    categories[0]
+  );
   const [region, setRegion] = useState({
     latitude: 37.78825,
     longitude: -122.4324,
@@ -68,8 +70,9 @@ const Map = () => {
 
   // Calculate the position of the end marker
   const endMarkerPosition = beaconPoints[Math.round(beaconPoints.length / 2)]; // Second to last point
+  console.log("endMarkerPosition", endMarkerPosition);
 
-  const onRegionChangeComplete = (newRegion) => {
+  const onRegionChangeComplete = (newRegion: Region) => {
     const zoomLevel =
       Math.log2(360 * (width / 256 / newRegion.longitudeDelta)) + 1;
     console.log(
@@ -79,6 +82,9 @@ const Map = () => {
       newRegion.latitudeDelta
     );
   };
+
+  const calloutLink = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition.latitude},${endMarkerPosition.longitude},11z`;
+  console.log("calloutLink", calloutLink);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -106,7 +112,7 @@ const Map = () => {
           description="60km from your location"
         /> */}
           <Marker coordinate={endMarkerPosition}>
-            <Callout onPress={() => Linking.openURL("https://www.google.com")}>
+            <Callout onPress={() => Linking.openURL(calloutLink)}>
               <View>
                 <Text>End of Beacon</Text>
                 <Text>60km from your location</Text>
