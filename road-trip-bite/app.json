@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "road-trip-bite",
+    "name": "Road Trip Bite",
     "slug": "road-trip-bite",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,13 +13,16 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.evda.roadtripbite",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.evda.roadtripbite"
     },
     "web": {
       "bundler": "metro",
