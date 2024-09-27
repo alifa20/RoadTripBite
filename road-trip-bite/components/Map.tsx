@@ -69,8 +69,10 @@ const Map = () => {
   const beaconPoints = generateRadiusPoints(region, 60, 45, 95);
 
   // Calculate the position of the end marker
-  const endMarkerPosition = beaconPoints[Math.round(beaconPoints.length / 2)]; // Second to last point
-  console.log("endMarkerPosition", endMarkerPosition);
+  const endMarkerPosition1 = beaconPoints[Math.round(beaconPoints.length / 3.5)]; // Second to last point
+  const endMarkerPosition2 = beaconPoints[Math.round(beaconPoints.length / 2)]; // Second to last point
+  const endMarkerPosition3 = beaconPoints[Math.round(beaconPoints.length / 1.5)]; // Second to last point
+  console.log("endMarkerPosition", endMarkerPosition2);
 
   const onRegionChangeComplete = (newRegion: Region) => {
     const zoomLevel =
@@ -83,8 +85,10 @@ const Map = () => {
     );
   };
 
-  const calloutLink = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition.latitude},${endMarkerPosition.longitude},11z`;
-  console.log("calloutLink", calloutLink);
+  const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},11z`;
+  const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},11z`;
+  const calloutLink3 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition3.latitude},${endMarkerPosition3.longitude},11z`;
+  console.log("calloutLink", calloutLink2);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -111,8 +115,26 @@ const Map = () => {
           title="End of Beacon"
           description="60km from your location"
         /> */}
-          <Marker coordinate={endMarkerPosition}>
-            <Callout onPress={() => Linking.openURL(calloutLink)}>
+          <Marker coordinate={endMarkerPosition1}>
+            <Callout onPress={() => Linking.openURL(calloutLink1)}>
+              <View>
+                <Text>End of Beacon</Text>
+                <Text>60km from your location</Text>
+                <Text style={styles.linkText}>Tap to open Google</Text>
+              </View>
+            </Callout>
+          </Marker>
+          <Marker coordinate={endMarkerPosition2}>
+            <Callout onPress={() => Linking.openURL(calloutLink2)}>
+              <View>
+                <Text>End of Beacon</Text>
+                <Text>60km from your location</Text>
+                <Text style={styles.linkText}>Tap to open Google</Text>
+              </View>
+            </Callout>
+          </Marker>
+          <Marker coordinate={endMarkerPosition3}>
+            <Callout onPress={() => Linking.openURL(calloutLink3)}>
               <View>
                 <Text>End of Beacon</Text>
                 <Text>60km from your location</Text>
