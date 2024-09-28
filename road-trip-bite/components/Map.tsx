@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 import {
-    Dimensions,
-    Linking,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import MapView, { Callout, Marker, Polygon, Region } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withRepeat,
-    withTiming,
-    Easing,
-} from 'react-native-reanimated';
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+  Easing,
+} from "react-native-reanimated";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -37,28 +37,34 @@ const Map = () => {
   });
 
   // Function to generate points for the angled radius beacon
-  const generateRadiusPoints = (center, radiusInKm, startAngle, endAngle) => {
+  const generateRadiusPoints = (
+    center: Region,
+    radiusInKm: number,
+    startAngle: number,
+    endAngle: number
+  ) => {
     const points = [];
     const earthRadius = 6371; // Earth's radius in kilometers
     const angularDistance = radiusInKm / earthRadius;
 
+    const radian = Math.PI / 180;
+
     for (let i = startAngle; i <= endAngle; i += 5) {
-      const radians = i * (Math.PI / 180);
+      const radians = i * radian;
       const lat = Math.asin(
-        Math.sin(center.latitude * (Math.PI / 180)) *
-          Math.cos(angularDistance) +
-          Math.cos(center.latitude * (Math.PI / 180)) *
+        Math.sin(center.latitude * radian) * Math.cos(angularDistance) +
+          Math.cos(center.latitude * radian) *
             Math.sin(angularDistance) *
             Math.cos(radians)
       );
       const lon =
-        center.longitude * (Math.PI / 180) +
+        center.longitude * radian +
         Math.atan2(
           Math.sin(radians) *
             Math.sin(angularDistance) *
-            Math.cos(center.latitude * (Math.PI / 180)),
+            Math.cos(center.latitude * radian),
           Math.cos(angularDistance) -
-            Math.sin(center.latitude * (Math.PI / 180)) * Math.sin(lat)
+            Math.sin(center.latitude * radian) * Math.sin(lat)
         );
 
       points.push({
@@ -76,7 +82,8 @@ const Map = () => {
   const beaconPoints = generateRadiusPoints(region, 60, 45, 95);
 
   // Calculate the position of the end marker
-  const endMarkerPosition1 = beaconPoints[Math.round(beaconPoints.length / 3.5)]; // Second to last point
+  const endMarkerPosition1 =
+    beaconPoints[Math.round(beaconPoints.length / 3.5)]; // Second to last point
   const endMarkerPosition2 = beaconPoints[Math.round(beaconPoints.length / 2)]; // Second to last point
   // const endMarkerPosition3 = beaconPoints[Math.round(beaconPoints.length / 1.5)]; // Second to last point
   console.log("endMarkerPosition", endMarkerPosition2);
@@ -259,21 +266,21 @@ const styles = StyleSheet.create({
   beaconContainer: {
     width: 100,
     height: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   beacon: {
-    position: 'absolute',
+    position: "absolute",
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(255, 140, 0, 0.3)', // Changed to semi-transparent orange
+    backgroundColor: "rgba(255, 140, 0, 0.3)", // Changed to semi-transparent orange
   },
   beaconCenter: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: 'rgb(255, 140, 0)', // Changed to solid orange
+    backgroundColor: "rgb(255, 140, 0)", // Changed to solid orange
   },
 });
 
