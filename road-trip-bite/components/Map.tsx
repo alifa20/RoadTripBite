@@ -88,17 +88,6 @@ const Map = () => {
   // const endMarkerPosition3 = beaconPoints[Math.round(beaconPoints.length / 1.5)]; // Second to last point
   console.log("endMarkerPosition", endMarkerPosition2);
 
-  const onRegionChangeComplete = (newRegion: Region) => {
-    const zoomLevel =
-      Math.log2(360 * (width / 256 / newRegion.longitudeDelta)) + 1;
-    console.log(
-      "Current zoom level:",
-      zoomLevel,
-      newRegion.longitudeDelta,
-      newRegion.latitudeDelta
-    );
-  };
-
   const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},11z`;
   const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},11z`;
   // const calloutLink3 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition3.latitude},${endMarkerPosition3.longitude},11z`;
@@ -142,12 +131,7 @@ const Map = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <MapView
-          onRegionChangeComplete={onRegionChangeComplete}
-          style={styles.map}
-          // provider={PROVIDER_GOOGLE}
-          initialRegion={region}
-        >
+        <MapView style={styles.map} initialRegion={region}>
           <Marker
             coordinate={region}
             title="Your Location"
