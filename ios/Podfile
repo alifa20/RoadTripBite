@@ -34,7 +34,7 @@ install! 'cocoapods',
 
 prepare_react_native_project!
 
-target 'roadtripbite' do
+target 'RoadTripBite' do
   use_expo_modules!
   config = use_native_modules!
 
