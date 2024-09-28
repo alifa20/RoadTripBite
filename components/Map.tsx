@@ -27,7 +27,7 @@ const INITIAL_LONGITUDE_DELTA = INITIAL_LATITUDE_DELTA * ASPECT_RATIO;
 const categories = ["Restaurants", "Coffee", "Groceries", "Chemists"];
 
 const Map = () => {
-  useLocation();
+  const { location } = useLocation();
   const [selectedCategory, setSelectedCategory] = useState<string>(
     categories[0]
   );
@@ -81,7 +81,14 @@ const Map = () => {
     return points;
   };
 
-  const beaconPoints = generateRadiusPoints(region, 60, 45, 95);
+  const startAngle =
+    location?.coords.heading !== -1 ? location?.coords.heading ?? 20 : 45;
+  const beaconPoints = generateRadiusPoints(
+    region,
+    60,
+    startAngle,
+    startAngle + 50
+  );
 
   // Calculate the position of the end marker
   const endMarkerPosition1 =
@@ -162,8 +169,7 @@ const Map = () => {
           <AnimatedBeacon coordinate={endMarkerPosition2}>
             <Callout onPress={() => Linking.openURL(calloutLink2)}>
               <View>
-                <Text>End of Beacon</Text>
-                <Text>60km from your location</Text>
+                <Text>Search this area</Text>
                 <Text style={styles.linkText}>Tap to open Google</Text>
               </View>
             </Callout>
@@ -250,7 +256,7 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
   beaconContainer: {
-    width: 100,
+    width: 200,
     height: 100,
     alignItems: "center",
     justifyContent: "center",

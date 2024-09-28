@@ -19,7 +19,12 @@
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "[LiveTrack] This app requires location while in use",
         "NSMotionUsageDescription": "[LiveTrack] This app uses motion-detection to determine the motion-activity of the device (walking, vehicle, bicycle, etc)",
-        "UIBackgroundModes": ["location", "fetch", "processing", "audio"],
+        "UIBackgroundModes": [
+          "location",
+          "fetch",
+          "processing",
+          "audio"
+        ],
         "BGTaskSchedulerPermittedIdentifiers": [
           "com.transistorsoft.fetch",
           "com.transistorsoft.customtask"
@@ -57,6 +62,11 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "12fe9ac9-def2-46dc-bc5d-776d07113fff"
+      }
     }
   }
 }

@@ -10,6 +10,7 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "prebuild": "expo prebuild",
+    "build:ios:local": "eas build --platform ios --local",
     "lint": "expo lint"
   },
   "jest": {
