@@ -9,14 +9,15 @@ import {
   View,
 } from "react-native";
 import MapView, { Callout, Marker, Polygon, Region } from "react-native-maps";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, {
+  Easing,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withTiming,
-  Easing,
 } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocation } from "../hooks/useLocation";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -26,6 +27,7 @@ const INITIAL_LONGITUDE_DELTA = INITIAL_LATITUDE_DELTA * ASPECT_RATIO;
 const categories = ["Restaurants", "Coffee", "Groceries", "Chemists"];
 
 const Map = () => {
+  useLocation();
   const [selectedCategory, setSelectedCategory] = useState<string>(
     categories[0]
   );

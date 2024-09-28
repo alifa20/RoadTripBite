@@ -15,7 +15,16 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.evda.roadtripbite",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "[LiveTrack] This app requires location while in use",
+        "NSMotionUsageDescription": "[LiveTrack] This app uses motion-detection to determine the motion-activity of the device (walking, vehicle, bicycle, etc)",
+        "UIBackgroundModes": ["location", "fetch", "processing", "audio"],
+        "BGTaskSchedulerPermittedIdentifiers": [
+          "com.transistorsoft.fetch",
+          "com.transistorsoft.customtask"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +39,21 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "react-native-background-geolocation",
+        {
+          "license": "7b2ccf55aaee02985fefd1e190201e4880b688a10381b95583286d811d82f93f"
+        }
+      ],
+      [
+        "expo-gradle-ext-vars",
+        {
+          "googlePlayServicesLocationVersion": "21.1.0",
+          "appCompatVersion": "1.4.2"
+        }
+      ],
+      "react-native-background-fetch"
     ],
     "experiments": {
       "typedRoutes": true
