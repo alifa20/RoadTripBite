@@ -18,6 +18,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocation } from "../hooks/useLocation";
+import { Location as BgLocation } from "react-native-background-geolocation";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -37,7 +38,8 @@ const initLocation = {
 
 const Map = () => {
   const mapRef = useRef<MapView>(null);
-  const { location } = useLocation();
+  // const { location } = useLocation();
+  const location = null as unknown as BgLocation;
   const [selectedCategory, setSelectedCategory] = useState<string>(
     categories[0]
   );
