@@ -10,7 +10,8 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "prebuild": "expo prebuild",
-    "build:ios:local": "eas build --platform ios --local",
+    "build:ios:local": "eas build --platform ios --local --output ./dist/prod/road-trip-bite.ipa",
+    "submit": "eas submit",
     "lint": "expo lint"
   },
   "jest": {

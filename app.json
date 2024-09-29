@@ -2,7 +2,7 @@
   "expo": {
     "name": "Road Trip Bite",
     "slug": "road-trip-bite",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.evda.roadtripbite",
+      "bundleIdentifier": "com.evda.RoadTripBite",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "[LiveTrack] This app requires location while in use",
