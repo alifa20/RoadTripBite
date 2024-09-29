@@ -9120,6 +9120,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-compass-heading@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "react-native-compass-heading@npm:1.5.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/b21230c7b96b673782652badbb449a31c1944014b14857340b29458a19f4c480d95ad04e84085b1c2b8c1702746637c546540f6c1bfe4ff826386d8afa55ca1d
+  languageName: node
+  linkType: hard
+
 "react-native-gesture-handler@npm:~2.16.1":
   version: 2.16.2
   resolution: "react-native-gesture-handler@npm:2.16.2"
@@ -9637,6 +9647,7 @@ __metadata:
     react-native: "npm:0.74.5"
     react-native-background-fetch: "npm:^4.2.5"
     react-native-background-geolocation: "npm:^4.17.1"
+    react-native-compass-heading: "npm:^1.5.0"
     react-native-gesture-handler: "npm:~2.16.1"
     react-native-maps: "npm:1.14.0"
     react-native-reanimated: "npm:~3.10.1"

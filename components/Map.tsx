@@ -17,6 +17,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useCompass } from "../hooks/useCompass";
 import { useLocation } from "../hooks/useLocation";
 
 const { width, height } = Dimensions.get("window");
@@ -37,6 +38,9 @@ const initLocation = {
 
 const Map = () => {
   const mapRef = useRef<MapView>(null);
+  const { heading, accuracy } = useCompass();
+  console.log("headingheadingheadingheading", heading, accuracy);
+
   const { location } = useLocation();
   const [selectedCategory, setSelectedCategory] = useState<string>(
     categories[0]
