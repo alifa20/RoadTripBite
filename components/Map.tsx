@@ -48,8 +48,8 @@ const Map = () => {
 
   const currentLocation: Region = location?.coords
     ? {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
+        latitude: location.coords?.latitude,
+        longitude: location.coords?.longitude,
         latitudeDelta: INITIAL_LATITUDE_DELTA,
         longitudeDelta: INITIAL_LONGITUDE_DELTA,
       }
@@ -58,8 +58,8 @@ const Map = () => {
   useEffect(() => {
     if (location && mapRef.current) {
       const region: Region = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
+        latitude: location.coords?.latitude,
+        longitude: location.coords?.longitude,
         latitudeDelta: INITIAL_LATITUDE_DELTA,
         longitudeDelta: INITIAL_LONGITUDE_DELTA,
       };
@@ -112,7 +112,7 @@ const Map = () => {
   };
 
   const startAngle =
-    location?.coords?.heading !== -1 ? location?.coords?.heading ?? 20 : 45;
+    location?.coords?.heading !== -1 ? location?.coords?.heading ?? 20 : heading;
   const beaconPoints = generateRadiusPoints(
     currentLocation,
     60,
