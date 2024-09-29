@@ -43,6 +43,7 @@ export const useLocation = () => {
       // Geolocation Config
       desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
       distanceFilter: 10,
+      locationAuthorizationRequest:'WhenInUse',
       // Activity Recognition
       stopTimeout: 5,
       // Application config

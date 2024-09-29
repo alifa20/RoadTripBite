@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   Linking,
@@ -26,17 +26,43 @@ const INITIAL_LONGITUDE_DELTA = INITIAL_LATITUDE_DELTA * ASPECT_RATIO;
 
 const categories = ["Restaurants", "Coffee", "Groceries", "Chemists"];
 
+const initLocation = {
+  // latitude: 37.78825,
+  // longitude: -122.4324,
+  latitude: -33.826826,
+  longitude: 151.085464,
+  latitudeDelta: INITIAL_LATITUDE_DELTA,
+  longitudeDelta: INITIAL_LONGITUDE_DELTA,
+};
+
 const Map = () => {
+  const mapRef = useRef<MapView>(null);
   const { location } = useLocation();
   const [selectedCategory, setSelectedCategory] = useState<string>(
     categories[0]
   );
-  const [region, setRegion] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
-    latitudeDelta: INITIAL_LATITUDE_DELTA,
-    longitudeDelta: INITIAL_LONGITUDE_DELTA,
-  });
+
+  const currentLocation: Region = location?.coords
+    ? {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: INITIAL_LATITUDE_DELTA,
+        longitudeDelta: INITIAL_LONGITUDE_DELTA,
+      }
+    : initLocation;
+
+  useEffect(() => {
+    if (location && mapRef.current) {
+      const region: Region = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: INITIAL_LATITUDE_DELTA,
+        longitudeDelta: INITIAL_LONGITUDE_DELTA,
+      };
+      // setRegion()
+      mapRef.current.animateToRegion(region, 1000); // 1000ms animation duration
+    }
+  }, [location]);
 
   // Function to generate points for the angled radius beacon
   const generateRadiusPoints = (
@@ -82,9 +108,9 @@ const Map = () => {
   };
 
   const startAngle =
-    location?.coords.heading !== -1 ? location?.coords.heading ?? 20 : 45;
+    location?.coords?.heading !== -1 ? location?.coords?.heading ?? 20 : 45;
   const beaconPoints = generateRadiusPoints(
-    region,
+    currentLocation,
     60,
     startAngle,
     startAngle + 50
@@ -95,12 +121,10 @@ const Map = () => {
     beaconPoints[Math.round(beaconPoints.length / 3.5)]; // Second to last point
   const endMarkerPosition2 = beaconPoints[Math.round(beaconPoints.length / 2)]; // Second to last point
   // const endMarkerPosition3 = beaconPoints[Math.round(beaconPoints.length / 1.5)]; // Second to last point
-  console.log("endMarkerPosition", endMarkerPosition2);
 
   const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},11z`;
   const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},11z`;
   // const calloutLink3 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition3.latitude},${endMarkerPosition3.longitude},11z`;
-  console.log("calloutLink", calloutLink2);
 
   const AnimatedBeacon = ({ coordinate, children }) => {
     const scale = useSharedValue(1);
@@ -140,9 +164,18 @@ const Map = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <MapView style={styles.map} initialRegion={region}>
+        <MapView
+          ref={mapRef}
+          style={styles.map}
+          // initialRegion={region}
+        >
           <Marker
-            coordinate={region}
+            coordinate={currentLocation}
+            // coordinate={
+            //   location.coords && {
+            //     latitude: location.coords.latitude,
+            //     longitude: location.coords.longitude,
+            //   }
             title="Your Location"
             description="You are here"
           />
