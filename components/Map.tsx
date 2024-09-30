@@ -74,10 +74,10 @@ const radiusDeltaMap = {
   10: 0.5,
   60: 1.5,
 };
-const zoomLevelLinkMap  =  { 
-  10: '14z',
-  60: '11z'
-}
+const zoomLevelLinkMap = {
+  10: "14z",
+  60: "11z",
+};
 const categories = ["Restaurants", "Coffee", "Groceries", "Chemists"];
 
 const initLocation = {
@@ -197,7 +197,7 @@ const Map = () => {
   const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
   const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
   // const calloutLink3 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition3.latitude},${endMarkerPosition3.longitude},11z`;
-  
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -208,11 +208,6 @@ const Map = () => {
         >
           <Marker
             coordinate={currentLocation}
-            // coordinate={
-            //   location.coords && {
-            //     latitude: location.coords.latitude,
-            //     longitude: location.coords.longitude,
-            //   }
             title="Your Location"
             description="You are here"
           />
@@ -222,16 +217,11 @@ const Map = () => {
             strokeColor="rgba(0, 150, 255, 0.5)"
             strokeWidth={2}
           />
-          {/* <Marker
-          coordinate={endMarkerPosition}
-          title="End of Beacon"
-          description="60km from your location"
-        /> */}
+
           <AnimatedBeacon coordinate={endMarkerPosition1}>
             <Callout onPress={() => Linking.openURL(calloutLink1)}>
               <View>
-                <Text>End of Beacon</Text>
-                <Text>60km from your location</Text>
+                <Text>{radius}km from your location</Text>
                 <Text style={styles.linkText}>Tap to open Google</Text>
               </View>
             </Callout>
@@ -239,20 +229,11 @@ const Map = () => {
           <AnimatedBeacon coordinate={endMarkerPosition2}>
             <Callout onPress={() => Linking.openURL(calloutLink2)}>
               <View>
-                <Text>Search this area</Text>
+                <Text>{radius}km from your location</Text>
                 <Text style={styles.linkText}>Tap to open Google</Text>
               </View>
             </Callout>
           </AnimatedBeacon>
-          {/* <AnimatedBeacon coordinate={endMarkerPosition3}>
-            <Callout onPress={() => Linking.openURL(calloutLink3)}>
-              <View>
-                <Text>End of Beacon</Text>
-                <Text>60km from your location</Text>
-                <Text style={styles.linkText}>Tap to open Google</Text>
-              </View>
-            </Callout>
-          </AnimatedBeacon> */}
         </MapView>
         <View style={styles.scrollersContainer}>
           {/* Speed and compass direction scroller */}
