@@ -96,6 +96,7 @@ const initLocation = {
 };
 
 type radiusMap = {
+  mode: "walking" | "driving";
   distance: number;
   delta: number;
   zoomLevel: string;
@@ -104,26 +105,51 @@ type radiusMap = {
 const getRadiusFromSpeed = (speed = 0): radiusMap => {
   // Walking speed (up to 5 km/h)
   if (speed <= 5) {
-    return { distance: 10, delta: 0.5, zoomLevel: "14z" }; // 10 km radius for walking (5 km/h * 2 hours)
+    return {
+      mode: "walking",
+      distance: 10,
+      delta: 0.5,
+      zoomLevel: "14z",
+    }; // 10 km radius for walking (5 km/h * 2 hours)
   }
   // Speeds between 5 km/h and 40 km/h
   else if (speed > 5 && speed <= 40) {
     const distance = Math.ceil(speed * 2); // 2 hours of travel at current speed
-    return { distance, delta: 0.5, zoomLevel: "14z" };
+    return {
+      mode: "walking",
+      distance,
+      delta: 0.5,
+      zoomLevel: "14z",
+    };
   }
   // Speeds between 40 km/h and 60 km/h
   else if (speed > 40 && speed <= 60) {
     const distance = 120; // 120 km radius (60 km/h * 2 hours)
-    return { distance, delta: 1.5, zoomLevel: "11z" };
+    return {
+      mode: "driving",
+      distance,
+      delta: 1.5,
+      zoomLevel: "11z",
+    };
   }
   // Speeds between 60 km/h and 80 km/h
   else if (speed > 60 && speed <= 80) {
     const distance = 160; // 160 km radius (80 km/h * 2 hours)
-    return { distance, delta: 1.5, zoomLevel: "11z" };
+    return {
+      mode: "driving",
+      distance,
+      delta: 1.5,
+      zoomLevel: "11z",
+    };
   }
   // Speeds above 80 km/h
   const distance = 200; // Cap at 200 km radius for very high speeds
-  return { distance, delta: 1.5, zoomLevel: "11z" };
+  return {
+    mode: "driving",
+    distance,
+    delta: 1.5,
+    zoomLevel: "11z",
+  };
 };
 
 const AnimatedBeacon = ({
@@ -218,10 +244,14 @@ const Map = () => {
     }
   }, [location, heading]);
 
+  // const startAngle =
+  //   location?.coords?.heading !== -1
+  //     ? location?.coords?.heading ?? 20
+  //     : heading;
+
   const startAngle =
-    location?.coords?.heading !== -1
-      ? location?.coords?.heading ?? 20
-      : heading;
+    radiusMap.mode === "walking" ? heading : location?.coords?.heading ?? 20;
+    
   const beaconPoints = generateRadiusPoints(
     currentLocation,
     radiusMap.distance,
@@ -240,6 +270,30 @@ const Map = () => {
   const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
   const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
   // const calloutLink3 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition3.latitude},${endMarkerPosition3.longitude},11z`;
+
+  // Add this new animated value
+  const opacity = useSharedValue(1);
+
+  const noGPS = location?.coords?.heading === -1;
+
+  useEffect(() => {
+    if (noGPS) {
+      opacity.value = withRepeat(
+        withTiming(0, { duration: 1000, easing: Easing.ease }),
+        -1,
+        true
+      );
+    } else {
+      // Stop the animation and set opacity to 1 if heading is not -1
+      opacity.value = 1;
+    }
+  }, [noGPS]);
+
+  const animatedTextStyle = useAnimatedStyle(() => {
+    return {
+      opacity: opacity.value,
+    };
+  });
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -284,13 +338,19 @@ const Map = () => {
               contentContainerStyle={styles.infoContent}
             >
               <View style={styles.infoChip}>
-                <Text style={styles.infoText}>
+                {noGPS && (
+                  <Animated.Text style={[styles.infoText, styles.noGps]}>
+                    GPS
+                  </Animated.Text>
+                )}
+                <Animated.Text style={[styles.infoText, animatedTextStyle]}>
                   Direction: {compassDirection}
-                </Text>
+                </Animated.Text>
               </View>
               <View style={styles.infoChip}>
                 <Text style={styles.infoText}>
-                  Speed: {!!speed ? `${(speed * 3.6).toFixed(1)} km/h` : "0.0 km/h"}
+                  Speed:{" "}
+                  {!!speed ? `${(speed * 3.6).toFixed(1)} km/h` : "0.0 km/h"}
                 </Text>
               </View>
             </ScrollView>
@@ -329,9 +389,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
   },
-  map: {
-    ...StyleSheet.absoluteFillObject,
-  },
+  map: StyleSheet.absoluteFillObject,
   scrollersContainer: {
     position: "absolute",
     top: 0,
@@ -353,6 +411,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   infoChip: {
+    flexDirection: "row",
     backgroundColor: "white",
     borderRadius: 15,
     paddingHorizontal: 15,
@@ -364,6 +423,11 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 14,
     fontWeight: "500",
+  },
+  noGps: {
+    textDecorationLine: "line-through",
+    textDecorationStyle: "solid",
+    paddingRight: 5,
   },
   categoriesContainer: {
     flexGrow: 0,
