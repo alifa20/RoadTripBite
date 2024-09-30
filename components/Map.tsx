@@ -8,7 +8,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MapView, { Callout, Marker, Polygon, Region } from "react-native-maps";
+import MapView, {
+  Callout,
+  LatLng,
+  Marker,
+  Polygon,
+  Region,
+} from "react-native-maps";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -70,14 +76,14 @@ const generateRadiusPoints = (
   return points;
 };
 
-const radiusDeltaMap = {
-  10: 0.5,
-  60: 1.5,
-};
-const zoomLevelLinkMap = {
-  10: "14z",
-  60: "11z",
-};
+// const radiusDeltaMap = {
+//   10: 0.5,
+//   60: 1.5,
+// };
+// const zoomLevelLinkMap = {
+//   10: "14z",
+//   60: "11z",
+// };
 const categories = ["Restaurants", "Coffee", "Groceries", "Chemists"];
 
 const initLocation = {
@@ -89,7 +95,44 @@ const initLocation = {
   longitudeDelta: INITIAL_LONGITUDE_DELTA,
 };
 
-const AnimatedBeacon = ({ coordinate, children }) => {
+type radiusMap = {
+  distance: number;
+  delta: number;
+  zoomLevel: string;
+};
+
+const getRadiusFromSpeed = (speed = 0): radiusMap => {
+  // Walking speed (up to 5 km/h)
+  if (speed <= 5) {
+    return { distance: 10, delta: 0.5, zoomLevel: "14z" }; // 10 km radius for walking (5 km/h * 2 hours)
+  }
+  // Speeds between 5 km/h and 40 km/h
+  else if (speed > 5 && speed <= 40) {
+    const distance = Math.ceil(speed * 2); // 2 hours of travel at current speed
+    return { distance, delta: 0.5, zoomLevel: "14z" };
+  }
+  // Speeds between 40 km/h and 60 km/h
+  else if (speed > 40 && speed <= 60) {
+    const distance = 120; // 120 km radius (60 km/h * 2 hours)
+    return { distance, delta: 1.5, zoomLevel: "11z" };
+  }
+  // Speeds between 60 km/h and 80 km/h
+  else if (speed > 60 && speed <= 80) {
+    const distance = 160; // 160 km radius (80 km/h * 2 hours)
+    return { distance, delta: 1.5, zoomLevel: "11z" };
+  }
+  // Speeds above 80 km/h
+  const distance = 200; // Cap at 200 km radius for very high speeds
+  return { distance, delta: 1.5, zoomLevel: "11z" };
+};
+
+const AnimatedBeacon = ({
+  coordinate,
+  children,
+}: {
+  coordinate: LatLng;
+  children: React.ReactNode;
+}) => {
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
 
@@ -133,7 +176,7 @@ const getCompassDirection = (degrees: number): string => {
 const Map = () => {
   const mapRef = useRef<MapView>(null);
   const { heading, accuracy } = useCompass();
-  console.log("headingheadingheadingheading", heading, accuracy);
+  // console.log("headingheadingheadingheading", heading, accuracy);
 
   const { location } = useLocation();
   const [selectedCategory, setSelectedCategory] = useState<string>(
@@ -141,16 +184,16 @@ const Map = () => {
   );
 
   // Add these new state variables
-  const [speed, setSpeed] = useState<number | null>(null);
+  const [speed, setSpeed] = useState<number | undefined>();
   const [compassDirection, setCompassDirection] = useState<string>("N");
 
-  const radius = 10;
+  const radiusMap = getRadiusFromSpeed(speed);
   const currentLocation: Region = location?.coords
     ? {
         latitude: location.coords?.latitude,
         longitude: location.coords?.longitude,
-        latitudeDelta: radiusDeltaMap[radius],
-        longitudeDelta: getDelta(radiusDeltaMap[radius]),
+        latitudeDelta: radiusMap.delta,
+        longitudeDelta: getDelta(radiusMap.delta),
       }
     : initLocation;
 
@@ -181,7 +224,7 @@ const Map = () => {
       : heading;
   const beaconPoints = generateRadiusPoints(
     currentLocation,
-    10,
+    radiusMap.distance,
     startAngle,
     startAngle + 50
   );
@@ -192,7 +235,7 @@ const Map = () => {
   const endMarkerPosition2 = beaconPoints[Math.round(beaconPoints.length / 2)]; // Second to last point
   // const endMarkerPosition3 = beaconPoints[Math.round(beaconPoints.length / 1.5)]; // Second to last point
 
-  const zoomLevelLink = zoomLevelLinkMap[radius];
+  const zoomLevelLink = radiusMap.zoomLevel;
   // https://www.google.com/maps/search/Restaurants/@-33.798424,151.0866225,15z/data=!4m4!2m3!5m1!4e9!6e5
   const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
   const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
@@ -201,11 +244,7 @@ const Map = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          // initialRegion={region}
-        >
+        <MapView ref={mapRef} style={styles.map}>
           <Marker
             coordinate={currentLocation}
             title="Your Location"
@@ -221,7 +260,7 @@ const Map = () => {
           <AnimatedBeacon coordinate={endMarkerPosition1}>
             <Callout onPress={() => Linking.openURL(calloutLink1)}>
               <View>
-                <Text>{radius}km from your location</Text>
+                <Text>{radiusMap.distance}km from your location</Text>
                 <Text style={styles.linkText}>Tap to open Google</Text>
               </View>
             </Callout>
@@ -229,7 +268,7 @@ const Map = () => {
           <AnimatedBeacon coordinate={endMarkerPosition2}>
             <Callout onPress={() => Linking.openURL(calloutLink2)}>
               <View>
-                <Text>{radius}km from your location</Text>
+                <Text>{radiusMap.distance}km from your location</Text>
                 <Text style={styles.linkText}>Tap to open Google</Text>
               </View>
             </Callout>
@@ -251,8 +290,7 @@ const Map = () => {
               </View>
               <View style={styles.infoChip}>
                 <Text style={styles.infoText}>
-                  Speed:{" "}
-                  {speed !== null ? `${(speed * 3.6).toFixed(1)} km/h` : "N/A"}
+                  Speed: {!!speed ? `${(speed * 3.6).toFixed(1)} km/h` : "0.0 km/h"}
                 </Text>
               </View>
             </ScrollView>
