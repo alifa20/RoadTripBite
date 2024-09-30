@@ -75,7 +75,7 @@ const radiusDeltaMap = {
   60: 1.5,
 };
 const zoomLevelLinkMap  =  { 
-  10: '12z',
+  10: '13z',
   60: '11z'
 }
 const categories = ["Restaurants", "Coffee", "Groceries", "Chemists"];
