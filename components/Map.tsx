@@ -25,6 +25,55 @@ const ASPECT_RATIO = width / height;
 const INITIAL_LATITUDE_DELTA = 1.5;
 const INITIAL_LONGITUDE_DELTA = INITIAL_LATITUDE_DELTA * ASPECT_RATIO;
 
+const getDelta = (latitudeDelta: number) => latitudeDelta * ASPECT_RATIO;
+
+// Function to generate points for the angled radius beacon
+const generateRadiusPoints = (
+  center: Region,
+  radiusInKm: number,
+  startAngle: number,
+  endAngle: number
+) => {
+  const points = [];
+  const earthRadius = 6371; // Earth's radius in kilometers
+  const angularDistance = radiusInKm / earthRadius;
+
+  const radian = Math.PI / 180;
+
+  for (let i = startAngle; i <= endAngle; i += 5) {
+    const radians = i * radian;
+    const lat = Math.asin(
+      Math.sin(center.latitude * radian) * Math.cos(angularDistance) +
+        Math.cos(center.latitude * radian) *
+          Math.sin(angularDistance) *
+          Math.cos(radians)
+    );
+    const lon =
+      center.longitude * radian +
+      Math.atan2(
+        Math.sin(radians) *
+          Math.sin(angularDistance) *
+          Math.cos(center.latitude * radian),
+        Math.cos(angularDistance) -
+          Math.sin(center.latitude * radian) * Math.sin(lat)
+      );
+
+    points.push({
+      latitude: lat * (180 / Math.PI),
+      longitude: lon * (180 / Math.PI),
+    });
+  }
+
+  // Add center point to close the polygon
+  points.push(center);
+
+  return points;
+};
+
+const radiusDeltaMap = {
+  10: 0.5,
+  60: 1.5,
+};
 const categories = ["Restaurants", "Coffee", "Groceries", "Chemists"];
 
 const initLocation = {
@@ -34,6 +83,47 @@ const initLocation = {
   longitude: 151.085464,
   latitudeDelta: INITIAL_LATITUDE_DELTA,
   longitudeDelta: INITIAL_LONGITUDE_DELTA,
+};
+
+const AnimatedBeacon = ({ coordinate, children }) => {
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(1);
+
+  React.useEffect(() => {
+    scale.value = withRepeat(
+      withTiming(1.5, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+      -1,
+      true
+    );
+    opacity.value = withRepeat(
+      withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+      -1,
+      true
+    );
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+      opacity: opacity.value,
+    };
+  });
+
+  return (
+    <Marker coordinate={coordinate}>
+      <View style={styles.beaconContainer}>
+        <Animated.View style={[styles.beacon, animatedStyle]} />
+        <View style={styles.beaconCenter} />
+      </View>
+      {children}
+    </Marker>
+  );
+};
+
+const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+// Helper function to get compass direction
+const getCompassDirection = (degrees: number): string => {
+  return directions[Math.round(degrees / 45) % 8];
 };
 
 const Map = () => {
@@ -46,76 +136,48 @@ const Map = () => {
     categories[0]
   );
 
+  // Add these new state variables
+  const [speed, setSpeed] = useState<number | null>(null);
+  const [compassDirection, setCompassDirection] = useState<string>("N");
+
+  const radius = 10;
   const currentLocation: Region = location?.coords
     ? {
         latitude: location.coords?.latitude,
         longitude: location.coords?.longitude,
-        latitudeDelta: INITIAL_LATITUDE_DELTA,
-        longitudeDelta: INITIAL_LONGITUDE_DELTA,
+        latitudeDelta: radiusDeltaMap[radius],
+        longitudeDelta: getDelta(radiusDeltaMap[radius]),
       }
     : initLocation;
 
   useEffect(() => {
     if (location && mapRef.current) {
-      const region: Region = {
-        latitude: location.coords?.latitude,
-        longitude: location.coords?.longitude,
-        latitudeDelta: INITIAL_LATITUDE_DELTA,
-        longitudeDelta: INITIAL_LONGITUDE_DELTA,
-      };
+      // const region: Region = {
+      //   latitude: location.coords?.latitude,
+      //   longitude: location.coords?.longitude,
+      //   latitudeDelta: INITIAL_LATITUDE_DELTA,
+      //   longitudeDelta: INITIAL_LONGITUDE_DELTA,
+      // };
       // setRegion()
-      mapRef.current.animateToRegion(region, 1000); // 1000ms animation duration
+      mapRef.current.animateToRegion(currentLocation, 1000); // 1000ms animation duration
     }
   }, [location]);
 
-  // Function to generate points for the angled radius beacon
-  const generateRadiusPoints = (
-    center: Region,
-    radiusInKm: number,
-    startAngle: number,
-    endAngle: number
-  ) => {
-    const points = [];
-    const earthRadius = 6371; // Earth's radius in kilometers
-    const angularDistance = radiusInKm / earthRadius;
-
-    const radian = Math.PI / 180;
-
-    for (let i = startAngle; i <= endAngle; i += 5) {
-      const radians = i * radian;
-      const lat = Math.asin(
-        Math.sin(center.latitude * radian) * Math.cos(angularDistance) +
-          Math.cos(center.latitude * radian) *
-            Math.sin(angularDistance) *
-            Math.cos(radians)
-      );
-      const lon =
-        center.longitude * radian +
-        Math.atan2(
-          Math.sin(radians) *
-            Math.sin(angularDistance) *
-            Math.cos(center.latitude * radian),
-          Math.cos(angularDistance) -
-            Math.sin(center.latitude * radian) * Math.sin(lat)
-        );
-
-      points.push({
-        latitude: lat * (180 / Math.PI),
-        longitude: lon * (180 / Math.PI),
-      });
+  // Update useEffect to set speed and compass direction
+  useEffect(() => {
+    if (location) {
+      setSpeed(Math.max(location.coords?.speed ?? 0, 0));
+      setCompassDirection(getCompassDirection(heading));
     }
-
-    // Add center point to close the polygon
-    points.push(center);
-
-    return points;
-  };
+  }, [location, heading]);
 
   const startAngle =
-    location?.coords?.heading !== -1 ? location?.coords?.heading ?? 20 : heading;
+    location?.coords?.heading !== -1
+      ? location?.coords?.heading ?? 20
+      : heading;
   const beaconPoints = generateRadiusPoints(
     currentLocation,
-    60,
+    10,
     startAngle,
     startAngle + 50
   );
@@ -129,41 +191,6 @@ const Map = () => {
   const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},11z`;
   const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},11z`;
   // const calloutLink3 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition3.latitude},${endMarkerPosition3.longitude},11z`;
-
-  const AnimatedBeacon = ({ coordinate, children }) => {
-    const scale = useSharedValue(1);
-    const opacity = useSharedValue(1);
-
-    React.useEffect(() => {
-      scale.value = withRepeat(
-        withTiming(1.5, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
-        -1,
-        true
-      );
-      opacity.value = withRepeat(
-        withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
-        -1,
-        true
-      );
-    }, []);
-
-    const animatedStyle = useAnimatedStyle(() => {
-      return {
-        transform: [{ scale: scale.value }],
-        opacity: opacity.value,
-      };
-    });
-
-    return (
-      <Marker coordinate={coordinate}>
-        <View style={styles.beaconContainer}>
-          <Animated.View style={[styles.beacon, animatedStyle]} />
-          <View style={styles.beaconCenter} />
-        </View>
-        {children}
-      </Marker>
-    );
-  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -221,26 +248,50 @@ const Map = () => {
             </Callout>
           </AnimatedBeacon> */}
         </MapView>
-        <View style={styles.categoriesWrapper}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.categoriesContainer}
-            contentContainerStyle={styles.categoriesContent}
-          >
-            {categories.map((category, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.categoryChip}
-                onPress={() => setSelectedCategory(category)}
-              >
-                <Text style={styles.categoryText}>
-                  {selectedCategory === category && "✓  "}
-                  {category}
+        <View style={styles.scrollersContainer}>
+          {/* Speed and compass direction scroller */}
+          <View style={styles.infoWrapper}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.infoContainer}
+              contentContainerStyle={styles.infoContent}
+            >
+              <View style={styles.infoChip}>
+                <Text style={styles.infoText}>
+                  Direction: {compassDirection}
                 </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+              </View>
+              <View style={styles.infoChip}>
+                <Text style={styles.infoText}>
+                  Speed:{" "}
+                  {speed !== null ? `${(speed * 3.6).toFixed(1)} km/h` : "N/A"}
+                </Text>
+              </View>
+            </ScrollView>
+          </View>
+
+          <View style={styles.categoriesWrapper}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.categoriesContainer}
+              contentContainerStyle={styles.categoriesContent}
+            >
+              {categories.map((category, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.categoryChip}
+                  onPress={() => setSelectedCategory(category)}
+                >
+                  <Text style={styles.categoryText}>
+                    {selectedCategory === category && "✓  "}
+                    {category}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -256,14 +307,38 @@ const styles = StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
-  categoriesWrapper: {
+  scrollersContainer: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
+  },
+  infoWrapper: {
     backgroundColor: "rgba(255, 255, 255, 0.3)",
-    paddingTop: 80, // Adjust this value based on your device's status bar height
-    paddingBottom: 10,
+    paddingTop: 80,
+  },
+  categoriesWrapper: {
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    paddingVertical: 10,
+  },
+  infoContainer: {
+    flexGrow: 0,
+  },
+  infoContent: {
+    paddingHorizontal: 10,
+  },
+  infoChip: {
+    backgroundColor: "white",
+    borderRadius: 15,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    marginHorizontal: 5,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  infoText: {
+    fontSize: 14,
+    fontWeight: "500",
   },
   categoriesContainer: {
     flexGrow: 0,
