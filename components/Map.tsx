@@ -383,13 +383,13 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "rgba(255, 140, 0, 0.3)", // Changed to semi-transparent orange
+    backgroundColor: "rgba(138, 143, 226, 0.3)", // Changed to semi-transparent orange
   },
   beaconCenter: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "rgb(255, 140, 0)", // Changed to solid orange
+    backgroundColor: "rgb(138, 143, 226)", // Changed to solid orange
   },
 });
 
