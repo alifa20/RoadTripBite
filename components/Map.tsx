@@ -328,7 +328,7 @@ const Map = () => {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1  }}>
       <View style={styles.container}>
         <MapView ref={mapRef} style={styles.map}>
           <Marker
