@@ -1,21 +1,12 @@
-import { Text, View } from "react-native";
-import Map from "../components/Map";
+import { Ads } from "@/components/Ads";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Map from "../components/Map";
 
 export default function Index() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <Map />
-      
+      <Ads />
     </SafeAreaView>
   );
 }
-// <View
-//   style={{
-//     flex: 1,
-//     justifyContent: "center",
-//     alignItems: "center",
-//   }}
-// >
-//   <Text>Edit app/index.tsx to edit this screen.</Text>
-// </View>
