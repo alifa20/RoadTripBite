@@ -1,8 +1,14 @@
 import { Text, View } from "react-native";
 import Map from "../components/Map";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
-  return <Map />;
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <Map />
+      
+    </SafeAreaView>
+  );
 }
 // <View
 //   style={{
