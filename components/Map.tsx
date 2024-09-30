@@ -74,6 +74,10 @@ const radiusDeltaMap = {
   10: 0.5,
   60: 1.5,
 };
+const zoomLevelLinkMap  =  { 
+  10: '12z',
+  60: '11z'
+}
 const categories = ["Restaurants", "Coffee", "Groceries", "Chemists"];
 
 const initLocation = {
@@ -188,8 +192,9 @@ const Map = () => {
   const endMarkerPosition2 = beaconPoints[Math.round(beaconPoints.length / 2)]; // Second to last point
   // const endMarkerPosition3 = beaconPoints[Math.round(beaconPoints.length / 1.5)]; // Second to last point
 
-  const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},11z`;
-  const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},11z`;
+  const zoomLevelLink = zoomLevelLinkMap[radius];
+  const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},${zoomLevelLink}`;
+  const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},${zoomLevelLink}`;
   // const calloutLink3 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition3.latitude},${endMarkerPosition3.longitude},11z`;
 
   return (
