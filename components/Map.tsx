@@ -193,10 +193,11 @@ const Map = () => {
   // const endMarkerPosition3 = beaconPoints[Math.round(beaconPoints.length / 1.5)]; // Second to last point
 
   const zoomLevelLink = zoomLevelLinkMap[radius];
-  const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},${zoomLevelLink}`;
-  const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},${zoomLevelLink}`;
+  // https://www.google.com/maps/search/Restaurants/@-33.798424,151.0866225,15z/data=!4m4!2m3!5m1!4e9!6e5
+  const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
+  const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
   // const calloutLink3 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition3.latitude},${endMarkerPosition3.longitude},11z`;
-
+  
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -383,13 +384,13 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "rgba(138, 143, 226, 0.3)", // Changed to semi-transparent orange
+    backgroundColor: "rgba(154, 134, 181, 0.3)", // Changed to semi-transparent orange
   },
   beaconCenter: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "rgb(138, 143, 226)", // Changed to solid orange
+    backgroundColor: "rgb(154, 134, 181)", // Changed to solid orange
   },
 });
 
