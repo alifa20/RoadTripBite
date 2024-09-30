@@ -102,6 +102,36 @@ type radiusMap = {
   zoomLevel: string;
 };
 
+// Add this function outside of the Map component
+const calculateRegionForPoints = (points: LatLng[], topPadding: number): Region => {
+  let minLat = points[0].latitude;
+  let maxLat = points[0].latitude;
+  let minLng = points[0].longitude;
+  let maxLng = points[0].longitude;
+
+  points.forEach((point) => {
+    minLat = Math.min(minLat, point.latitude);
+    maxLat = Math.max(maxLat, point.latitude);
+    minLng = Math.min(minLng, point.longitude);
+    maxLng = Math.max(maxLng, point.longitude);
+  });
+
+  const midLat = (minLat + maxLat) / 2;
+  const midLng = (minLng + maxLng) / 2;
+  const deltaLat = (maxLat - minLat) * 1.1; // Add 10% padding
+  const deltaLng = (maxLng - minLng) * 1.1; // Add 10% padding
+
+  // Calculate the latitude shift based on topPadding
+  const latitudeShift = (deltaLat * topPadding) / height;
+
+  return {
+    latitude: midLat + latitudeShift / 2, // Shift the center slightly south
+    longitude: midLng,
+    latitudeDelta: Math.max(deltaLat * (height / (height - topPadding)), 0.01), // Adjust zoom level
+    longitudeDelta: Math.max(deltaLng * (height / (height - topPadding)), 0.01), // Adjust zoom level
+  };
+};
+
 const getRadiusFromSpeed = (speed = 0): radiusMap => {
   // Walking speed (up to 5 km/h)
   if (speed <= 5) {
@@ -223,35 +253,9 @@ const Map = () => {
       }
     : initLocation;
 
-  useEffect(() => {
-    if (location && mapRef.current) {
-      // const region: Region = {
-      //   latitude: location.coords?.latitude,
-      //   longitude: location.coords?.longitude,
-      //   latitudeDelta: INITIAL_LATITUDE_DELTA,
-      //   longitudeDelta: INITIAL_LONGITUDE_DELTA,
-      // };
-      // setRegion()
-      mapRef.current.animateToRegion(currentLocation, 1000); // 1000ms animation duration
-    }
-  }, [location]);
-
-  // Update useEffect to set speed and compass direction
-  useEffect(() => {
-    if (location) {
-      setSpeed(Math.max(location.coords?.speed ?? 0, 0));
-      setCompassDirection(getCompassDirection(heading));
-    }
-  }, [location, heading]);
-
-  // const startAngle =
-  //   location?.coords?.heading !== -1
-  //     ? location?.coords?.heading ?? 20
-  //     : heading;
-
   const startAngle =
     radiusMap.mode === "walking" ? heading : location?.coords?.heading ?? 20;
-    
+
   const beaconPoints = generateRadiusPoints(
     currentLocation,
     radiusMap.distance,
@@ -270,6 +274,34 @@ const Map = () => {
   const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
   const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
   // const calloutLink3 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition3.latitude},${endMarkerPosition3.longitude},11z`;
+
+  useEffect(() => {
+    if (location && mapRef.current) {
+      const allPoints = [
+        currentLocation,
+        endMarkerPosition1,
+        endMarkerPosition2,
+        ...beaconPoints,
+      ];
+      
+      const topPadding = 200; // Height of the top controls
+      const region = calculateRegionForPoints(allPoints, topPadding);
+      mapRef.current.animateToRegion(region, 1000);
+    }
+  }, [location, beaconPoints, endMarkerPosition1, endMarkerPosition2]);
+
+  // Update useEffect to set speed and compass direction
+  useEffect(() => {
+    if (location) {
+      setSpeed(Math.max(location.coords?.speed ?? 0, 0));
+      setCompassDirection(getCompassDirection(heading));
+    }
+  }, [location, heading]);
+
+  // const startAngle =
+  //   location?.coords?.heading !== -1
+  //     ? location?.coords?.heading ?? 20
+  //     : heading;
 
   // Add this new animated value
   const opacity = useSharedValue(1);
@@ -389,7 +421,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     alignItems: "center",
   },
-  map: StyleSheet.absoluteFillObject,
+  map: {
+    ...StyleSheet.absoluteFillObject,
+    height: height / 1.5,
+
+  },
   scrollersContainer: {
     position: "absolute",
     top: 0,
