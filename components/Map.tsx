@@ -17,6 +17,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useCompass } from "../hooks/useCompass";
 import { useLocation } from "../hooks/useLocation";
 
 const { width, height } = Dimensions.get("window");
@@ -37,6 +38,9 @@ const initLocation = {
 
 const Map = () => {
   const mapRef = useRef<MapView>(null);
+  const { heading, accuracy } = useCompass();
+  console.log("headingheadingheadingheading", heading, accuracy);
+
   const { location } = useLocation();
   const [selectedCategory, setSelectedCategory] = useState<string>(
     categories[0]
@@ -44,8 +48,8 @@ const Map = () => {
 
   const currentLocation: Region = location?.coords
     ? {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
+        latitude: location.coords?.latitude,
+        longitude: location.coords?.longitude,
         latitudeDelta: INITIAL_LATITUDE_DELTA,
         longitudeDelta: INITIAL_LONGITUDE_DELTA,
       }
@@ -54,8 +58,8 @@ const Map = () => {
   useEffect(() => {
     if (location && mapRef.current) {
       const region: Region = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
+        latitude: location.coords?.latitude,
+        longitude: location.coords?.longitude,
         latitudeDelta: INITIAL_LATITUDE_DELTA,
         longitudeDelta: INITIAL_LONGITUDE_DELTA,
       };
@@ -108,7 +112,7 @@ const Map = () => {
   };
 
   const startAngle =
-    location?.coords?.heading !== -1 ? location?.coords?.heading ?? 20 : 45;
+    location?.coords?.heading !== -1 ? location?.coords?.heading ?? 20 : heading;
   const beaconPoints = generateRadiusPoints(
     currentLocation,
     60,
