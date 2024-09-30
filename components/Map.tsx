@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  InteractionManager,
 } from "react-native";
 import MapView, {
   Callout,
@@ -275,6 +276,9 @@ const Map = () => {
   const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
   // const calloutLink3 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition3.latitude},${endMarkerPosition3.longitude},11z`;
 
+  const [isUserInteracting, setIsUserInteracting] = useState(false);
+  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     if (location && mapRef.current) {
       const allPoints = [
@@ -286,9 +290,29 @@ const Map = () => {
       
       const topPadding = 200; // Height of the top controls
       const region = calculateRegionForPoints(allPoints, topPadding);
-      mapRef.current.animateToRegion(region, 1000);
+
+      // Clear any existing timeout
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
+
+      // Set a new timeout
+      animationTimeoutRef.current = setTimeout(() => {
+        if (!isUserInteracting) {
+          InteractionManager.runAfterInteractions(() => {
+            mapRef.current?.animateToRegion(region, 1000);
+          });
+        }
+      }, 5000);
     }
-  }, [location, beaconPoints, endMarkerPosition1, endMarkerPosition2]);
+
+    // Cleanup function
+    return () => {
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
+    };
+  }, [location, beaconPoints, endMarkerPosition1, endMarkerPosition2, isUserInteracting]);
 
   // Update useEffect to set speed and compass direction
   useEffect(() => {
@@ -330,7 +354,12 @@ const Map = () => {
   return (
     
       <View style={styles.container}>
-        <MapView ref={mapRef} style={styles.map}>
+        <MapView
+          ref={mapRef}
+          style={styles.map}
+          onPanDrag={() => setIsUserInteracting(true)}
+          onRegionChangeComplete={() => setIsUserInteracting(false)}
+        >
           <Marker
             coordinate={currentLocation}
             title="Your Location"
