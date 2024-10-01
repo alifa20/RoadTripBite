@@ -435,11 +435,19 @@ const Map = () => {
           >
             <View style={styles.infoChip}>
               {noGPS && (
-                <Animated.Text style={[styles.infoText, styles.noGps]}>
-                  GPS
+                <Animated.Text
+                  style={[
+                    styles.infoText,
+                    ...(noGPS
+                      ? [styles.noGps, animatedTextStyle]
+                      : [styles.gps]),
+                  ]}
+                >
+                  {!noGPS && "✓ "}
+                  GPS - 
                 </Animated.Text>
               )}
-              <Animated.Text style={[styles.infoText, animatedTextStyle]}>
+              <Animated.Text style={[styles.infoText]}>
                 Direction: {compassDirection}
               </Animated.Text>
             </View>
@@ -529,6 +537,11 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 14,
     fontWeight: "500",
+  },
+  gps: {
+    color: "green",
+    textDecorationColor: "bold",
+    paddingRight: 5,
   },
   noGps: {
     textDecorationLine: "line-through",
