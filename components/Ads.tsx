@@ -14,7 +14,7 @@ const adUnitId = __DEV__
   ? TestIds.ADAPTIVE_BANNER
   : "ca-app-pub-5971323065106042/5579059579";
 
-  // native
+// native
 // const adUnitId = "ca-app-pub-5971323065106042/4026304756";
 
 export const Ads = () => {
@@ -47,8 +47,9 @@ const styles = StyleSheet.create({
   // },
   container: {
     // Remove the fixed height
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
+    maxHeight: height / 3,
   },
 });
 
