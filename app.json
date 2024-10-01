@@ -19,12 +19,7 @@
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "[LiveTrack] This app requires location while in use",
         "NSMotionUsageDescription": "[LiveTrack] This app uses motion-detection to determine the motion-activity of the device (walking, vehicle, bicycle, etc)",
-        "UIBackgroundModes": [
-          "location",
-          "fetch",
-          "processing",
-          "audio"
-        ],
+        "UIBackgroundModes": ["location", "fetch", "processing", "audio"],
         "BGTaskSchedulerPermittedIdentifiers": [
           "com.transistorsoft.fetch",
           "com.transistorsoft.customtask"
@@ -45,6 +40,28 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      [
+        "react-native-permissions",
+        {
+          "APP_TRACKING_TRANSPARENCY": "This identifier will be used to deliver personalized ads to you."
+        }
+      ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-xxxxxxxx~xxxxxxxx",
+          "iosAppId": "ca-app-pub-5971323065106042~2910903326",
+          "userTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you."
+        }
+      ],
       [
         "react-native-background-geolocation",
         {

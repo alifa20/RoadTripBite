@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
+  InteractionManager,
   Linking,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  InteractionManager,
 } from "react-native";
 import MapView, {
   Callout,
@@ -23,7 +23,6 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useCompass } from "../hooks/useCompass";
 import { useLocation } from "../hooks/useLocation";
 
@@ -104,7 +103,10 @@ type radiusMap = {
 };
 
 // Add this function outside of the Map component
-const calculateRegionForPoints = (points: LatLng[], topPadding: number): Region => {
+const calculateRegionForPoints = (
+  points: LatLng[],
+  topPadding: number
+): Region => {
   let minLat = points[0].latitude;
   let maxLat = points[0].latitude;
   let minLng = points[0].longitude;
@@ -233,7 +235,6 @@ const getCompassDirection = (degrees: number): string => {
 const Map = () => {
   const mapRef = useRef<MapView>(null);
   const { heading, accuracy } = useCompass();
-  // console.log("headingheadingheadingheading", heading, accuracy);
 
   const { location } = useLocation();
   const [selectedCategory, setSelectedCategory] = useState<string>(
@@ -287,7 +288,7 @@ const Map = () => {
         endMarkerPosition2,
         ...beaconPoints,
       ];
-      
+
       const topPadding = 200; // Height of the top controls
       const region = calculateRegionForPoints(allPoints, topPadding);
 
@@ -303,7 +304,7 @@ const Map = () => {
             mapRef.current?.animateToRegion(region, 1000);
           });
         }
-      }, 5000);
+      }, 2000);
     }
 
     // Cleanup function
@@ -312,7 +313,13 @@ const Map = () => {
         clearTimeout(animationTimeoutRef.current);
       }
     };
-  }, [location, beaconPoints, endMarkerPosition1, endMarkerPosition2, isUserInteracting]);
+  }, [
+    location,
+    beaconPoints,
+    endMarkerPosition1,
+    endMarkerPosition2,
+    isUserInteracting,
+  ]);
 
   // Update useEffect to set speed and compass direction
   useEffect(() => {
@@ -352,108 +359,105 @@ const Map = () => {
   });
 
   return (
-    
-      <View style={styles.container}>
-        <MapView
-          ref={mapRef}
-          style={styles.map}
-          onPanDrag={() => setIsUserInteracting(true)}
-          onRegionChangeComplete={() => setIsUserInteracting(false)}
-        >
-          <Marker
-            coordinate={currentLocation}
-            title="Your Location"
-            description="You are here"
-          />
-          <Polygon
-            coordinates={beaconPoints}
-            fillColor="rgba(0, 150, 255, 0.2)"
-            strokeColor="rgba(0, 150, 255, 0.5)"
-            strokeWidth={2}
-          />
+    <View style={styles.container}>
+      <MapView
+        ref={mapRef}
+        style={styles.map}
+        onPanDrag={() => setIsUserInteracting(true)}
+        onRegionChangeComplete={() => setIsUserInteracting(false)}
+      >
+        <Marker
+          coordinate={currentLocation}
+          title="Your Location"
+          description="You are here"
+        />
+        <Polygon
+          coordinates={beaconPoints}
+          fillColor="rgba(0, 150, 255, 0.2)"
+          strokeColor="rgba(0, 150, 255, 0.5)"
+          strokeWidth={2}
+        />
 
-          <AnimatedBeacon coordinate={endMarkerPosition1}>
-            <Callout onPress={() => Linking.openURL(calloutLink1)}>
-              <View>
-                <Text>{radiusMap.distance}km from your location</Text>
-                <Text style={styles.linkText}>Tap to open Google</Text>
-              </View>
-            </Callout>
-          </AnimatedBeacon>
-          <AnimatedBeacon coordinate={endMarkerPosition2}>
-            <Callout onPress={() => Linking.openURL(calloutLink2)}>
-              <View>
-                <Text>{radiusMap.distance}km from your location</Text>
-                <Text style={styles.linkText}>Tap to open Google</Text>
-              </View>
-            </Callout>
-          </AnimatedBeacon>
-        </MapView>
-        <View style={styles.scrollersContainer}>
-          {/* Speed and compass direction scroller */}
-          <View style={styles.infoWrapper}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.infoContainer}
-              contentContainerStyle={styles.infoContent}
-            >
-              <View style={styles.infoChip}>
-                {noGPS && (
-                  <Animated.Text style={[styles.infoText, styles.noGps]}>
-                    GPS
-                  </Animated.Text>
-                )}
-                <Animated.Text style={[styles.infoText, animatedTextStyle]}>
-                  Direction: {compassDirection}
+        <AnimatedBeacon coordinate={endMarkerPosition1}>
+          <Callout onPress={() => Linking.openURL(calloutLink1)}>
+            <View>
+              <Text>{radiusMap.distance}km from your location</Text>
+              <Text style={styles.linkText}>Tap to open Google</Text>
+            </View>
+          </Callout>
+        </AnimatedBeacon>
+        <AnimatedBeacon coordinate={endMarkerPosition2}>
+          <Callout onPress={() => Linking.openURL(calloutLink2)}>
+            <View>
+              <Text>{radiusMap.distance}km from your location</Text>
+              <Text style={styles.linkText}>Tap to open Google</Text>
+            </View>
+          </Callout>
+        </AnimatedBeacon>
+      </MapView>
+      <View style={styles.scrollersContainer}>
+        <View style={styles.infoWrapper}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.infoContainer}
+            contentContainerStyle={styles.infoContent}
+          >
+            <View style={styles.infoChip}>
+              {noGPS && (
+                <Animated.Text style={[styles.infoText, styles.noGps]}>
+                  GPS
                 </Animated.Text>
-              </View>
-              <View style={styles.infoChip}>
-                <Text style={styles.infoText}>
-                  Speed:{" "}
-                  {!!speed ? `${(speed * 3.6).toFixed(1)} km/h` : "0.0 km/h"}
-                </Text>
-              </View>
-            </ScrollView>
-          </View>
+              )}
+              <Animated.Text style={[styles.infoText, animatedTextStyle]}>
+                Direction: {compassDirection}
+              </Animated.Text>
+            </View>
+            <View style={styles.infoChip}>
+              <Text style={styles.infoText}>
+                Speed:{" "}
+                {!!speed ? `${(speed * 3.6).toFixed(1)} km/h` : "0.0 km/h"}
+              </Text>
+            </View>
+          </ScrollView>
+        </View>
 
-          <View style={styles.categoriesWrapper}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.categoriesContainer}
-              contentContainerStyle={styles.categoriesContent}
-            >
-              {categories.map((category, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.categoryChip}
-                  onPress={() => setSelectedCategory(category)}
-                >
-                  <Text style={styles.categoryText}>
-                    {selectedCategory === category && "✓  "}
-                    {category}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
+        <View style={styles.categoriesWrapper}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.categoriesContainer}
+            contentContainerStyle={styles.categoriesContent}
+          >
+            {categories.map((category, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.categoryChip}
+                onPress={() => setSelectedCategory(category)}
+              >
+                <Text style={styles.categoryText}>
+                  {selectedCategory === category && "✓  "}
+                  {category}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
       </View>
-
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "flex-end",
-    alignItems: "center",
+    // ...StyleSheet.absoluteFillObject,
+    // justifyContent: "flex-end",
+    // alignItems: "center",
+    flex: 1,
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
     height: height / 1.5,
-
+    flex: 1,
   },
   scrollersContainer: {
     position: "absolute",
