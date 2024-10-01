@@ -11,7 +11,7 @@ const { height } = Dimensions.get("window");
 
 const adUnitId = __DEV__
   ? TestIds.ADAPTIVE_BANNER
-  : "ca-app-pub-xxxxxxxxxxxxx/yyyyyyyyyyyyyy";
+  : "ca-app-pub-5971323065106042/4026304756";
 
 
 export const Ads = () => {
