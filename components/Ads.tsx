@@ -23,8 +23,6 @@ export const Ads = () => {
   // (iOS) WKWebView can terminate if app is in a "suspended state", resulting in an empty banner when app returns to foreground.
   // Therefore it's advised to "manually" request a new ad when the app is foregrounded (https://groups.google.com/g/google-admob-ads-sdk/c/rwBpqOUr8m8).
   useForeground(() => {
-    console.log("here");
-
     Platform.OS === "ios" && bannerRef.current?.load();
   });
 
