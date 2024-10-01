@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
+  Button,
   Dimensions,
   InteractionManager,
   Linking,
@@ -358,6 +359,10 @@ const Map = () => {
     };
   });
 
+  const onSearch = () => {
+    Linking.openURL(calloutLink2);
+  };
+
   return (
     <View style={styles.container}>
       <MapView
@@ -378,7 +383,7 @@ const Map = () => {
           strokeWidth={2}
         />
 
-        <AnimatedBeacon coordinate={endMarkerPosition1}>
+        {/* <AnimatedBeacon coordinate={endMarkerPosition1}>
           <Callout onPress={() => Linking.openURL(calloutLink1)}>
             <View>
               <Text>{radiusMap.distance}km from your location</Text>
@@ -393,7 +398,7 @@ const Map = () => {
               <Text style={styles.linkText}>Tap to open Google</Text>
             </View>
           </Callout>
-        </AnimatedBeacon>
+        </AnimatedBeacon> */}
       </MapView>
       <View style={styles.scrollersContainer}>
         <View style={styles.infoWrapper}>
@@ -442,6 +447,13 @@ const Map = () => {
               </TouchableOpacity>
             ))}
           </ScrollView>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={onSearch}>
+            <Text style={styles.buttonText}>
+              Search &gt; {radiusMap.distance}km
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -543,6 +555,32 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     backgroundColor: "rgb(154, 134, 181)", // Changed to solid orange
+  },
+  buttonContainer: {
+    // position: 'absolute',
+    // left: '50%',
+    // transform: [{ translateX: -75 }, { translateY: -20 }],
+
+    borderRadius: 5,
+    padding: 5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  button: {
+    backgroundColor: "#4CAF50", // Green background
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 15,
+    elevation: 3, // Add shadow on Android
+    shadowColor: "#000", // Add shadow on iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
