@@ -227,6 +227,38 @@ const AnimatedBeacon = ({
   );
 };
 
+const DirectionalBeacon = ({ heading }: { heading: number }) => {
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(1);
+
+  useEffect(() => {
+    scale.value = withRepeat(
+      withTiming(2, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+      -1,
+      true
+    );
+    opacity.value = withRepeat(
+      withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
+      -1,
+      true
+    );
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }, { rotate: `${heading}deg` }],
+      opacity: opacity.value,
+    };
+  });
+
+  return (
+    <View style={styles.directionalBeaconContainer}>
+      <Animated.View style={[styles.directionalBeacon, animatedStyle]} />
+      <View style={styles.directionalBeaconCenter} />
+    </View>
+  );
+};
+
 const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 // Helper function to get compass direction
 const getCompassDirection = (degrees: number): string => {
@@ -363,6 +395,10 @@ const Map = () => {
     Linking.openURL(calloutLink2);
   };
 
+  const hasValidHeading =
+    location?.coords?.heading !== undefined && location.coords.heading > -1;
+  // const hasValidHeading = true
+
   return (
     <View style={styles.container}>
       <MapView
@@ -383,22 +419,11 @@ const Map = () => {
           strokeWidth={2}
         />
 
-        {/* <AnimatedBeacon coordinate={endMarkerPosition1}>
-          <Callout onPress={() => Linking.openURL(calloutLink1)}>
-            <View>
-              <Text>{radiusMap.distance}km from your location</Text>
-              <Text style={styles.linkText}>Tap to open Google</Text>
-            </View>
-          </Callout>
-        </AnimatedBeacon>
-        <AnimatedBeacon coordinate={endMarkerPosition2}>
-          <Callout onPress={() => Linking.openURL(calloutLink2)}>
-            <View>
-              <Text>{radiusMap.distance}km from your location</Text>
-              <Text style={styles.linkText}>Tap to open Google</Text>
-            </View>
-          </Callout>
-        </AnimatedBeacon> */}
+        {hasValidHeading && (
+          <Marker coordinate={currentLocation} anchor={{ x: 0.5, y: 0.5 }}>
+            <DirectionalBeacon heading={location?.coords?.heading ?? 0} />
+          </Marker>
+        )}
       </MapView>
       <View style={styles.scrollersContainer}>
         <View style={styles.infoWrapper}>
@@ -555,6 +580,33 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     backgroundColor: "rgb(154, 134, 181)", // Changed to solid orange
+  },
+  directionalBeaconContainer: {
+    width: 400,
+    height: 400,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  directionalBeacon: {
+    position: "absolute",
+    width: 240,
+    height: 240,
+    borderRadius: 120,
+    // backgroundColor: 'rgba(0, 150, 255, 0.1)',
+    borderTopWidth: 120,
+    borderRightWidth: 120,
+    borderBottomWidth: 0,
+    borderLeftWidth: 120,
+    borderTopColor: "rgba(0, 150, 255, 0.8)",
+    borderRightColor: "transparent",
+    borderBottomColor: "transparent",
+    borderLeftColor: "transparent",
+  },
+  directionalBeaconCenter: {
+    width: 10,
+    height: 10,
+    borderRadius: 20,
+    backgroundColor: "rgb(0, 150, 255)",
   },
   buttonContainer: {
     // position: 'absolute',
