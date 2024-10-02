@@ -50,8 +50,8 @@ export const useLocation = () => {
       stopOnTerminate: false, // <-- Allow the background-service to continue tracking when user closes the app.
       startOnBoot: true, // <-- Auto start tracking when device is powered-up.
       stopOnStationary: false,
-      desiredOdometerAccuracy:10,
-      stationaryRadius:5, 
+      desiredOdometerAccuracy: 10,
+      stationaryRadius: 5,
       // HTTP / SQLite config
       //   url: "http://yourserver.com/locations",
       batchSync: false, // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
