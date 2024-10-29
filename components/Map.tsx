@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Button,
   Dimensions,
   InteractionManager,
   Linking,
@@ -8,14 +7,13 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import MapView, {
-  Callout,
   LatLng,
   Marker,
   Polygon,
-  Region,
+  Region
 } from "react-native-maps";
 import Animated, {
   Easing,
@@ -26,6 +24,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useCompass } from "../hooks/useCompass";
 import { useLocation } from "../hooks/useLocation";
+import { Feather } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -307,11 +306,13 @@ const Map = () => {
   const zoomLevelLink = radiusMap.zoomLevel;
   // https://www.google.com/maps/search/Restaurants/@-33.798424,151.0866225,15z/data=!4m4!2m3!5m1!4e9!6e5
   const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
-  const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
+  // const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
+  const calloutLink2 = `maps://maps.apple.com/?q=${selectedCategory}&ll=${endMarkerPosition2.latitude},${endMarkerPosition2.longitude}&z=${zoomLevelLink}`;
   // const calloutLink3 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition3.latitude},${endMarkerPosition3.longitude},11z`;
 
   const [isUserInteracting, setIsUserInteracting] = useState(false);
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     if (location && mapRef.current) {
@@ -399,6 +400,10 @@ const Map = () => {
     location?.coords?.heading !== undefined && location.coords.heading > -1;
   // const hasValidHeading = true
 
+  const onCogClick = () => {
+    console.log("Settings clicked");
+  };
+
   return (
     <View style={styles.container}>
       <MapView
@@ -427,6 +432,11 @@ const Map = () => {
       </MapView>
       <View style={styles.scrollersContainer}>
         <View style={styles.infoWrapper}>
+          {/* <SearchInput
+            value={searchText}
+            onChangeText={setSearchText}
+            placeholder="Search locations..."
+          /> */}
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -444,7 +454,7 @@ const Map = () => {
                   ]}
                 >
                   {!noGPS && "✓ "}
-                  GPS - 
+                  GPS -
                 </Animated.Text>
               )}
               <Animated.Text style={[styles.infoText]}>
@@ -467,6 +477,12 @@ const Map = () => {
             style={styles.categoriesContainer}
             contentContainerStyle={styles.categoriesContent}
           >
+            <TouchableOpacity 
+              style={styles.categoryChip}
+              onPress={onCogClick}
+            >
+              <Feather name="settings" size={18} color="#333" />
+            </TouchableOpacity>
             {categories.map((category, index) => (
               <TouchableOpacity
                 key={index}
