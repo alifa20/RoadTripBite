@@ -1,3 +1,5 @@
+import { Feather } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
@@ -7,14 +9,9 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
-import MapView, {
-  LatLng,
-  Marker,
-  Polygon,
-  Region
-} from "react-native-maps";
+import MapView, { LatLng, Marker, Polygon, Region } from "react-native-maps";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -24,7 +21,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { useCompass } from "../hooks/useCompass";
 import { useLocation } from "../hooks/useLocation";
-import { Feather } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -266,6 +262,8 @@ const getCompassDirection = (degrees: number): string => {
 
 const Map = () => {
   const mapRef = useRef<MapView>(null);
+  const router = useRouter();
+
   const { heading, accuracy } = useCompass();
 
   const { location } = useLocation();
@@ -401,7 +399,7 @@ const Map = () => {
   // const hasValidHeading = true
 
   const onCogClick = () => {
-    console.log("Settings clicked");
+    router.push("/settings");
   };
 
   return (
@@ -477,10 +475,7 @@ const Map = () => {
             style={styles.categoriesContainer}
             contentContainerStyle={styles.categoriesContent}
           >
-            <TouchableOpacity 
-              style={styles.categoryChip}
-              onPress={onCogClick}
-            >
+            <TouchableOpacity style={styles.categoryChip} onPress={onCogClick}>
               <Feather name="settings" size={18} color="#333" />
             </TouchableOpacity>
             {categories.map((category, index) => (
