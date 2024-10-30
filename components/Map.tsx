@@ -22,6 +22,7 @@ import Animated, {
 import { useCompass } from "../hooks/useCompass";
 import { useLocation } from "../hooks/useLocation";
 import { useAppSelector } from "@/app/store/hooks";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -272,6 +273,7 @@ const Map = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>(
     categories[0]
   );
+  const radarColor = useThemeColor({}, "radar");
 
   // Add these new state variables
   const [speed, setSpeed] = useState<number | undefined>();
@@ -425,8 +427,10 @@ const Map = () => {
         />
         <Polygon
           coordinates={beaconPoints}
-          fillColor="rgba(84, 56, 54, 0.2)"
-          strokeColor="rgba(84, 56, 54, 0.5)"
+          fillColor={`${radarColor}33`}
+          // strokeColor={`${radarColor}88`}
+          // fillColor={`${radarColor}66`}
+          strokeColor={`${radarColor}CC`}
           strokeWidth={2}
         />
 

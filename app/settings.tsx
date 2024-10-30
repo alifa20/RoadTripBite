@@ -6,16 +6,21 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import {
-    setPreferredMap,
-    toggleDarkMode,
-    toggleNotifications,
+  setPreferredMap,
+  toggleDarkMode,
+  toggleNotifications,
 } from "./store/settingsSlice";
 import { MAP_TYPES, MapType } from "./store/types";
 import { ThemedText } from "@/components/ThemedText";
+import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 export default function Settings() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+
+  const color = useThemeColor({}, "icon");
+
   const { darkMode, notifications, preferredMap } = useAppSelector(
     (state) => state.settings
   );
@@ -23,20 +28,25 @@ export default function Settings() {
   const [showMapPicker, setShowMapPicker] = useState(false);
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
+    <ThemedSafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => router.back()}
           style={styles.backButton}
         >
-          <Ionicons name="arrow-back" size={24} color="#333" />
+          <Ionicons
+            name="arrow-back"
+            size={24}
+            // color="#333"
+            color={color}
+          />
         </TouchableOpacity>
         <ThemedText type="title">Settings</ThemedText>
       </View>
 
       <View style={styles.content}>
         <View style={styles.settingItem}>
-        <ThemedText>Dark Mode</ThemedText>
+          <ThemedText>Dark Mode</ThemedText>
           <Switch
             value={darkMode}
             onValueChange={() => {
@@ -46,7 +56,7 @@ export default function Settings() {
         </View>
 
         <View style={styles.settingItem}>
-        <ThemedText>Notifications</ThemedText>
+          <ThemedText>Notifications</ThemedText>
           <Switch
             value={notifications}
             onValueChange={() => {
@@ -56,7 +66,7 @@ export default function Settings() {
         </View>
 
         <View style={styles.settingItem}>
-          <Text>Default Map</Text>
+          <ThemedText>Default Map</ThemedText>
           <TouchableOpacity
             style={styles.pickerButton}
             onPress={() => setShowMapPicker(true)}
@@ -105,7 +115,7 @@ export default function Settings() {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </ThemedSafeAreaView>
   );
 }
 
@@ -149,7 +159,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: '#FFF8F0',
+    backgroundColor: "#FFF8F0",
     borderRadius: 16,
     padding: 16,
     width: "80%",
@@ -164,7 +174,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: '#543836',
+    color: "#543836",
   },
   mapOption: {
     paddingVertical: 12,
@@ -173,14 +183,14 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   mapOptionSelected: {
-    backgroundColor: '#543836',
+    backgroundColor: "#543836",
   },
   mapOptionText: {
     fontSize: 16,
-    color: '#543836',
+    color: "#543836",
   },
   mapOptionTextSelected: {
-    color: '#FFF8F0',
+    color: "#FFF8F0",
     fontWeight: "600",
   },
 });
