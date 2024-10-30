@@ -23,6 +23,7 @@ import { useCompass } from "../hooks/useCompass";
 import { useLocation } from "../hooks/useLocation";
 import { useAppSelector } from "@/app/store/hooks";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { SpeedOMeter } from "./SpeedOMeter";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -262,6 +263,8 @@ const getCompassDirection = (degrees: number): string => {
   return directions[Math.round(degrees / 45) % 8];
 };
 
+ 
+
 const Map = () => {
   const mapRef = useRef<MapView>(null);
   const router = useRouter();
@@ -447,7 +450,7 @@ const Map = () => {
             onChangeText={setSearchText}
             placeholder="Search locations..."
           /> */}
-          <ScrollView
+          {/* <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             style={styles.infoContainer}
@@ -477,7 +480,7 @@ const Map = () => {
                 {!!speed ? `${(speed * 3.6).toFixed(1)} km/h` : "0.0 km/h"}
               </Text>
             </View>
-          </ScrollView>
+          </ScrollView> */}
         </View>
 
         <View style={styles.categoriesWrapper}>
@@ -504,6 +507,7 @@ const Map = () => {
             ))}
           </ScrollView>
         </View>
+
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={onSearch}>
             <Text style={styles.buttonText}>
@@ -511,6 +515,7 @@ const Map = () => {
             </Text>
           </TouchableOpacity>
         </View>
+        <SpeedOMeter speed={speed}  style={styles.speedContainer}/>
       </View>
     </View>
   );
@@ -518,9 +523,6 @@ const Map = () => {
 
 const styles = StyleSheet.create({
   container: {
-    // ...StyleSheet.absoluteFillObject,
-    // justifyContent: "flex-end",
-    // alignItems: "center",
     flex: 1,
   },
   map: {
@@ -535,7 +537,7 @@ const styles = StyleSheet.create({
   },
   infoWrapper: {
     backgroundColor: "rgba(255, 255, 255, 0.3)",
-    paddingTop: 80,
+    paddingTop: 60,
   },
   categoriesWrapper: {
     backgroundColor: "rgba(255, 255, 255, 0.3)",
@@ -668,6 +670,35 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  speedContainer: {
+    position: "absolute",
+    right: 10,
+    top: height / 6, // Adjust this value to position below infoChips
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 12,
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    width: 50,
+  },
+  speedValue: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  speedUnit: {
+    fontSize: 12,
+    color: "#666",
+    marginTop: -2,
   },
 });
 
