@@ -1,16 +1,26 @@
-import { View, StyleSheet, Switch } from "react-native";
-import { useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ThemedText } from "@/components/ThemedText";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import { Modal, StyleSheet, Switch, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
-import { toggleDarkMode, toggleNotifications } from "./store/settingsSlice";
+import {
+    setPreferredMap,
+    toggleDarkMode,
+    toggleNotifications,
+} from "./store/settingsSlice";
+import { MAP_TYPES, MapType } from "./store/types";
+import { ThemedText } from "@/components/ThemedText";
 
 export default function Settings() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { darkMode, notifications } = useAppSelector((state) => state.settings);
+  const { darkMode, notifications, preferredMap } = useAppSelector(
+    (state) => state.settings
+  );
+
+  const [showMapPicker, setShowMapPicker] = useState(false);
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -26,7 +36,7 @@ export default function Settings() {
 
       <View style={styles.content}>
         <View style={styles.settingItem}>
-          <ThemedText>Dark Mode</ThemedText>
+        <ThemedText>Dark Mode</ThemedText>
           <Switch
             value={darkMode}
             onValueChange={() => {
@@ -34,8 +44,9 @@ export default function Settings() {
             }}
           />
         </View>
+
         <View style={styles.settingItem}>
-          <ThemedText>Notifications</ThemedText>
+        <ThemedText>Notifications</ThemedText>
           <Switch
             value={notifications}
             onValueChange={() => {
@@ -43,7 +54,57 @@ export default function Settings() {
             }}
           />
         </View>
+
+        <View style={styles.settingItem}>
+          <Text>Default Map</Text>
+          <TouchableOpacity
+            style={styles.pickerButton}
+            onPress={() => setShowMapPicker(true)}
+          >
+            <Text>{MAP_TYPES[preferredMap]}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
+
+      <Modal
+        visible={showMapPicker}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowMapPicker(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select Map Type</Text>
+              <TouchableOpacity onPress={() => setShowMapPicker(false)}>
+                <Ionicons name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
+            {Object.keys(MAP_TYPES).map((type) => (
+              <TouchableOpacity
+                key={type}
+                style={[
+                  styles.mapOption,
+                  preferredMap === type && styles.mapOptionSelected,
+                ]}
+                onPress={() => {
+                  dispatch(setPreferredMap(type as MapType));
+                  setShowMapPicker(false);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.mapOptionText,
+                    preferredMap === type && styles.mapOptionTextSelected,
+                  ]}
+                >
+                  {MAP_TYPES[type as MapType]}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -58,19 +119,66 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 16,
   },
+
   backButton: {
     padding: 8,
   },
   content: {
-    flex: 1,
     padding: 16,
   },
   settingItem: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
+  },
+  pickerButton: {
+    backgroundColor: "#f0f0f0",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: 16,
+    padding: 16,
+    width: "80%",
+    maxWidth: 400,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  mapOption: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginVertical: 4,
+  },
+  mapOptionSelected: {
+    backgroundColor: "#0a7ea4",
+  },
+  mapOptionText: {
+    fontSize: 16,
+  },
+  mapOptionTextSelected: {
+    color: "white",
+    fontWeight: "600",
   },
 });

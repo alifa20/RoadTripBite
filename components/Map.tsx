@@ -21,6 +21,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useCompass } from "../hooks/useCompass";
 import { useLocation } from "../hooks/useLocation";
+import { useAppSelector } from "@/app/store/hooks";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -264,6 +265,7 @@ const Map = () => {
   const mapRef = useRef<MapView>(null);
   const router = useRouter();
 
+  const preferredMap = useAppSelector((state) => state.settings.preferredMap);
   const { heading, accuracy } = useCompass();
 
   const { location } = useLocation();
