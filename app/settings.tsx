@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: "white",
+    backgroundColor: '#FFF8F0',
     borderRadius: 16,
     padding: 16,
     width: "80%",
@@ -164,6 +164,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: "600",
+    color: '#543836',
   },
   mapOption: {
     paddingVertical: 12,
@@ -172,13 +173,14 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   mapOptionSelected: {
-    backgroundColor: "#0a7ea4",
+    backgroundColor: '#543836',
   },
   mapOptionText: {
     fontSize: 16,
+    color: '#543836',
   },
   mapOptionTextSelected: {
-    color: "white",
+    color: '#FFF8F0',
     fontWeight: "600",
   },
 });

@@ -305,9 +305,15 @@ const Map = () => {
 
   const zoomLevelLink = radiusMap.zoomLevel;
   // https://www.google.com/maps/search/Restaurants/@-33.798424,151.0866225,15z/data=!4m4!2m3!5m1!4e9!6e5
-  const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
-  // const calloutLink2 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
-  const calloutLink2 = `maps://maps.apple.com/?q=${selectedCategory}&ll=${endMarkerPosition2.latitude},${endMarkerPosition2.longitude}&z=${zoomLevelLink}`;
+  // const calloutLink1 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition1.latitude},${endMarkerPosition1.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
+  const linkGoogle = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition2.latitude},${endMarkerPosition2.longitude},${zoomLevelLink}/data=!4m4!2m3!5m1!4e9!6e5`;
+  const linkApple = `maps://maps.apple.com/?q=${selectedCategory}&ll=${endMarkerPosition2.latitude},${endMarkerPosition2.longitude}&z=${zoomLevelLink}`;
+  let calloutLink2 = "";
+  if (preferredMap === "GOOGLE") {
+    calloutLink2 = linkGoogle;
+  } else if (preferredMap === "APPLE") {
+    calloutLink2 = linkApple;
+  }
   // const calloutLink3 = `https://www.google.com/maps/search/${selectedCategory}/@${endMarkerPosition3.latitude},${endMarkerPosition3.longitude},11z`;
 
   const [isUserInteracting, setIsUserInteracting] = useState(false);
@@ -419,8 +425,8 @@ const Map = () => {
         />
         <Polygon
           coordinates={beaconPoints}
-          fillColor="rgba(0, 150, 255, 0.2)"
-          strokeColor="rgba(0, 150, 255, 0.5)"
+          fillColor="rgba(84, 56, 54, 0.2)"
+          strokeColor="rgba(84, 56, 54, 0.5)"
           strokeWidth={2}
         />
 
@@ -599,13 +605,13 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "rgba(154, 134, 181, 0.3)", // Changed to semi-transparent orange
+    backgroundColor: "rgba(84, 56, 54, 0.3)",
   },
   beaconCenter: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "rgb(154, 134, 181)", // Changed to solid orange
+    backgroundColor: "rgb(84, 56, 54)",
   },
   directionalBeaconContainer: {
     width: 400,
@@ -618,12 +624,11 @@ const styles = StyleSheet.create({
     width: 240,
     height: 240,
     borderRadius: 120,
-    // backgroundColor: 'rgba(0, 150, 255, 0.1)',
     borderTopWidth: 120,
     borderRightWidth: 120,
     borderBottomWidth: 0,
     borderLeftWidth: 120,
-    borderTopColor: "rgba(0, 150, 255, 0.8)",
+    borderTopColor: "rgba(84, 56, 54, 0.8)",
     borderRightColor: "transparent",
     borderBottomColor: "transparent",
     borderLeftColor: "transparent",
@@ -632,7 +637,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 20,
-    backgroundColor: "rgb(0, 150, 255)",
+    backgroundColor: "rgb(84, 56, 54)",
   },
   buttonContainer: {
     // position: 'absolute',
@@ -645,12 +650,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button: {
-    backgroundColor: "#4CAF50", // Green background
+    backgroundColor: "#543836",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 15,
-    elevation: 3, // Add shadow on Android
-    shadowColor: "#000", // Add shadow on iOS
+    elevation: 3,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,

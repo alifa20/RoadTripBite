@@ -12,7 +12,7 @@ const initialState: SettingsState = {
   darkMode: false,
   notifications: true,
   searchRadius: 5,
-  preferredMap: 'IN_APP',
+  preferredMap: "GOOGLE",
 };
 
 const settingsSlice = createSlice({
