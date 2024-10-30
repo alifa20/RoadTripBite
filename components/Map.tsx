@@ -24,6 +24,7 @@ import { useLocation } from "../hooks/useLocation";
 import { useAppSelector } from "@/app/store/hooks";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { SpeedOMeter } from "./SpeedOMeter";
+import { Compass } from "./Compass";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -262,8 +263,6 @@ const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 const getCompassDirection = (degrees: number): string => {
   return directions[Math.round(degrees / 45) % 8];
 };
-
- 
 
 const Map = () => {
   const mapRef = useRef<MapView>(null);
@@ -515,7 +514,10 @@ const Map = () => {
             </Text>
           </TouchableOpacity>
         </View>
-        <SpeedOMeter speed={speed}  style={styles.speedContainer}/>
+        <SpeedOMeter speed={speed} style={styles.speedContainer} />
+        {/* <View style={styles.compass}>
+          <Compass heading={heading} direction={compassDirection} />
+        </View> */}
       </View>
     </View>
   );
@@ -700,6 +702,9 @@ const styles = StyleSheet.create({
     color: "#666",
     marginTop: -2,
   },
+  compass:{
+    width: 50,
+  }
 });
 
 export default Map;
