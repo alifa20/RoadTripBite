@@ -1,5 +1,5 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface AuthContextData {
   user: FirebaseAuthTypes.User | null;
@@ -7,6 +7,7 @@ interface AuthContextData {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  signInAnonymously: () => Promise<FirebaseAuthTypes.UserCredential>;
   forgotPassword: (email: string) => Promise<void>;
 }
 
@@ -41,6 +42,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const signInAnonymously =
+    async (): Promise<FirebaseAuthTypes.UserCredential> => {
+      try {
+        return await auth().signInAnonymously();
+      } catch (error) {
+        throw error;
+      }
+    };
+
   const signOut = async () => {
     try {
       await auth().signOut();
@@ -58,7 +68,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, forgotPassword }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        signIn,
+        signUp,
+        signOut,
+        forgotPassword,
+        signInAnonymously,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
