@@ -36,6 +36,12 @@
           <string>com.evda.RoadTripBite</string>
         </array>
       </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>com.googleusercontent.apps.379472462063-ic8uclfduimpeq0laovhnfqvrkv10kl5</string>
+        </array>
+      </dict>
     </array>
     <key>CFBundleVersion</key>
     <string>1</string>
@@ -53,11 +59,12 @@
       <true/>
     </dict>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>[LiveTrack] This app requires location while in use</string>
+    <string>Your location helps us show nearby food stops and calculate accurate travel times. This makes it easier to plan your perfect road trip breaks.</string>
     <key>NSMotionUsageDescription</key>
-    <string>[LiveTrack] This app uses motion-detection to determine the motion-activity of the device (walking, vehicle, bicycle, etc)</string>
+    <string>We use motion detection to improve your road trip experience by automatically detecting when you're driving, walking, or cycling. This helps us provide more accurate navigation and trip tracking.</string>
     <key>NSUserActivityTypes</key>
     <array>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>
     <key>NSUserTrackingUsageDescription</key>

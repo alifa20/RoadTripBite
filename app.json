@@ -17,8 +17,8 @@
       "bundleIdentifier": "com.evda.RoadTripBite",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "[LiveTrack] This app requires location while in use",
-        "NSMotionUsageDescription": "[LiveTrack] This app uses motion-detection to determine the motion-activity of the device (walking, vehicle, bicycle, etc)",
+        "NSLocationWhenInUseUsageDescription": "Your location helps us show nearby food stops and calculate accurate travel times. This makes it easier to plan your perfect road trip breaks.",
+        "NSMotionUsageDescription": "We use motion detection to improve your road trip experience by automatically detecting when you're driving, walking, or cycling. This helps us provide more accurate navigation and trip tracking.",
         "UIBackgroundModes": ["location", "fetch", "processing", "audio"],
         "BGTaskSchedulerPermittedIdentifiers": [
           "com.transistorsoft.fetch",
@@ -27,8 +27,9 @@
       }
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.jpeg",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.evda.roadtripbite"
@@ -75,7 +76,9 @@
           "appCompatVersion": "1.4.2"
         }
       ],
-      "react-native-background-fetch"
+      "react-native-background-fetch",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth"
     ],
     "experiments": {
       "typedRoutes": true
