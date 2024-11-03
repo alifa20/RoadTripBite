@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "379472462063",
+    "project_id": "road-trip-bite",
+    "storage_bucket": "road-trip-bite.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:379472462063:android:df2e5d65287eb9d6901b1a",
+        "android_client_info": {
+          "package_name": "com.evda.roadtripbite"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "379472462063-773i9rndj58g0s2l7t30fu4echa66qac.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBk0jE1HjKLSHwmktDiocOBCwLF1PaFsiA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "379472462063-773i9rndj58g0s2l7t30fu4echa66qac.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "379472462063-ic8uclfduimpeq0laovhnfqvrkv10kl5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.evda.roadtripbite"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
