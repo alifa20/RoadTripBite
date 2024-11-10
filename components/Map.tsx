@@ -348,7 +348,7 @@ const Map = () => {
             mapRef.current?.animateToRegion(region, 1000);
           });
         }
-      }, 2000);
+      }, 1000);
     }
 
     // Cleanup function
