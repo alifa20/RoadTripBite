@@ -42,6 +42,12 @@
           <string>com.googleusercontent.apps.379472462063-ic8uclfduimpeq0laovhnfqvrkv10kl5</string>
         </array>
       </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>exp+road-trip-bite</string>
+        </array>
+      </dict>
     </array>
     <key>CFBundleVersion</key>
     <string>1</string>
@@ -64,6 +70,7 @@
     <string>We use motion detection to improve your road trip experience by automatically detecting when you're driving, walking, or cycling. This helps us provide more accurate navigation and trip tracking.</string>
     <key>NSUserActivityTypes</key>
     <array>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>
