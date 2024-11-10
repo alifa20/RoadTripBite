@@ -7,25 +7,30 @@ import { store } from "./store";
 import { Splash } from "@/components/Splash";
 
 export default function RootLayout() {
+  return (
+    <Provider store={store}>
+      <AuthProvider>
+        <RootContent />
+      </AuthProvider>
+    </Provider>
+  );
+}
+
+const RootContent = () => {
   const { currentOffering } = useRevenueCat();
-  console.log('currentOffering',currentOffering);
-  
+  console.log("currentOffering", currentOffering);
 
   if (currentOffering === null) {
     return <Splash />;
   }
 
   return (
-    <Provider store={store}>
-      <AuthProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="settings" />
-            <Stack.Screen name="subscription" />
-          </Stack>
-        </GestureHandlerRootView>
-      </AuthProvider>
-    </Provider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="settings" />
+        <Stack.Screen name="subscription" />
+      </Stack>
+    </GestureHandlerRootView>
   );
-}
+};

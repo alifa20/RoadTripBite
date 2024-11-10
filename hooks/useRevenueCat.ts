@@ -5,12 +5,18 @@ import Purchases, {
   LOG_LEVEL,
   PurchasesOffering,
 } from "react-native-purchases";
+import { useAnonymousAuth } from "./useAnonymousAuth";
 
 export const useRevenueCat = () => {
+  const { user } = useAnonymousAuth();
   const [currentOffering, setCurrentOffering] =
     useState<PurchasesOffering | null>();
 
   useEffect(() => {
+    if (!user) {
+      return;
+    }
+
     const initializePurchases = async () => {
       Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
 
@@ -18,7 +24,11 @@ export const useRevenueCat = () => {
         await Purchases.configure({
           // apiKey: process.env.EXPO_PUBLIC_REVENUECAT_APPLE_API_KEY,
           apiKey: API_KEYS.apple,
+
         });
+        const { customerInfo, created } = await Purchases.logIn(user.uid);
+
+        console.log("customerInfo", customerInfo);
       }
       //   else if (Platform.OS === 'android') {
       //     await Purchases.configure({
@@ -35,7 +45,7 @@ export const useRevenueCat = () => {
     };
 
     initializePurchases().catch(console.error);
-  }, []);
+  }, [user]);
 
   return { currentOffering };
 };

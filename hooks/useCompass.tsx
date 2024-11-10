@@ -13,7 +13,7 @@ export const useCompass = () => {
     CompassHeading.start(degree_update_rate, ({ heading, accuracy }) => {
       setAccuracy(accuracy);
       setHeading(heading);
-      console.log("CompassHeading: ", heading, accuracy);
+      // console.log("CompassHeading: ", heading, accuracy);
     });
 
     return () => {
