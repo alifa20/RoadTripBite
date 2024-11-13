@@ -1,4 +1,7 @@
+import { useAppSelector } from "@/app/store/hooks";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { Feather } from "@expo/vector-icons";
+import functions from "@react-native-firebase/functions";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -21,10 +24,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { useCompass } from "../hooks/useCompass";
 import { useLocation } from "../hooks/useLocation";
-import { useAppSelector } from "@/app/store/hooks";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { SpeedOMeter } from "./SpeedOMeter";
-import { Compass } from "./Compass";
+import { useAuth } from "@/contexts/AuthContext";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -265,6 +266,7 @@ const getCompassDirection = (degrees: number): string => {
 };
 
 const Map = () => {
+  const { user, signInAnonymously } = useAuth();
   const mapRef = useRef<MapView>(null);
   const router = useRouter();
 
@@ -373,6 +375,35 @@ const Map = () => {
     }
   }, [location, heading]);
 
+  // useEffect(() => {
+  //   const callFunction = async () => {
+  //     try {
+  //       // // Only proceed if we have a user
+  //       // if (!user) {
+  //       //   await signInAnonymously();
+  //       //   return; // The auth state change will trigger this effect again
+  //       // }
+
+  //       // console.log('here');
+
+  //       // // Get the ID token
+  //       // const token = await user.getIdToken();
+
+  //       // Now call the function with the token
+  //       const resp = await functions().httpsCallable("placesOnCall")({
+  //         lat: beaconPoints[beaconPoints.length / 3].latitude,
+  //         lng: beaconPoints[beaconPoints.length / 3].longitude,
+  //         type: "restaurant",
+  //       });
+  //       console.log("Function response:", resp);
+  //     } catch (error) {
+  //       console.error("Error calling function:", error);
+  //     }
+  //   };
+
+  //   callFunction();
+  // }, []);
+
   // const startAngle =
   //   location?.coords?.heading !== -1
   //     ? location?.coords?.heading ?? 20
@@ -402,8 +433,17 @@ const Map = () => {
     };
   });
 
-  const onSearch = () => {
-    Linking.openURL(calloutLink2);
+  const onSearch = async () => {
+    if (preferredMap === "IN_APP") {
+      const resp = await functions().httpsCallable("placesOnCall")({
+        lat: beaconPoints[beaconPoints.length / 3].latitude,
+        lng: beaconPoints[beaconPoints.length / 3].longitude,
+        type: "restaurant",
+      });
+      console.log("response", resp);
+    } else {
+      Linking.openURL(calloutLink2);
+    }
   };
 
   const hasValidHeading =
@@ -427,6 +467,16 @@ const Map = () => {
           title="Your Location"
           description="You are here"
         />
+        {/* <Marker
+          coordinate={{
+            latitude:
+              beaconPoints[Math.round(beaconPoints.length / 3)].latitude,
+            longitude:
+              beaconPoints[Math.round(beaconPoints.length / 3)].longitude,
+          }}
+          title="Your Location"
+          description="You are here"
+        /> */}
         <Polygon
           coordinates={beaconPoints}
           fillColor={`${radarColor}33`}
@@ -702,9 +752,9 @@ const styles = StyleSheet.create({
     color: "#666",
     marginTop: -2,
   },
-  compass:{
+  compass: {
     width: 50,
-  }
+  },
 });
 
 export default Map;

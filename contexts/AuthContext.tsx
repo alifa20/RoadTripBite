@@ -23,6 +23,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     });
 
+    // Verify Firebase is initialized
+    if (!auth().app) {
+      console.error("Firebase not initialized!");
+    }
+
     return unsubscribe;
   }, []);
 

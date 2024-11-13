@@ -285,6 +285,9 @@ PODS:
     - FirebaseAuth (~> 11.2.0)
   - Firebase/CoreOnly (11.2.0):
     - FirebaseCore (= 11.2.0)
+  - Firebase/Functions (11.2.0):
+    - Firebase/CoreOnly
+    - FirebaseFunctions (~> 11.2.0)
   - FirebaseAppCheckInterop (11.2.0)
   - FirebaseAuth (11.2.0):
     - FirebaseAppCheckInterop (~> 11.0)
@@ -304,6 +307,16 @@ PODS:
     - FirebaseCore (~> 11.0)
   - FirebaseCoreInternal (11.2.0):
     - "GoogleUtilities/NSData+zlib (~> 8.0)"
+  - FirebaseFunctions (11.2.0):
+    - FirebaseAppCheckInterop (~> 11.0)
+    - FirebaseAuthInterop (~> 11.0)
+    - FirebaseCore (~> 11.0)
+    - FirebaseCoreExtension (~> 11.0)
+    - FirebaseMessagingInterop (~> 11.0)
+    - FirebaseSharedSwift (~> 11.0)
+    - GTMSessionFetcher/Core (~> 3.4)
+  - FirebaseMessagingInterop (11.2.0)
+  - FirebaseSharedSwift (11.2.0)
   - fmt (9.1.0)
   - glog (0.3.5)
   - Google-Mobile-Ads-SDK (11.7.0):
@@ -1518,6 +1531,10 @@ PODS:
     - Firebase/Auth (<= 11.4.0)
     - React-Core
     - RNFBApp
+  - RNFBFunctions (21.4.0):
+    - Firebase/Functions (<= 11.4.0)
+    - React-Core
+    - RNFBApp
   - RNGestureHandler (2.16.2):
     - DoubleConversion
     - glog
@@ -1697,6 +1714,7 @@ DEPENDENCIES:
   - RNBackgroundGeolocation (from `../node_modules/react-native-background-geolocation`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
+  - "RNFBFunctions (from `../node_modules/@react-native-firebase/functions`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNGoogleMobileAds (from `../node_modules/react-native-google-mobile-ads`)
   - RNPaywalls (from `../node_modules/react-native-purchases-ui`)
@@ -1716,6 +1734,9 @@ SPEC REPOS:
     - FirebaseCore
     - FirebaseCoreExtension
     - FirebaseCoreInternal
+    - FirebaseFunctions
+    - FirebaseMessagingInterop
+    - FirebaseSharedSwift
     - Google-Mobile-Ads-SDK
     - GoogleUserMessagingPlatform
     - GoogleUtilities
@@ -1885,6 +1906,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBAuth:
     :path: "../node_modules/@react-native-firebase/auth"
+  RNFBFunctions:
+    :path: "../node_modules/@react-native-firebase/functions"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNGoogleMobileAds:
@@ -1932,6 +1955,9 @@ SPEC CHECKSUMS:
   FirebaseCore: a282032ae9295c795714ded2ec9c522fc237f8da
   FirebaseCoreExtension: cda74ddfb001224bd8fd1d6e74698b4ed07803de
   FirebaseCoreInternal: 0c569513412da9f3b31bd0b340013bbee8f295c5
+  FirebaseFunctions: 8ff3cb87f2c18fd564dddd4e5086a899392e1d07
+  FirebaseMessagingInterop: 2bf06fae2d15b77b8e4ca872241f90e2c6285ef3
+  FirebaseSharedSwift: 7a0d78d155ede78407f0fdc89fbc914014c7c540
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
   glog: fdfdfe5479092de0c4bdbebedd9056951f092c4f
   Google-Mobile-Ads-SDK: 204b517c9765169144cf39763c7f5d23c57a9db0
@@ -1998,6 +2024,7 @@ SPEC CHECKSUMS:
   RNBackgroundGeolocation: 7662b761774c7203fbebbcaacbd92f61efe8f799
   RNFBApp: fcb5659457f5a4857b7e54b4c29a5bbaa8b3b9a9
   RNFBAuth: f11e9d6753d84254dad80e3afcea18433582c74c
+  RNFBFunctions: fdb39dde0475341a830c3901bef2965e81832cd3
   RNGestureHandler: 20a4307fd21cbff339abfcfa68192f3f0a6a518b
   RNGoogleMobileAds: f920a1f359a9322a2988cbfb963d3275ba9f897e
   RNPaywalls: e42bdbd68dfe88cf26066bce590cbe075a6d40f0

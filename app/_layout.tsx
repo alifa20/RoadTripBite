@@ -1,10 +1,10 @@
+import { Splash } from "@/components/Splash";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { useRevenueCat } from "@/hooks/useRevenueCat";
 import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import { store } from "./store";
-import { Splash } from "@/components/Splash";
 
 export default function RootLayout() {
   return (
