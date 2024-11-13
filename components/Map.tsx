@@ -440,7 +440,7 @@ const Map = () => {
         lng: beaconPoints[beaconPoints.length / 3].longitude,
         type: "restaurant",
       });
-      console.log("response", resp);
+      console.log("response", JSON.stringify(resp, null, 2));
     } else {
       Linking.openURL(calloutLink2);
     }
