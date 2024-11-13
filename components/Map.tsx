@@ -1,4 +1,5 @@
 import { useAppSelector } from "@/app/store/hooks";
+import { useAuth } from "@/contexts/AuthContext";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Feather } from "@expo/vector-icons";
 import functions from "@react-native-firebase/functions";
@@ -24,8 +25,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { useCompass } from "../hooks/useCompass";
 import { useLocation } from "../hooks/useLocation";
+import { LocationMarkers } from "./LocationMarkers";
 import { SpeedOMeter } from "./SpeedOMeter";
-import { useAuth } from "@/contexts/AuthContext";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -271,6 +272,8 @@ const Map = () => {
   const router = useRouter();
 
   const preferredMap = useAppSelector((state) => state.settings.preferredMap);
+  const locations = useAppSelector((state) => state.location.locations);
+
   const { heading, accuracy } = useCompass();
 
   const { location } = useLocation();
@@ -328,12 +331,18 @@ const Map = () => {
 
   useEffect(() => {
     if (location && mapRef.current) {
-      const allPoints = [
-        currentLocation,
-        endMarkerPosition1,
-        endMarkerPosition2,
-        ...beaconPoints,
-      ];
+      const allPoints =
+        locations.length > 0
+          ? locations.map(({ location }) => ({
+              latitude: location.lat,
+              longitude: location.lng,
+            }))
+          : [
+              currentLocation,
+              endMarkerPosition1,
+              endMarkerPosition2,
+              ...beaconPoints,
+            ];
 
       const topPadding = 200; // Height of the top controls
       const region = calculateRegionForPoints(allPoints, topPadding);
@@ -467,6 +476,7 @@ const Map = () => {
           title="Your Location"
           description="You are here"
         />
+        <LocationMarkers />
         {/* <Marker
           coordinate={{
             latitude:
