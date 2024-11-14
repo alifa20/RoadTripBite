@@ -317,7 +317,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
     router.push("/settings");
   };
 
-  const onMapPress = () => {
+  const onMapPress = () => {    
     bottomSheetRef.current?.close()
   };
 
