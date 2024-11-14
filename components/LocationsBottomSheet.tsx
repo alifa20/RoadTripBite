@@ -27,6 +27,15 @@ const Content = () => {
     }
   );
 
+  const photos = [
+    {
+      photo_reference: selectedLocation?.photos?.[0] || "",
+      width: 0,
+      height: 0,
+    },
+    ...(placeDetails.currentData?.photos ?? []).slice(1, 5),
+  ];
+
   return (
     <>
       <Text style={styles.title}>{selectedLocation?.name}</Text>
@@ -51,9 +60,7 @@ const Content = () => {
           </Text>
         </View>
       </View>
-      <LocationImages
-        photos={(placeDetails.currentData?.photos ?? []).slice(0, 5)}
-      />
+      <LocationImages photos={photos} />
     </>
   );
 };

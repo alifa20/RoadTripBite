@@ -9,19 +9,27 @@ interface Props {
 }
 
 export const LocationImage = ({ photoReference }: Props) => {
-  const { data: photoUrl, isLoading } = useGetPhotoUrlQuery({
-    photoReference,
-    maxWidth: 400,
-  });
+  const { data: photoUrl, isLoading } = useGetPhotoUrlQuery(
+    {
+      photoReference,
+      maxWidth: 400,
+    },
+    {
+      skip: !photoReference || photoReference === "",
+    }
+  );
 
   return (
     <>
-      {isLoading && <ActivityIndicator style={styles.photo} />}
-      <Image
-        source={{ uri: photoUrl }}
-        style={styles.photo}
-        resizeMode="cover"
-      />
+      {isLoading || photoReference === "" ? (
+        <ActivityIndicator style={styles.photo} />
+      ) : (
+        <Image
+          source={{ uri: photoUrl }}
+          style={styles.photo}
+          resizeMode="cover"
+        />
+      )}
     </>
   );
 };

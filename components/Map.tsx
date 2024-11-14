@@ -29,6 +29,9 @@ import { useLocation } from "../hooks/useLocation";
 import { DirectionalBeacon } from "./DirectionalBeacon";
 import { LocationMarkers } from "./LocationMarkers";
 import { SpeedOMeter } from "./SpeedOMeter";
+import { useDispatch } from "react-redux";
+import { setLocations } from "@/store/locationSlice";
+import { LocationState } from "@/store/types";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -159,6 +162,7 @@ interface MapProps {
 const Map = ({ bottomSheetRef }: MapProps) => {
   const mapRef = useRef<MapView>(null);
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const preferredMap = useAppSelector((state) => state.settings.preferredMap);
   const locations = useAppSelector((state) => state.location.locations);
@@ -298,12 +302,20 @@ const Map = ({ bottomSheetRef }: MapProps) => {
 
   const onSearch = async () => {
     if (preferredMap === "IN_APP") {
-      const resp = await functions().httpsCallable("placesOnCall")({
+      const resp = await functions().httpsCallable<
+        {
+          lat: number;
+          lng: number;
+          type: string;
+        },
+        { data: { results: LocationState[] } }
+      >("placesOnCall")({
         lat: beaconPoints[beaconPoints.length / 3].latitude,
         lng: beaconPoints[beaconPoints.length / 3].longitude,
         type: "restaurant",
       });
-      console.log("response", JSON.stringify(resp, null, 2));
+      dispatch(setLocations(((resp.data as any)?.results as any) ?? []));
+      // console.log("response", JSON.stringify(resp, null, 2));
     } else {
       Linking.openURL(calloutLink2);
     }
@@ -317,8 +329,8 @@ const Map = ({ bottomSheetRef }: MapProps) => {
     router.push("/settings");
   };
 
-  const onMapPress = () => {    
-    bottomSheetRef.current?.close()
+  const onMapPress = () => {
+    bottomSheetRef.current?.close();
   };
 
   return (
