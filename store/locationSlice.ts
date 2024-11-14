@@ -2,12 +2,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { mockResponse } from "@/mocks/mockLocations";
 import { LocationState, PlaceLocation } from "./types";
 
-
 const initialState: LocationState = {
-  locations: mockResponse.data.results,
-  nextPageToken: mockResponse.data.nextPageToken,
+  // locations: mockResponse.data.results,
+  // nextPageToken: mockResponse.data.nextPageToken,
+  locations: [],
+  nextPageToken: "",
   selectedLocation: null,
-  showBottomSheet:false
+  showBottomSheet: false,
 };
 
 const locationSlice = createSlice({
@@ -20,7 +21,10 @@ const locationSlice = createSlice({
     setNextPageToken: (state, action: PayloadAction<string>) => {
       state.nextPageToken = action.payload;
     },
-    setSelectedLocation: (state, action: PayloadAction<PlaceLocation | null>) => {
+    setSelectedLocation: (
+      state,
+      action: PayloadAction<PlaceLocation | null>
+    ) => {
       state.selectedLocation = action.payload;
     },
     clearLocations: (state) => {
