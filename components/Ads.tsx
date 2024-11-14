@@ -1,5 +1,6 @@
-import React, { useState, useRef } from "react";
-import { Dimensions, Platform, StyleSheet, Text, View } from "react-native";
+import { ADS_HEIGHT } from "@/constants";
+import React, { useRef } from "react";
+import { Dimensions, Platform, StyleSheet, View } from "react-native";
 import {
   BannerAd,
   BannerAdSize,
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
     // Remove the fixed height
     width: "100%",
     alignItems: "center",
-    maxHeight: height / 3,
+    maxHeight: ADS_HEIGHT,
   },
 });
 

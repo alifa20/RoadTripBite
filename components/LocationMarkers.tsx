@@ -1,8 +1,13 @@
-import { useAppSelector } from "@/app/store/hooks";
+import { useAppSelector } from "@/store/hooks";
 import { Marker } from "react-native-maps";
 import { useRouter } from "expo-router";
+import BottomSheet from "@gorhom/bottom-sheet";
 
-export const LocationMarkers = () => {
+interface Props {
+  bottomSheetRef: React.RefObject<BottomSheet>;
+}
+
+export const LocationMarkers = ({ bottomSheetRef }: Props) => {
   const router = useRouter();
   const locations = useAppSelector((state) => state.location.locations);
 
@@ -18,15 +23,15 @@ export const LocationMarkers = () => {
           title={location.name}
           description={location.address}
           onPress={() => {
-            // Optional: Navigate to detail view or show more info
-            router.push({
-              pathname: "/place/[id]",
-              params: { id: location.placeId }
-            });
+            bottomSheetRef.current?.expand();
+            // // Optional: Navigate to detail view or show more info
+            // router.push({
+            //   pathname: "/place/[id]",
+            //   params: { id: location.placeId }
+            // });
           }}
         />
       ))}
     </>
   );
 };
-

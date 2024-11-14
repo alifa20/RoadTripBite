@@ -7,6 +7,7 @@ const initialState: LocationState = {
   locations: mockResponse.data.results,
   nextPageToken: mockResponse.data.nextPageToken,
   selectedLocation: null,
+  showBottomSheet:false
 };
 
 const locationSlice = createSlice({

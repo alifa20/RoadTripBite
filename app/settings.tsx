@@ -4,13 +4,13 @@ import { useState } from "react";
 import { Modal, StyleSheet, Switch, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAppDispatch, useAppSelector } from "./store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   setPreferredMap,
   toggleDarkMode,
   toggleNotifications,
-} from "./store/settingsSlice";
-import { MAP_TYPES, MapType } from "./store/types";
+} from "../store/settingsSlice";
+import { MAP_TYPES, MapType } from "../store/types";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
 import { useThemeColor } from "@/hooks/useThemeColor";

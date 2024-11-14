@@ -1,7 +1,8 @@
-import { useAppSelector } from "@/app/store/hooks";
-import { useAuth } from "@/contexts/AuthContext";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { useAppSelector } from "@/store/hooks";
+import { generateRadiusPoints } from "@/utils/generateRadiusPoints";
 import { Feather } from "@expo/vector-icons";
+import BottomSheet from "@gorhom/bottom-sheet";
 import functions from "@react-native-firebase/functions";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
@@ -16,7 +17,7 @@ import {
   View,
 } from "react-native";
 import MapView, { LatLng, Marker, Polygon, Region } from "react-native-maps";
-import Animated, {
+import {
   Easing,
   useAnimatedStyle,
   useSharedValue,
@@ -25,6 +26,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useCompass } from "../hooks/useCompass";
 import { useLocation } from "../hooks/useLocation";
+import { DirectionalBeacon } from "./DirectionalBeacon";
 import { LocationMarkers } from "./LocationMarkers";
 import { SpeedOMeter } from "./SpeedOMeter";
 
@@ -34,49 +36,6 @@ const INITIAL_LATITUDE_DELTA = 1.5;
 const INITIAL_LONGITUDE_DELTA = INITIAL_LATITUDE_DELTA * ASPECT_RATIO;
 
 const getDelta = (latitudeDelta: number) => latitudeDelta * ASPECT_RATIO;
-
-// Function to generate points for the angled radius beacon
-const generateRadiusPoints = (
-  center: Region,
-  radiusInKm: number,
-  startAngle: number,
-  endAngle: number
-) => {
-  const points = [];
-  const earthRadius = 6371; // Earth's radius in kilometers
-  const angularDistance = radiusInKm / earthRadius;
-
-  const radian = Math.PI / 180;
-
-  for (let i = startAngle; i <= endAngle; i += 5) {
-    const radians = i * radian;
-    const lat = Math.asin(
-      Math.sin(center.latitude * radian) * Math.cos(angularDistance) +
-        Math.cos(center.latitude * radian) *
-          Math.sin(angularDistance) *
-          Math.cos(radians)
-    );
-    const lon =
-      center.longitude * radian +
-      Math.atan2(
-        Math.sin(radians) *
-          Math.sin(angularDistance) *
-          Math.cos(center.latitude * radian),
-        Math.cos(angularDistance) -
-          Math.sin(center.latitude * radian) * Math.sin(lat)
-      );
-
-    points.push({
-      latitude: lat * (180 / Math.PI),
-      longitude: lon * (180 / Math.PI),
-    });
-  }
-
-  // Add center point to close the polygon
-  points.push(center);
-
-  return points;
-};
 
 // const radiusDeltaMap = {
 //   10: 0.5,
@@ -187,87 +146,17 @@ const getRadiusFromSpeed = (speed = 0): radiusMap => {
   };
 };
 
-const AnimatedBeacon = ({
-  coordinate,
-  children,
-}: {
-  coordinate: LatLng;
-  children: React.ReactNode;
-}) => {
-  const scale = useSharedValue(1);
-  const opacity = useSharedValue(1);
-
-  React.useEffect(() => {
-    scale.value = withRepeat(
-      withTiming(1.5, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
-      -1,
-      true
-    );
-    opacity.value = withRepeat(
-      withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
-      -1,
-      true
-    );
-  }, []);
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: scale.value }],
-      opacity: opacity.value,
-    };
-  });
-
-  return (
-    <Marker coordinate={coordinate}>
-      <View style={styles.beaconContainer}>
-        <Animated.View style={[styles.beacon, animatedStyle]} />
-        <View style={styles.beaconCenter} />
-      </View>
-      {children}
-    </Marker>
-  );
-};
-
-const DirectionalBeacon = ({ heading }: { heading: number }) => {
-  const scale = useSharedValue(1);
-  const opacity = useSharedValue(1);
-
-  useEffect(() => {
-    scale.value = withRepeat(
-      withTiming(2, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
-      -1,
-      true
-    );
-    opacity.value = withRepeat(
-      withTiming(0, { duration: 2000, easing: Easing.inOut(Easing.ease) }),
-      -1,
-      true
-    );
-  }, []);
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: scale.value }, { rotate: `${heading}deg` }],
-      opacity: opacity.value,
-    };
-  });
-
-  return (
-    <View style={styles.directionalBeaconContainer}>
-      <Animated.View style={[styles.directionalBeacon, animatedStyle]} />
-      <View style={styles.directionalBeaconCenter} />
-    </View>
-  );
-};
-
 const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 // Helper function to get compass direction
 const getCompassDirection = (degrees: number): string => {
   return directions[Math.round(degrees / 45) % 8];
 };
 
-const Map = () => {
-  const { user, signInAnonymously } = useAuth();
+interface MapProps {
+  bottomSheetRef: React.RefObject<BottomSheet>;
+}
+
+const Map = ({ bottomSheetRef }: MapProps) => {
   const mapRef = useRef<MapView>(null);
   const router = useRouter();
 
@@ -384,41 +273,6 @@ const Map = () => {
     }
   }, [location, heading]);
 
-  // useEffect(() => {
-  //   const callFunction = async () => {
-  //     try {
-  //       // // Only proceed if we have a user
-  //       // if (!user) {
-  //       //   await signInAnonymously();
-  //       //   return; // The auth state change will trigger this effect again
-  //       // }
-
-  //       // console.log('here');
-
-  //       // // Get the ID token
-  //       // const token = await user.getIdToken();
-
-  //       // Now call the function with the token
-  //       const resp = await functions().httpsCallable("placesOnCall")({
-  //         lat: beaconPoints[beaconPoints.length / 3].latitude,
-  //         lng: beaconPoints[beaconPoints.length / 3].longitude,
-  //         type: "restaurant",
-  //       });
-  //       console.log("Function response:", resp);
-  //     } catch (error) {
-  //       console.error("Error calling function:", error);
-  //     }
-  //   };
-
-  //   callFunction();
-  // }, []);
-
-  // const startAngle =
-  //   location?.coords?.heading !== -1
-  //     ? location?.coords?.heading ?? 20
-  //     : heading;
-
-  // Add this new animated value
   const opacity = useSharedValue(1);
 
   const noGPS = location?.coords?.heading === -1;
@@ -463,6 +317,10 @@ const Map = () => {
     router.push("/settings");
   };
 
+  const onMapPress = () => {
+    bottomSheetRef.current?.close()
+  };
+
   return (
     <View style={styles.container}>
       <MapView
@@ -470,13 +328,14 @@ const Map = () => {
         style={styles.map}
         onPanDrag={() => setIsUserInteracting(true)}
         onRegionChangeComplete={() => setIsUserInteracting(false)}
+        onPress={onMapPress}
       >
         <Marker
           coordinate={currentLocation}
           title="Your Location"
           description="You are here"
         />
-        <LocationMarkers />
+        <LocationMarkers bottomSheetRef={bottomSheetRef} />
         {/* <Marker
           coordinate={{
             latitude:
