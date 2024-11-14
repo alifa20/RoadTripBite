@@ -24,11 +24,8 @@ export const useRevenueCat = () => {
         await Purchases.configure({
           // apiKey: process.env.EXPO_PUBLIC_REVENUECAT_APPLE_API_KEY,
           apiKey: API_KEYS.apple,
-
         });
         const { customerInfo, created } = await Purchases.logIn(user.uid);
-
-        console.log("customerInfo", customerInfo);
       }
       //   else if (Platform.OS === 'android') {
       //     await Purchases.configure({

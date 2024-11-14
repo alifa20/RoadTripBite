@@ -27,5 +27,6 @@ export const MAP_TYPES = {
     locations: PlaceLocation[];
     nextPageToken: string | null;
     selectedLocation: PlaceLocation | null;
+    showBottomSheet:boolean
   }
   
