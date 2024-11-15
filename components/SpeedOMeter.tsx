@@ -1,12 +1,14 @@
 import React from "react";
 import { StyleSheet, Text, View, ViewStyle } from "react-native";
+import { useAppSelector } from "@/store/hooks";
 
 interface Props {
-  speed?: number;
   style: ViewStyle;
 }
 
-export const SpeedOMeter = ({ speed = 0, style }: Props) => {
+export const SpeedOMeter = ({ style }: Props) => {
+  const speed = useAppSelector((state) => state.odometer.speed);
+  
   return (
     <View style={style}>
       <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.speedValue]}>

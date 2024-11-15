@@ -1,7 +1,11 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useAppSelector } from "@/store/hooks";
 import { setLocations } from "@/store/locationSlice";
+import { setCompassDirection, setSpeed } from "@/store/odometerSlice";
+import { PlaceLocation } from "@/store/types";
+import { calculateRegionForPoints } from "@/utils/calculateRegionForPoints";
 import { generateRadiusPoints } from "@/utils/generateRadiusPoints";
+import { getRadiusFromSpeed } from "@/utils/getRadiusFromSpeed";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import BottomSheet from "@gorhom/bottom-sheet";
 import functions from "@react-native-firebase/functions";
@@ -17,10 +21,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MapView, { LatLng, Marker, Polygon, Region } from "react-native-maps";
+import MapView, { Marker, Polygon, Region } from "react-native-maps";
 import Animated, {
   Easing,
-  useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSpring,
@@ -59,96 +62,6 @@ const initLocation = {
   longitudeDelta: INITIAL_LONGITUDE_DELTA,
 };
 
-type radiusMap = {
-  mode: "walking" | "driving";
-  distance: number;
-  delta: number;
-  zoomLevel: string;
-};
-
-// Add this function outside of the Map component
-const calculateRegionForPoints = (
-  points: LatLng[],
-  topPadding: number
-): Region => {
-  let minLat = points[0].latitude;
-  let maxLat = points[0].latitude;
-  let minLng = points[0].longitude;
-  let maxLng = points[0].longitude;
-
-  points.forEach((point) => {
-    minLat = Math.min(minLat, point.latitude);
-    maxLat = Math.max(maxLat, point.latitude);
-    minLng = Math.min(minLng, point.longitude);
-    maxLng = Math.max(maxLng, point.longitude);
-  });
-
-  const midLat = (minLat + maxLat) / 2;
-  const midLng = (minLng + maxLng) / 2;
-  const deltaLat = (maxLat - minLat) * 1.1; // Add 10% padding
-  const deltaLng = (maxLng - minLng) * 1.1; // Add 10% padding
-
-  // Calculate the latitude shift based on topPadding
-  const latitudeShift = (deltaLat * topPadding) / height;
-
-  return {
-    latitude: midLat + latitudeShift / 2, // Shift the center slightly south
-    longitude: midLng,
-    latitudeDelta: Math.max(deltaLat * (height / (height - topPadding)), 0.01), // Adjust zoom level
-    longitudeDelta: Math.max(deltaLng * (height / (height - topPadding)), 0.01), // Adjust zoom level
-  };
-};
-
-const getRadiusFromSpeed = (speed = 0): radiusMap => {
-  // Walking speed (up to 5 km/h)
-  if (speed <= 5) {
-    return {
-      mode: "walking",
-      distance: 10,
-      delta: 0.5,
-      zoomLevel: "14z",
-    }; // 10 km radius for walking (5 km/h * 2 hours)
-  }
-  // Speeds between 5 km/h and 40 km/h
-  else if (speed > 5 && speed <= 40) {
-    const distance = Math.ceil(speed * 2); // 2 hours of travel at current speed
-    return {
-      mode: "walking",
-      distance,
-      delta: 0.5,
-      zoomLevel: "14z",
-    };
-  }
-  // Speeds between 40 km/h and 60 km/h
-  else if (speed > 40 && speed <= 60) {
-    const distance = 120; // 120 km radius (60 km/h * 2 hours)
-    return {
-      mode: "driving",
-      distance,
-      delta: 1.5,
-      zoomLevel: "11z",
-    };
-  }
-  // Speeds between 60 km/h and 80 km/h
-  else if (speed > 60 && speed <= 80) {
-    const distance = 160; // 160 km radius (80 km/h * 2 hours)
-    return {
-      mode: "driving",
-      distance,
-      delta: 1.5,
-      zoomLevel: "11z",
-    };
-  }
-  // Speeds above 80 km/h
-  const distance = 200; // Cap at 200 km radius for very high speeds
-  return {
-    mode: "driving",
-    distance,
-    delta: 1.5,
-    zoomLevel: "11z",
-  };
-};
-
 const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 // Helper function to get compass direction
 const getCompassDirection = (degrees: number): string => {
@@ -167,6 +80,8 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const preferredMap = useAppSelector((state) => state.settings.preferredMap);
   const locations = useAppSelector((state) => state.location.locations);
   const minRating = useAppSelector((state) => state.settings.minRating);
+  const speed = useAppSelector((state) => state.odometer.speed);
+  
   const minReviewCount = useAppSelector(
     (state) => state.settings.minReviewCount
   );
@@ -180,8 +95,6 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const radarColor = useThemeColor({}, "radar");
 
   // Add these new state variables
-  const [speed, setSpeed] = useState<number | undefined>();
-  const [compassDirection, setCompassDirection] = useState<string>("N");
   const [isCenteringEnabled, setIsCenteringEnabled] = useState(true);
   const buttonOpacity = useSharedValue(1);
 
@@ -283,10 +196,10 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   // Update useEffect to set speed and compass direction
   useEffect(() => {
     if (location) {
-      setSpeed(Math.max(location.coords?.speed ?? 0, 0));
-      setCompassDirection(getCompassDirection(heading));
+      dispatch(setSpeed(Math.max(location.coords?.speed ?? 0, 0)));
+      dispatch(setCompassDirection(getCompassDirection(heading)));
     }
-  }, [location, heading]);
+  }, [location, heading, dispatch]);
 
   const opacity = useSharedValue(1);
 
@@ -305,12 +218,6 @@ const Map = ({ bottomSheetRef }: MapProps) => {
     }
   }, [noGPS]);
 
-  const animatedTextStyle = useAnimatedStyle(() => {
-    return {
-      opacity: opacity.value,
-    };
-  });
-
   const onSearch = async () => {
     if (preferredMap === "IN_APP") {
       try {
@@ -323,20 +230,21 @@ const Map = ({ bottomSheetRef }: MapProps) => {
             userRatingsTotal: number;
           },
           {
-            results: Array<{
-              rating: number;
-              userRatingsTotal: number;
-              location: {
-                lat: number;
-                lng: number;
-              };
-              isOpen: boolean;
-              address: string;
-              placeId: string;
-              name: string;
-              priceLevel: number | null;
-              photos: string[];
-            }>;
+            results: PlaceLocation[];
+            // results: Array<{
+            //   rating: number;
+            //   userRatingsTotal: number;
+            //   location: {
+            //     lat: number;
+            //     lng: number;
+            //   };
+            //   isOpen: boolean;
+            //   address: string;
+            //   placeId: string;
+            //   name: string;
+            //   priceLevel: number | null;
+            //   photos: string[];
+            // }>;
           }
         >("placesOnCall")({
           lat: beaconPoints[beaconPoints.length / 3].latitude,
@@ -549,7 +457,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
             </Text>
           </TouchableOpacity>
         </View>
-        <SpeedOMeter speed={speed} style={styles.speedContainer} />
+        <SpeedOMeter style={styles.speedContainer} />
         {/* <View style={styles.compass}>
           <Compass heading={heading} direction={compassDirection} />
         </View> */}

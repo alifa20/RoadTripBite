@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import settingsReducer from './settingsSlice';
 import locationReducer from './locationSlice';
+import odometerReducer from './odometerSlice';
 import { photoApi } from './api/photoApi';
 import { placeApi } from './api/placeApi';
 
@@ -8,6 +9,7 @@ export const store = configureStore({
   reducer: {
     settings: settingsReducer,
     location: locationReducer,
+    odometer: odometerReducer,
     [photoApi.reducerPath]: photoApi.reducer,
     [placeApi.reducerPath]: placeApi.reducer,
   },
