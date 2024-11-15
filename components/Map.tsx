@@ -1,7 +1,8 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useAppSelector } from "@/store/hooks";
+import { setLocations } from "@/store/locationSlice";
 import { generateRadiusPoints } from "@/utils/generateRadiusPoints";
-import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import BottomSheet from "@gorhom/bottom-sheet";
 import functions from "@react-native-firebase/functions";
 import { useRouter } from "expo-router";
@@ -22,17 +23,15 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
-  withTiming,
   withSpring,
+  withTiming,
 } from "react-native-reanimated";
+import { useDispatch } from "react-redux";
 import { useCompass } from "../hooks/useCompass";
 import { useLocation } from "../hooks/useLocation";
 import { DirectionalBeacon } from "./DirectionalBeacon";
 import { LocationMarkers } from "./LocationMarkers";
 import { SpeedOMeter } from "./SpeedOMeter";
-import { useDispatch } from "react-redux";
-import { setLocations } from "@/store/locationSlice";
-import { LocationState } from "@/store/types";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
