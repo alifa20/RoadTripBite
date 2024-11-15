@@ -13,12 +13,15 @@ import {
   setPreferredMap,
   toggleDarkMode,
   toggleNotifications,
+  setTimeWindow,
 } from "../store/settingsSlice";
 import {
   MAP_TYPES,
   MapType,
   MIN_RATINGS,
   MIN_REVIEW_COUNTS,
+  TIME_LABELS,
+  TIME_OPTIONS,
 } from "../store/types";
 
 export default function Settings() {
@@ -27,12 +30,13 @@ export default function Settings() {
 
   const color = useThemeColor({}, "icon");
 
-  const { darkMode, notifications, preferredMap, minRating, minReviewCount } =
+  const { darkMode, notifications, preferredMap, minRating, minReviewCount, timeWindow } =
     useAppSelector((state) => state.settings);
 
   const [showMapPicker, setShowMapPicker] = useState(false);
   const [showRatingPicker, setShowRatingPicker] = useState(false);
   const [showReviewCountPicker, setShowReviewCountPicker] = useState(false);
+  const [showTimeWindowPicker, setShowTimeWindowPicker] = useState(false);
 
   return (
     <ThemedSafeAreaView style={styles.container} edges={["top"]}>
@@ -104,6 +108,16 @@ export default function Settings() {
             onPress={() => setShowReviewCountPicker(true)}
           >
             <Text>{minReviewCount === 1 ? "Any" : `+${minReviewCount}`}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.settingItem}>
+          <ThemedText>Time Window</ThemedText>
+          <TouchableOpacity
+            style={styles.pickerButton}
+            onPress={() => setShowTimeWindowPicker(true)}
+          >
+            <Text>{TIME_LABELS[timeWindow]}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -221,6 +235,46 @@ export default function Settings() {
                   ]}
                 >
                   {value === 1 ? "Any" : `+${value}`}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={showTimeWindowPicker}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowTimeWindowPicker(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select Time Window</Text>
+              <TouchableOpacity onPress={() => setShowTimeWindowPicker(false)}>
+                <Ionicons name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
+            {Object.values(TIME_OPTIONS).map((value) => (
+              <TouchableOpacity
+                key={value}
+                style={[
+                  styles.mapOption,
+                  timeWindow === value && styles.mapOptionSelected,
+                ]}
+                onPress={() => {
+                  dispatch(setTimeWindow(value));
+                  setShowTimeWindowPicker(false);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.mapOptionText,
+                    timeWindow === value && styles.mapOptionTextSelected,
+                  ]}
+                >
+                  {TIME_LABELS[value]}
                 </Text>
               </TouchableOpacity>
             ))}

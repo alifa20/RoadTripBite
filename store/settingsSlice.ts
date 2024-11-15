@@ -6,6 +6,7 @@ import {
   MinReviewCount,
   MIN_REVIEW_COUNTS,
   MIN_RATINGS,
+  TIME_OPTIONS,
 } from "./types";
 
 interface SettingsState {
@@ -15,6 +16,7 @@ interface SettingsState {
   preferredMap: MapType;
   minRating: MinRating;
   minReviewCount: MinReviewCount;
+  timeWindow: number;
 }
 
 const initialState: SettingsState = {
@@ -24,6 +26,7 @@ const initialState: SettingsState = {
   preferredMap: "IN_APP",
   minRating: MIN_RATINGS.FOUR_FIVE,
   minReviewCount: MIN_REVIEW_COUNTS.FORTY,
+  timeWindow: TIME_OPTIONS.ONE_HOUR,
 };
 
 const settingsSlice = createSlice({
@@ -48,6 +51,9 @@ const settingsSlice = createSlice({
     setMinReviewCount: (state, action: PayloadAction<MinReviewCount>) => {
       state.minReviewCount = action.payload;
     },
+    setTimeWindow: (state, action: PayloadAction<number>) => {
+      state.timeWindow = action.payload;
+    },
   },
 });
 
@@ -58,5 +64,6 @@ export const {
   setPreferredMap,
   setMinRating,
   setMinReviewCount,
+  setTimeWindow,
 } = settingsSlice.actions;
 export default settingsSlice.reducer;

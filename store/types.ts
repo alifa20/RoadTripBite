@@ -24,10 +24,16 @@ export const MAP_TYPES = {
   }
   
   export interface LocationState {
-    locations: PlaceLocation[];
-    nextPageToken: string | null;
-    selectedLocation: PlaceLocation | null;
-    showBottomSheet:boolean
+    location: {
+      lat: number;
+      lng: number;
+    };
+    name: string;
+    rating: number;
+    userRatingsTotal: number;
+    address: string;
+    isOpen: boolean;
+    photos: string[];
   }
   
   export const MIN_RATINGS = {
@@ -52,4 +58,18 @@ export const MAP_TYPES = {
   } as const;
 
   export type MinReviewCount = typeof MIN_REVIEW_COUNTS[keyof typeof MIN_REVIEW_COUNTS];
+  
+  export const TIME_OPTIONS = {
+    THIRTY_MIN: 0.5,
+    ONE_HOUR: 1,
+    TWO_HOURS: 2,
+    FOUR_HOURS: 4,
+  } as const;
+
+  export const TIME_LABELS: Record<number, string> = {
+    0.5: "+30 mins",
+    1: "+1 hour",
+    2: "+2 hours",
+    4: "+4 hours",
+  };
   

@@ -725,6 +725,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     width: 50,
+    height:62
   },
   speedValue: {
     fontSize: 24,
