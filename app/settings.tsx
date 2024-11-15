@@ -23,6 +23,7 @@ import {
   TIME_LABELS,
   TIME_OPTIONS,
 } from "../store/types";
+import { CloseButton } from "@/components/CloseButton";
 
 export default function Settings() {
   const router = useRouter();
@@ -30,8 +31,14 @@ export default function Settings() {
 
   const color = useThemeColor({}, "icon");
 
-  const { darkMode, notifications, preferredMap, minRating, minReviewCount, timeWindow } =
-    useAppSelector((state) => state.settings);
+  const {
+    darkMode,
+    notifications,
+    preferredMap,
+    minRating,
+    minReviewCount,
+    timeWindow,
+  } = useAppSelector((state) => state.settings);
 
   const [showMapPicker, setShowMapPicker] = useState(false);
   const [showRatingPicker, setShowRatingPicker] = useState(false);
@@ -48,7 +55,6 @@ export default function Settings() {
           <Ionicons
             name="arrow-back"
             size={24}
-            // color="#333"
             color={color}
           />
         </TouchableOpacity>
@@ -132,9 +138,7 @@ export default function Settings() {
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select Map Type</Text>
-              <TouchableOpacity onPress={() => setShowMapPicker(false)}>
-                <Ionicons name="close" size={24} color="#333" />
-              </TouchableOpacity>
+              <CloseButton onPress={() => setShowMapPicker(false)} />
             </View>
             {Object.keys(MAP_TYPES).map((type) => (
               <TouchableOpacity
@@ -172,9 +176,7 @@ export default function Settings() {
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select Minimum Rating</Text>
-              <TouchableOpacity onPress={() => setShowRatingPicker(false)}>
-                <Ionicons name="close" size={24} color="#333" />
-              </TouchableOpacity>
+              <CloseButton onPress={() => setShowRatingPicker(false)} />
             </View>
             {Object.entries(MIN_RATINGS).map(([key, value]) => (
               <TouchableOpacity
@@ -212,9 +214,7 @@ export default function Settings() {
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select Minimum Reviews</Text>
-              <TouchableOpacity onPress={() => setShowReviewCountPicker(false)}>
-                <Ionicons name="close" size={24} color="#333" />
-              </TouchableOpacity>
+              <CloseButton onPress={() => setShowReviewCountPicker(false)} />
             </View>
             {Object.entries(MIN_REVIEW_COUNTS).map(([key, value]) => (
               <TouchableOpacity
@@ -252,9 +252,7 @@ export default function Settings() {
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select Time Window</Text>
-              <TouchableOpacity onPress={() => setShowTimeWindowPicker(false)}>
-                <Ionicons name="close" size={24} color="#333" />
-              </TouchableOpacity>
+              <CloseButton onPress={() => setShowTimeWindowPicker(false)} />
             </View>
             {Object.values(TIME_OPTIONS).map((value) => (
               <TouchableOpacity
