@@ -306,23 +306,29 @@ const Map = ({ bottomSheetRef }: MapProps) => {
 
   const onSearch = async () => {
     if (preferredMap === "IN_APP") {
-      const resp = await functions().httpsCallable<
-        {
-          lat: number;
-          lng: number;
-          type: string;
-          rating: number;
-          userRatingsTotal: number;
-        },
-        { data: { results: LocationState[] } }
-      >("placesOnCall")({
-        lat: beaconPoints[beaconPoints.length / 3].latitude,
-        lng: beaconPoints[beaconPoints.length / 3].longitude,
-        type: selectedCategory,
-        rating: minRating,
-        userRatingsTotal: minReviewCount,
-      });
-      dispatch(setLocations(((resp.data as any)?.results as any) ?? []));
+      try {
+        const resp = await functions().httpsCallable<
+          {
+            lat: number;
+            lng: number;
+            type: string;
+            rating: number;
+            userRatingsTotal: number;
+          },
+          { data: { results: LocationState[] } }
+        >("placesOnCall")({
+          lat: beaconPoints[beaconPoints.length / 3].latitude,
+          lng: beaconPoints[beaconPoints.length / 3].longitude,
+          type: selectedCategory,
+          rating: minRating,
+          userRatingsTotal: minReviewCount,
+        });
+        console.log("resp.data", resp.data);
+
+        dispatch(setLocations(((resp.data as any)?.results as any) ?? []));
+      } catch (error) {
+        console.error("!!Error", error);
+      }
       // console.log("response", JSON.stringify(resp, null, 2));
     } else {
       Linking.openURL(calloutLink2);

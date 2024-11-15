@@ -1,5 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { MAP_TYPES, MapType, MinRating, MinReviewCount, MIN_REVIEW_COUNTS, MIN_RATINGS } from "./types";
+import {
+  MAP_TYPES,
+  MapType,
+  MinRating,
+  MinReviewCount,
+  MIN_REVIEW_COUNTS,
+  MIN_RATINGS,
+} from "./types";
 
 interface SettingsState {
   darkMode: boolean;
@@ -16,7 +23,7 @@ const initialState: SettingsState = {
   searchRadius: 5,
   preferredMap: "IN_APP",
   minRating: MIN_RATINGS.FOUR_FIVE,
-  minReviewCount: MIN_REVIEW_COUNTS.ANY,
+  minReviewCount: MIN_REVIEW_COUNTS.FORTY,
 };
 
 const settingsSlice = createSlice({

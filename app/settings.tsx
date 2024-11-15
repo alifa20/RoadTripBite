@@ -9,12 +9,17 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   setMinRating,
+  setMinReviewCount,
   setPreferredMap,
   toggleDarkMode,
   toggleNotifications,
-  setMinReviewCount,
 } from "../store/settingsSlice";
-import { MAP_TYPES, MapType, MIN_RATINGS, MIN_REVIEW_COUNTS, MinReviewCount } from "../store/types";
+import {
+  MAP_TYPES,
+  MapType,
+  MIN_RATINGS,
+  MIN_REVIEW_COUNTS,
+} from "../store/types";
 
 export default function Settings() {
   const router = useRouter();
@@ -22,9 +27,8 @@ export default function Settings() {
 
   const color = useThemeColor({}, "icon");
 
-  const { darkMode, notifications, preferredMap, minRating, minReviewCount } = useAppSelector(
-    (state) => state.settings
-  );
+  const { darkMode, notifications, preferredMap, minRating, minReviewCount } =
+    useAppSelector((state) => state.settings);
 
   const [showMapPicker, setShowMapPicker] = useState(false);
   const [showRatingPicker, setShowRatingPicker] = useState(false);
@@ -84,7 +88,9 @@ export default function Settings() {
             style={styles.pickerButton}
             onPress={() => setShowRatingPicker(true)}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+            >
               <Ionicons name="star" size={16} color="#FFB800" />
               <Text>{minRating === 1 ? "Any" : minRating}</Text>
             </View>
@@ -174,7 +180,7 @@ export default function Settings() {
                     minRating === value && styles.mapOptionTextSelected,
                   ]}
                 >
-                  {value === 0 ? "Any" : value}
+                  {value === 1 ? "Any" : value}
                 </Text>
               </TouchableOpacity>
             ))}
