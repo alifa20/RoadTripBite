@@ -9,7 +9,9 @@ interface Props {
 export const SpeedOMeter = ({ speed = 0, style }: Props) => {
   return (
     <View style={style}>
-      <Text style={styles.speedValue}>{(speed * 3.6).toFixed(0)}</Text>
+      <Text numberOfLines={1} adjustsFontSizeToFit style={[styles.speedValue]}>
+        {(speed * 3.6).toFixed(0)}
+      </Text>
       <Text style={styles.speedUnit}>km/h</Text>
     </View>
   );
