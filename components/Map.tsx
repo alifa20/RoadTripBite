@@ -1,7 +1,7 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useAppSelector } from "@/store/hooks";
 import { generateRadiusPoints } from "@/utils/generateRadiusPoints";
-import { Feather } from "@expo/vector-icons";
+import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import BottomSheet from "@gorhom/bottom-sheet";
 import functions from "@react-native-firebase/functions";
 import { useRouter } from "expo-router";
@@ -17,12 +17,13 @@ import {
   View,
 } from "react-native";
 import MapView, { LatLng, Marker, Polygon, Region } from "react-native-maps";
-import {
+import Animated, {
   Easing,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withTiming,
+  withSpring,
 } from "react-native-reanimated";
 import { useCompass } from "../hooks/useCompass";
 import { useLocation } from "../hooks/useLocation";
@@ -182,6 +183,8 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   // Add these new state variables
   const [speed, setSpeed] = useState<number | undefined>();
   const [compassDirection, setCompassDirection] = useState<string>("N");
+  const [isCenteringEnabled, setIsCenteringEnabled] = useState(true);
+  const buttonOpacity = useSharedValue(1);
 
   const radiusMap = getRadiusFromSpeed(speed);
   const currentLocation: Region = location?.coords
@@ -227,19 +230,23 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   // const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
+    if (!isCenteringEnabled) {
+      return;
+    }
     if (location && mapRef.current) {
       const allPoints =
-        locations.length > 0
-          ? locations.map(({ location }) => ({
-              latitude: location.lat,
-              longitude: location.lng,
-            }))
-          : [
-              currentLocation,
-              endMarkerPosition1,
-              endMarkerPosition2,
-              ...beaconPoints,
-            ];
+        // locations.length > 0
+        //   ? locations.map(({ location }) => ({
+        //       latitude: location.lat,
+        //       longitude: location.lng,
+        //     }))
+        //   :
+        [
+          currentLocation,
+          endMarkerPosition1,
+          endMarkerPosition2,
+          ...beaconPoints,
+        ];
 
       const topPadding = 200; // Height of the top controls
       const region = calculateRegionForPoints(allPoints, topPadding);
@@ -271,6 +278,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
     endMarkerPosition1,
     endMarkerPosition2,
     isUserInteracting,
+    isCenteringEnabled,
   ]);
 
   // Update useEffect to set speed and compass direction
@@ -315,7 +323,20 @@ const Map = ({ bottomSheetRef }: MapProps) => {
             rating: number;
             userRatingsTotal: number;
           },
-          { data: { results: LocationState[] } }
+          { results: Array<{
+            rating: number;
+            userRatingsTotal: number;
+            location: {
+              lat: number;
+              lng: number;
+            };
+            isOpen: boolean;
+            address: string;
+            placeId: string;
+            name: string;
+            priceLevel: number | null;
+            photos: string[];
+          }> }
         >("placesOnCall")({
           lat: beaconPoints[beaconPoints.length / 3].latitude,
           lng: beaconPoints[beaconPoints.length / 3].longitude,
@@ -323,13 +344,35 @@ const Map = ({ bottomSheetRef }: MapProps) => {
           rating: minRating,
           userRatingsTotal: minReviewCount,
         });
-        console.log("resp.data", resp.data);
 
-        dispatch(setLocations(((resp.data as any)?.results as any) ?? []));
+        const locations = resp.data.results.map((place) => ({
+          location: {
+            lat: place.location.lat,
+            lng: place.location.lng,
+          },
+          name: place.name,
+          rating: place.rating,
+          userRatingsTotal: place.userRatingsTotal,
+          address: place.address,
+          isOpen: place.isOpen,
+          photos: place.photos,
+        }));
+
+        const locs = locations.map(({ location }) => ({
+          latitude: location.lat,
+          longitude: location.lng,
+        }));
+
+        const topPadding = 200;
+        const region = calculateRegionForPoints(locs, topPadding);
+
+        mapRef.current?.animateToRegion(region, 1000);
+
+        setIsCenteringEnabled(false);
+        dispatch(setLocations(resp.data.results));
       } catch (error) {
-        console.error("!!Error", error);
+        console.error("Error fetching places:", error);
       }
-      // console.log("response", JSON.stringify(resp, null, 2));
     } else {
       Linking.openURL(calloutLink2);
     }
@@ -347,12 +390,45 @@ const Map = ({ bottomSheetRef }: MapProps) => {
     bottomSheetRef.current?.close();
   };
 
+  const handleCenterPress = () => {
+    if (!location?.coords) return;
+
+    setIsUserInteracting(false);
+    setIsCenteringEnabled(true);
+    buttonOpacity.value = withSpring(1);
+
+    const region = calculateRegionForPoints(
+      locations.length > 0
+        ? locations.map(({ location }) => ({
+            latitude: location.lat,
+            longitude: location.lng,
+          }))
+        : [
+            currentLocation,
+            endMarkerPosition1,
+            endMarkerPosition2,
+            ...beaconPoints,
+          ],
+      200
+    );
+
+    mapRef.current?.animateToRegion(region, 1000);
+  };
+
+  const handleMapDrag = () => {
+    setIsUserInteracting(true);
+    if (isCenteringEnabled) {
+      setIsCenteringEnabled(false);
+      buttonOpacity.value = withSpring(0.5);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <MapView
         ref={mapRef}
         style={styles.map}
-        onPanDrag={() => setIsUserInteracting(true)}
+        onPanDrag={handleMapDrag}
         onRegionChangeComplete={() => setIsUserInteracting(false)}
         onPress={onMapPress}
       >
@@ -387,6 +463,18 @@ const Map = ({ bottomSheetRef }: MapProps) => {
           </Marker>
         )}
       </MapView>
+      <Animated.View style={[styles.centerButton]}>
+        <TouchableOpacity
+          onPress={handleCenterPress}
+          disabled={isCenteringEnabled}
+        >
+          <MaterialCommunityIcons
+            name={isCenteringEnabled ? "crosshairs-gps" : "crosshairs"}
+            size={24}
+            color="#000"
+          />
+        </TouchableOpacity>
+      </Animated.View>
       <View style={styles.scrollersContainer}>
         <View style={styles.infoWrapper}>
           {/* <SearchInput
@@ -650,6 +738,26 @@ const styles = StyleSheet.create({
   },
   compass: {
     width: 50,
+  },
+  centerButton: {
+    position: "absolute",
+    right: 16,
+    bottom: 50, // Adjust this value based on your layout
+    backgroundColor: "white",
+    borderRadius: 30,
+    width: 44,
+    height: 44,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    opacity: 0.9,
   },
 });
 
