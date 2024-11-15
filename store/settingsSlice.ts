@@ -9,8 +9,11 @@ import {
   TIME_OPTIONS,
 } from "./types";
 
+// Add this type definition
+type ThemeMode = "light" | "dark" | "system";
+
 interface SettingsState {
-  darkMode: boolean;
+  themeMode: ThemeMode;
   notifications: boolean;
   searchRadius: number;
   preferredMap: MapType;
@@ -20,7 +23,7 @@ interface SettingsState {
 }
 
 const initialState: SettingsState = {
-  darkMode: false,
+  themeMode: "system",
   notifications: true,
   searchRadius: 5,
   preferredMap: "IN_APP",
@@ -33,9 +36,6 @@ const settingsSlice = createSlice({
   name: "settings",
   initialState,
   reducers: {
-    toggleDarkMode: (state) => {
-      state.darkMode = !state.darkMode;
-    },
     toggleNotifications: (state) => {
       state.notifications = !state.notifications;
     },
@@ -54,16 +54,19 @@ const settingsSlice = createSlice({
     setTimeWindow: (state, action: PayloadAction<number>) => {
       state.timeWindow = action.payload;
     },
+    setThemeMode: (state, action: PayloadAction<ThemeMode>) => {
+      state.themeMode = action.payload;
+    },
   },
 });
 
 export const {
-  toggleDarkMode,
   toggleNotifications,
   setSearchRadius,
   setPreferredMap,
   setMinRating,
   setMinReviewCount,
   setTimeWindow,
+  setThemeMode,
 } = settingsSlice.actions;
 export default settingsSlice.reducer;

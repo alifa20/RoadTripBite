@@ -1,11 +1,11 @@
 import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import { Ionicons } from "@expo/vector-icons";
 import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
-  useColorScheme,
 } from "react-native";
 
 interface SearchInputProps {
@@ -19,7 +19,7 @@ export function SearchInput({
   onChangeText,
   placeholder = "Search...",
 }: SearchInputProps) {
-  const colorScheme = useColorScheme() ?? "light";
+  const colorScheme = useColorScheme()  
   const iconColor = Colors[colorScheme].icon;
 
   const handleClear = () => {

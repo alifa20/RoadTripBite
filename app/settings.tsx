@@ -4,16 +4,16 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Modal, StyleSheet, Switch, Text, View } from "react-native";
+import { Modal, StyleSheet, Switch, Text, View, Pressable } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   setMinRating,
   setMinReviewCount,
   setPreferredMap,
-  toggleDarkMode,
   toggleNotifications,
   setTimeWindow,
+  setThemeMode,
 } from "../store/settingsSlice";
 import {
   MAP_TYPES,
@@ -32,12 +32,12 @@ export default function Settings() {
   const color = useThemeColor({}, "icon");
 
   const {
-    darkMode,
     notifications,
     preferredMap,
     minRating,
     minReviewCount,
     timeWindow,
+    themeMode,
   } = useAppSelector((state) => state.settings);
 
   const [showMapPicker, setShowMapPicker] = useState(false);
@@ -63,13 +63,36 @@ export default function Settings() {
 
       <View style={styles.content}>
         <View style={styles.settingItem}>
-          <ThemedText>Dark Mode</ThemedText>
-          <Switch
-            value={darkMode}
-            onValueChange={() => {
-              dispatch(toggleDarkMode());
-            }}
-          />
+          <ThemedText>Theme</ThemedText>
+          <View style={styles.themeSelector}>
+            <Pressable
+              style={[
+                styles.themeOption,
+                themeMode === 'light' && styles.themeOptionSelected,
+              ]}
+              onPress={() => dispatch(setThemeMode('light'))}
+            >
+              <Ionicons name="sunny" size={20} color={themeMode === 'light' ? '#FFF8F0' : '#543836'} />
+            </Pressable>
+            <Pressable
+              style={[
+                styles.themeOption,
+                themeMode === 'system' && styles.themeOptionSelected,
+              ]}
+              onPress={() => dispatch(setThemeMode('system'))}
+            >
+              <Ionicons name="phone-portrait" size={20} color={themeMode === 'system' ? '#FFF8F0' : '#543836'} />
+            </Pressable>
+            <Pressable
+              style={[
+                styles.themeOption,
+                themeMode === 'dark' && styles.themeOptionSelected,
+              ]}
+              onPress={() => dispatch(setThemeMode('dark'))}
+            >
+              <Ionicons name="moon" size={20} color={themeMode === 'dark' ? '#FFF8F0' : '#543836'} />
+            </Pressable>
+          </View>
         </View>
 
         <View style={styles.settingItem}>
@@ -356,5 +379,21 @@ const styles = StyleSheet.create({
   mapOptionTextSelected: {
     color: "#FFF8F0",
     fontWeight: "600",
+  },
+  themeSelector: {
+    flexDirection: 'row',
+    gap: 8,
+    backgroundColor: '#f0f0f0',
+    padding: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  themeOption: {
+    padding: 8,
+    borderRadius: 6,
+  },
+  themeOptionSelected: {
+    backgroundColor: '#543836',
   },
 });
