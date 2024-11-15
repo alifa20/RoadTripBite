@@ -1,3 +1,4 @@
+import { useColorScheme } from "@/hooks/useColorScheme";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useAppSelector } from "@/store/hooks";
 import { setLocations } from "@/store/locationSlice";
@@ -75,6 +76,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const mapRef = useRef<MapView>(null);
   const router = useRouter();
   const dispatch = useDispatch();
+  const colorScheme = useColorScheme();
 
   const preferredMap = useAppSelector((state) => state.settings.preferredMap);
   const locations = useAppSelector((state) => state.location.locations);
@@ -335,6 +337,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   return (
     <View style={styles.container}>
       <MapView
+        userInterfaceStyle={colorScheme}
         ref={mapRef}
         style={styles.map}
         onPanDrag={handleMapDrag}
