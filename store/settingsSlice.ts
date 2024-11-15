@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { MAP_TYPES, MapType } from "./types";
+import { MAP_TYPES, MapType, MinRating } from "./types";
 
 interface SettingsState {
   darkMode: boolean;
   notifications: boolean;
   searchRadius: number;
   preferredMap: MapType;
+  minRating: MinRating;
 }
 
 const initialState: SettingsState = {
@@ -13,6 +14,7 @@ const initialState: SettingsState = {
   notifications: true,
   searchRadius: 5,
   preferredMap: "IN_APP",
+  minRating: 4.5,
 };
 
 const settingsSlice = createSlice({
@@ -31,6 +33,9 @@ const settingsSlice = createSlice({
     setPreferredMap: (state, action: PayloadAction<MapType>) => {
       state.preferredMap = action.payload;
     },
+    setMinRating: (state, action: PayloadAction<MinRating>) => {
+      state.minRating = action.payload;
+    },
   },
 });
 
@@ -39,5 +44,6 @@ export const {
   toggleNotifications,
   setSearchRadius,
   setPreferredMap,
+  setMinRating,
 } = settingsSlice.actions;
 export default settingsSlice.reducer;

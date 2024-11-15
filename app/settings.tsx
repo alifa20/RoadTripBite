@@ -1,19 +1,19 @@
+import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
+import { ThemedText } from "@/components/ThemedText";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Modal, StyleSheet, Switch, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
+  setMinRating,
   setPreferredMap,
   toggleDarkMode,
   toggleNotifications,
 } from "../store/settingsSlice";
-import { MAP_TYPES, MapType } from "../store/types";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedSafeAreaView } from "@/components/ThemedSafeAreaView";
-import { useThemeColor } from "@/hooks/useThemeColor";
+import { MAP_TYPES, MapType, MIN_RATINGS } from "../store/types";
 
 export default function Settings() {
   const router = useRouter();
@@ -21,11 +21,12 @@ export default function Settings() {
 
   const color = useThemeColor({}, "icon");
 
-  const { darkMode, notifications, preferredMap } = useAppSelector(
+  const { darkMode, notifications, preferredMap, minRating } = useAppSelector(
     (state) => state.settings
   );
 
   const [showMapPicker, setShowMapPicker] = useState(false);
+  const [showRatingPicker, setShowRatingPicker] = useState(false);
 
   return (
     <ThemedSafeAreaView style={styles.container} edges={["top"]}>
@@ -74,6 +75,19 @@ export default function Settings() {
             <Text>{MAP_TYPES[preferredMap]}</Text>
           </TouchableOpacity>
         </View>
+
+        <View style={styles.settingItem}>
+          <ThemedText>Minimum Rating</ThemedText>
+          <TouchableOpacity
+            style={styles.pickerButton}
+            onPress={() => setShowRatingPicker(true)}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <Ionicons name="star" size={16} color="#FFB800" />
+              <Text>{minRating === 1 ? "Any" : minRating}</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <Modal
@@ -109,6 +123,46 @@ export default function Settings() {
                   ]}
                 >
                   {MAP_TYPES[type as MapType]}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={showRatingPicker}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowRatingPicker(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select Minimum Rating</Text>
+              <TouchableOpacity onPress={() => setShowRatingPicker(false)}>
+                <Ionicons name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
+            {Object.entries(MIN_RATINGS).map(([key, value]) => (
+              <TouchableOpacity
+                key={key}
+                style={[
+                  styles.mapOption,
+                  minRating === value && styles.mapOptionSelected,
+                ]}
+                onPress={() => {
+                  dispatch(setMinRating(value));
+                  setShowRatingPicker(false);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.mapOptionText,
+                    minRating === value && styles.mapOptionTextSelected,
+                  ]}
+                >
+                  {value === 0 ? "Any" : value}
                 </Text>
               </TouchableOpacity>
             ))}

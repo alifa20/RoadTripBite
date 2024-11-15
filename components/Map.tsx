@@ -166,6 +166,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
 
   const preferredMap = useAppSelector((state) => state.settings.preferredMap);
   const locations = useAppSelector((state) => state.location.locations);
+  const minRating = useAppSelector((state) => state.settings.minRating);
 
   const { heading, accuracy } = useCompass();
 
@@ -307,12 +308,14 @@ const Map = ({ bottomSheetRef }: MapProps) => {
           lat: number;
           lng: number;
           type: string;
+          rating: number;
         },
         { data: { results: LocationState[] } }
       >("placesOnCall")({
         lat: beaconPoints[beaconPoints.length / 3].latitude,
         lng: beaconPoints[beaconPoints.length / 3].longitude,
-        type: "restaurant",
+        type: selectedCategory,
+        rating: minRating,
       });
       dispatch(setLocations(((resp.data as any)?.results as any) ?? []));
       // console.log("response", JSON.stringify(resp, null, 2));
@@ -441,7 +444,8 @@ const Map = ({ bottomSheetRef }: MapProps) => {
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={onSearch}>
             <Text style={styles.buttonText}>
-              Search &gt; {radiusMap.distance}km
+              Search
+              {/* &gt; {radiusMap.distance}km */}
             </Text>
           </TouchableOpacity>
         </View>

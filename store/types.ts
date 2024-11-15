@@ -30,3 +30,12 @@ export const MAP_TYPES = {
     showBottomSheet:boolean
   }
   
+  export const MIN_RATINGS = {
+    ANY: 1,
+    FOUR: 4,
+    FOUR_FIVE: 4.5,
+    FOUR_EIGHT: 4.8,
+  } as const;
+
+  export type MinRating = typeof MIN_RATINGS[keyof typeof MIN_RATINGS];
+  
