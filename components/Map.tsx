@@ -1,7 +1,6 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useAppSelector } from "@/store/hooks";
 import { setLocations } from "@/store/locationSlice";
-import { setCompassDirection, setSpeed } from "@/store/odometerSlice";
 import { PlaceLocation } from "@/store/types";
 import { calculateRegionForPoints } from "@/utils/calculateRegionForPoints";
 import { generateRadiusPoints } from "@/utils/generateRadiusPoints";
@@ -288,7 +287,8 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   };
 
   const hasValidHeading =
-    rawLocation?.coords?.heading !== undefined && rawLocation.coords.heading > -1;
+    rawLocation?.coords?.heading !== undefined &&
+    rawLocation.coords.heading > -1;
   // const hasValidHeading = true
 
   const onCogClick = () => {
@@ -372,18 +372,18 @@ const Map = ({ bottomSheetRef }: MapProps) => {
           </Marker>
         )}
       </MapView>
-      <Animated.View style={[styles.centerButton]}>
-        <TouchableOpacity
-          onPress={handleCenterPress}
-          disabled={isCenteringEnabled}
-        >
+      <TouchableOpacity
+        onPress={handleCenterPress}
+        disabled={isCenteringEnabled}
+      >
+        <Animated.View style={[styles.centerButton]}>
           <MaterialCommunityIcons
             name={isCenteringEnabled ? "crosshairs-gps" : "crosshairs"}
             size={24}
             color="#000"
           />
-        </TouchableOpacity>
-      </Animated.View>
+        </Animated.View>
+      </TouchableOpacity>
       <View style={styles.scrollersContainer}>
         <View style={styles.infoWrapper}>
           {/* <SearchInput
