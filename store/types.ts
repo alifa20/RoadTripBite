@@ -39,3 +39,17 @@ export const MAP_TYPES = {
 
   export type MinRating = typeof MIN_RATINGS[keyof typeof MIN_RATINGS];
   
+  export const MIN_REVIEW_COUNTS = {
+    ANY: 1,
+    TEN: 10,
+    FORTY: 40,
+    HUNDRED: 100,
+    THREE_HUNDRED: 300,
+    FIVE_HUNDRED: 500,
+    THOUSAND: 1000,
+    TWO_THOUSAND: 2000,
+    FOUR_THOUSAND: 4000,
+  } as const;
+
+  export type MinReviewCount = typeof MIN_REVIEW_COUNTS[keyof typeof MIN_REVIEW_COUNTS];
+  

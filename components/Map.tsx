@@ -167,6 +167,9 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const preferredMap = useAppSelector((state) => state.settings.preferredMap);
   const locations = useAppSelector((state) => state.location.locations);
   const minRating = useAppSelector((state) => state.settings.minRating);
+  const minReviewCount = useAppSelector(
+    (state) => state.settings.minReviewCount
+  );
 
   const { heading, accuracy } = useCompass();
 
@@ -309,6 +312,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
           lng: number;
           type: string;
           rating: number;
+          userRatingsTotal: number;
         },
         { data: { results: LocationState[] } }
       >("placesOnCall")({
@@ -316,6 +320,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
         lng: beaconPoints[beaconPoints.length / 3].longitude,
         type: selectedCategory,
         rating: minRating,
+        userRatingsTotal: minReviewCount,
       });
       dispatch(setLocations(((resp.data as any)?.results as any) ?? []));
       // console.log("response", JSON.stringify(resp, null, 2));

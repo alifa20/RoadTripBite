@@ -12,8 +12,9 @@ import {
   setPreferredMap,
   toggleDarkMode,
   toggleNotifications,
+  setMinReviewCount,
 } from "../store/settingsSlice";
-import { MAP_TYPES, MapType, MIN_RATINGS } from "../store/types";
+import { MAP_TYPES, MapType, MIN_RATINGS, MIN_REVIEW_COUNTS, MinReviewCount } from "../store/types";
 
 export default function Settings() {
   const router = useRouter();
@@ -21,12 +22,13 @@ export default function Settings() {
 
   const color = useThemeColor({}, "icon");
 
-  const { darkMode, notifications, preferredMap, minRating } = useAppSelector(
+  const { darkMode, notifications, preferredMap, minRating, minReviewCount } = useAppSelector(
     (state) => state.settings
   );
 
   const [showMapPicker, setShowMapPicker] = useState(false);
   const [showRatingPicker, setShowRatingPicker] = useState(false);
+  const [showReviewCountPicker, setShowReviewCountPicker] = useState(false);
 
   return (
     <ThemedSafeAreaView style={styles.container} edges={["top"]}>
@@ -86,6 +88,16 @@ export default function Settings() {
               <Ionicons name="star" size={16} color="#FFB800" />
               <Text>{minRating === 1 ? "Any" : minRating}</Text>
             </View>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.settingItem}>
+          <ThemedText>Reviews</ThemedText>
+          <TouchableOpacity
+            style={styles.pickerButton}
+            onPress={() => setShowReviewCountPicker(true)}
+          >
+            <Text>{minReviewCount === 1 ? "Any" : `+${minReviewCount}`}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -163,6 +175,46 @@ export default function Settings() {
                   ]}
                 >
                   {value === 0 ? "Any" : value}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={showReviewCountPicker}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowReviewCountPicker(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Select Minimum Reviews</Text>
+              <TouchableOpacity onPress={() => setShowReviewCountPicker(false)}>
+                <Ionicons name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
+            {Object.entries(MIN_REVIEW_COUNTS).map(([key, value]) => (
+              <TouchableOpacity
+                key={key}
+                style={[
+                  styles.mapOption,
+                  minReviewCount === value && styles.mapOptionSelected,
+                ]}
+                onPress={() => {
+                  dispatch(setMinReviewCount(value));
+                  setShowReviewCountPicker(false);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.mapOptionText,
+                    minReviewCount === value && styles.mapOptionTextSelected,
+                  ]}
+                >
+                  {value === 1 ? "Any" : `+${value}`}
                 </Text>
               </TouchableOpacity>
             ))}
