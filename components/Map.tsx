@@ -80,15 +80,15 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const preferredMap = useAppSelector((state) => state.settings.preferredMap);
   const locations = useAppSelector((state) => state.location.locations);
   const minRating = useAppSelector((state) => state.settings.minRating);
-  const speed = useAppSelector((state) => state.odometer.speed);
-  
+  const avgSpeed = useAppSelector((state) => state.odometer.avgSpeed);
+
   const minReviewCount = useAppSelector(
     (state) => state.settings.minReviewCount
   );
 
   const { heading, accuracy } = useCompass();
 
-  const { location } = useLocation();
+  const { location: rawLocation } = useLocation();
   const [selectedCategory, setSelectedCategory] = useState<string>(
     categories[0]
   );
@@ -98,18 +98,18 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const [isCenteringEnabled, setIsCenteringEnabled] = useState(true);
   const buttonOpacity = useSharedValue(1);
 
-  const radiusMap = getRadiusFromSpeed(speed);
-  const currentLocation: Region = location?.coords
+  const radiusMap = getRadiusFromSpeed(avgSpeed);
+  const currentLocation: Region = rawLocation?.coords
     ? {
-        latitude: location.coords?.latitude,
-        longitude: location.coords?.longitude,
+        latitude: rawLocation.coords?.latitude,
+        longitude: rawLocation.coords?.longitude,
         latitudeDelta: radiusMap.delta,
         longitudeDelta: getDelta(radiusMap.delta),
       }
     : initLocation;
 
   const startAngle =
-    radiusMap.mode === "walking" ? heading : location?.coords?.heading ?? 20;
+    radiusMap.mode === "walking" ? heading : rawLocation?.coords?.heading ?? 20;
 
   const beaconPoints = generateRadiusPoints(
     currentLocation,
@@ -145,7 +145,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
     if (!isCenteringEnabled) {
       return;
     }
-    if (location && mapRef.current) {
+    if (mapRef.current) {
       const allPoints =
         // locations.length > 0
         //   ? locations.map(({ location }) => ({
@@ -185,7 +185,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
       }
     };
   }, [
-    location,
+    // location,
     beaconPoints,
     endMarkerPosition1,
     endMarkerPosition2,
@@ -194,16 +194,16 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   ]);
 
   // Update useEffect to set speed and compass direction
-  useEffect(() => {
-    if (location) {
-      dispatch(setSpeed(Math.max(location.coords?.speed ?? 0, 0)));
-      dispatch(setCompassDirection(getCompassDirection(heading)));
-    }
-  }, [location, heading, dispatch]);
+  // useEffect(() => {
+  //   if (location) {
+  //     dispatch(setSpeed(Math.max(location.coords?.speed ?? 0, 0)));
+  //     dispatch(setCompassDirection(getCompassDirection(heading)));
+  //   }
+  // }, [location, heading, dispatch]);
 
   const opacity = useSharedValue(1);
 
-  const noGPS = location?.coords?.heading === -1;
+  const noGPS = rawLocation?.coords?.heading === -1;
 
   useEffect(() => {
     if (noGPS) {
@@ -288,7 +288,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   };
 
   const hasValidHeading =
-    location?.coords?.heading !== undefined && location.coords.heading > -1;
+    rawLocation?.coords?.heading !== undefined && rawLocation.coords.heading > -1;
   // const hasValidHeading = true
 
   const onCogClick = () => {
@@ -300,7 +300,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   };
 
   const handleCenterPress = () => {
-    if (!location?.coords) return;
+    if (!rawLocation?.coords) return;
 
     setIsUserInteracting(false);
     setIsCenteringEnabled(true);
@@ -368,7 +368,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
 
         {hasValidHeading && (
           <Marker coordinate={currentLocation} anchor={{ x: 0.5, y: 0.5 }}>
-            <DirectionalBeacon heading={location?.coords?.heading ?? 0} />
+            <DirectionalBeacon heading={rawLocation?.coords?.heading ?? 0} />
           </Marker>
         )}
       </MapView>
