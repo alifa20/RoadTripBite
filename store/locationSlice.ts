@@ -29,8 +29,7 @@ const locationSlice = createSlice({
     },
     clearLocations: (state) => {
       state.locations = [];
-      state.nextPageToken = null;
-      state.selectedLocation = null;
+       state.selectedLocation = null;
     },
   },
 });

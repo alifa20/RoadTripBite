@@ -23,17 +23,24 @@ export const MAP_TYPES = {
     photos: string[];
   }
   
+  // export interface LocationState {
+  //   location: {
+  //     lat: number;
+  //     lng: number;
+  //   };
+  //   name: string;
+  //   rating: number;
+  //   userRatingsTotal: number;
+  //   address: string;
+  //   isOpen: boolean;
+  //   photos: string[];
+  // }
+
   export interface LocationState {
-    location: {
-      lat: number;
-      lng: number;
-    };
-    name: string;
-    rating: number;
-    userRatingsTotal: number;
-    address: string;
-    isOpen: boolean;
-    photos: string[];
+    locations: PlaceLocation[];
+    nextPageToken: string;
+    selectedLocation: PlaceLocation | null;
+    showBottomSheet: boolean;
   }
   
   export const MIN_RATINGS = {

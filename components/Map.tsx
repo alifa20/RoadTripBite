@@ -322,20 +322,22 @@ const Map = ({ bottomSheetRef }: MapProps) => {
             rating: number;
             userRatingsTotal: number;
           },
-          { results: Array<{
-            rating: number;
-            userRatingsTotal: number;
-            location: {
-              lat: number;
-              lng: number;
-            };
-            isOpen: boolean;
-            address: string;
-            placeId: string;
-            name: string;
-            priceLevel: number | null;
-            photos: string[];
-          }> }
+          {
+            results: Array<{
+              rating: number;
+              userRatingsTotal: number;
+              location: {
+                lat: number;
+                lng: number;
+              };
+              isOpen: boolean;
+              address: string;
+              placeId: string;
+              name: string;
+              priceLevel: number | null;
+              photos: string[];
+            }>;
+          }
         >("placesOnCall")({
           lat: beaconPoints[beaconPoints.length / 3].latitude,
           lng: beaconPoints[beaconPoints.length / 3].longitude,
@@ -344,7 +346,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
           userRatingsTotal: minReviewCount,
         });
 
-        const locations = resp.data.results.map((place) => ({
+        const resultsLocations = resp.data.results.map((place) => ({
           location: {
             lat: place.location.lat,
             lng: place.location.lng,
@@ -357,7 +359,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
           photos: place.photos,
         }));
 
-        const locs = locations.map(({ location }) => ({
+        const locs = resultsLocations.map(({ location }) => ({
           latitude: location.lat,
           longitude: location.lng,
         }));
@@ -724,7 +726,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     width: 50,
-    height:62
+    height: 62,
   },
   speedValue: {
     fontSize: 24,
