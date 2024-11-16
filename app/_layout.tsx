@@ -20,17 +20,17 @@ const RootContent = () => {
   const { currentOffering } = useRevenueCat();
   console.log("currentOffering", currentOffering);
 
-  if (currentOffering === null) {
-    return <Splash />;
-  }
-
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="settings" />
-        <Stack.Screen name="subscription" />
-      </Stack>
+      {currentOffering === null ? (
+        <Splash />
+      ) : (
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="settings" />
+          <Stack.Screen name="subscription" />
+        </Stack>
+      )}
     </GestureHandlerRootView>
   );
 };

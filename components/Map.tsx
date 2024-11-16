@@ -343,6 +343,9 @@ const Map = ({ bottomSheetRef }: MapProps) => {
         onPanDrag={handleMapDrag}
         onRegionChangeComplete={() => setIsUserInteracting(false)}
         onPress={onMapPress}
+        showsCompass={true}
+        rotateEnabled={true}
+        compassOffset={{ x: -12, y: height * 0.65 }}
       >
         <Marker
           coordinate={currentLocation}

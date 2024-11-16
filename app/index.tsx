@@ -6,11 +6,11 @@ import { useRef } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Map from "../components/Map";
+import { Test } from "@/components/Test";
 
 export default function Index() {
   const { loading, error } = useAnonymousAuth();
   const bottomSheetRef = useRef<BottomSheet>(null);
-
 
   if (loading) {
     return (
@@ -30,8 +30,9 @@ export default function Index() {
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
-      <Map bottomSheetRef={bottomSheetRef}/>
-      <LocationsBottomSheet bottomSheetRef={bottomSheetRef}/>
+      <Map bottomSheetRef={bottomSheetRef} />
+      {/* <Test />   */}
+      <LocationsBottomSheet bottomSheetRef={bottomSheetRef} />
       <Ads />
     </SafeAreaView>
   );

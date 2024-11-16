@@ -37,7 +37,7 @@ export const useLocation = () => {
         setLocation(location);
 
         // Update speed data when we get a new location
-        if (location.coords.speed != null) {
+        if (location.coords?.speed != null) {
           const currentSpeed = Math.max(location.coords.speed ?? 0, 0);
 
           // Update Redux store with current speed

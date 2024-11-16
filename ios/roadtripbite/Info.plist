@@ -55,6 +55,8 @@
     <string>ca-app-pub-5971323065106042~2910903326</string>
     <key>GADDelayAppMeasurementInit</key>
     <false/>
+    <key>LSMinimumSystemVersion</key>
+    <string>12.0</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSAppTransportSecurity</key>
@@ -70,9 +72,6 @@
     <string>We use motion detection to improve your road trip experience by automatically detecting when you're driving, walking, or cycling. This helps us provide more accurate navigation and trip tracking.</string>
     <key>NSUserActivityTypes</key>
     <array>
-      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
-      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
-      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>
     <key>NSUserTrackingUsageDescription</key>
