@@ -1,9 +1,10 @@
-import { configureStore } from '@reduxjs/toolkit';
-import settingsReducer from './settingsSlice';
-import locationReducer from './locationSlice';
-import odometerReducer from './odometerSlice';
-import { photoApi } from './api/photoApi';
-import { placeApi } from './api/placeApi';
+import { configureStore } from "@reduxjs/toolkit";
+import { helloApi } from "./api/helloApi";
+import { photoApi } from "./api/photoApi";
+import { placeApi } from "./api/placeApi";
+import locationReducer from "./locationSlice";
+import odometerReducer from "./odometerSlice";
+import settingsReducer from "./settingsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,11 +13,12 @@ export const store = configureStore({
     odometer: odometerReducer,
     [photoApi.reducerPath]: photoApi.reducer,
     [placeApi.reducerPath]: placeApi.reducer,
+    [helloApi.reducerPath]: helloApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat(photoApi.middleware, placeApi.middleware),
+    }).concat(photoApi.middleware, placeApi.middleware, helloApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
