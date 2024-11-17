@@ -51,7 +51,12 @@ const getDelta = (latitudeDelta: number) => latitudeDelta * ASPECT_RATIO;
 //   10: "14z",
 //   60: "11z",
 // };
-const categories = ["Restaurants", "Coffee", "Groceries", "Chemists"];
+const categories = [
+  { name: "Restaurants", value: "restaurant" },
+  { name: "Coffee", value: "cafe" },
+  { name: "Groceries", value: "convenience_store" },
+  { name: "Chemists", value: "pharmacy" }
+];
 
 const initLocation = {
   // latitude: 37.78825,
@@ -91,7 +96,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
 
   const { location: rawLocation } = useLocation();
   const [selectedCategory, setSelectedCategory] = useState<string>(
-    categories[0]
+    categories[0].value
   );
   const radarColor = useThemeColor({}, "radar");
 
@@ -222,6 +227,25 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const onSearch = async () => {
     if (preferredMap === "IN_APP") {
       try {
+        const param =
+         {
+          lat: beaconPoints[beaconPoints.length / 3].latitude,
+          lng: beaconPoints[beaconPoints.length / 3].longitude,
+          type: selectedCategory,
+          rating: minRating,
+          userRatingsTotal: minReviewCount,
+        };
+
+        // const param = {
+        //   lat: -33.88566370609694,
+        //   lng: 151.00686130036487,
+        //   rankby: "distance",
+        //   // type: "restaurant",
+        //   type: selectedCategory,
+        //   rating: minRating,
+        //   userRatingsTotal: minReviewCount,
+        // };
+
         const resp = await functions().httpsCallable<
           {
             lat: number;
@@ -232,28 +256,8 @@ const Map = ({ bottomSheetRef }: MapProps) => {
           },
           {
             results: PlaceLocation[];
-            // results: Array<{
-            //   rating: number;
-            //   userRatingsTotal: number;
-            //   location: {
-            //     lat: number;
-            //     lng: number;
-            //   };
-            //   isOpen: boolean;
-            //   address: string;
-            //   placeId: string;
-            //   name: string;
-            //   priceLevel: number | null;
-            //   photos: string[];
-            // }>;
           }
-        >("placesOnCall")({
-          lat: beaconPoints[beaconPoints.length / 3].latitude,
-          lng: beaconPoints[beaconPoints.length / 3].longitude,
-          type: selectedCategory,
-          rating: minRating,
-          userRatingsTotal: minReviewCount,
-        });
+        >("placesOnCall")(param);
 
         const resultsLocations = resp.data.results.map((place) => ({
           location: {
@@ -444,11 +448,11 @@ const Map = ({ bottomSheetRef }: MapProps) => {
               <TouchableOpacity
                 key={index}
                 style={styles.categoryChip}
-                onPress={() => setSelectedCategory(category)}
+                onPress={() => setSelectedCategory(category.value)}
               >
                 <Text style={styles.categoryText}>
-                  {selectedCategory === category && "✓  "}
-                  {category}
+                  {selectedCategory === category.value && "✓  "}
+                  {category.name}
                 </Text>
               </TouchableOpacity>
             ))}
