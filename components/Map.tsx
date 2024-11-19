@@ -30,7 +30,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useDispatch } from "react-redux";
-import { useCompass } from "../hooks/useCompass";
 import { useLocation } from "../hooks/useLocation";
 import { DirectionalBeacon } from "./DirectionalBeacon";
 import { LocationMarkers } from "./LocationMarkers";
