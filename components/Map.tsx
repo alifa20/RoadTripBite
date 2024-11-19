@@ -35,6 +35,7 @@ import { useLocation } from "../hooks/useLocation";
 import { DirectionalBeacon } from "./DirectionalBeacon";
 import { LocationMarkers } from "./LocationMarkers";
 import { SpeedOMeter } from "./SpeedOMeter";
+import { ArrowDirection } from "./ArrowDirection";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -55,7 +56,7 @@ const categories = [
   { name: "Restaurants", value: "restaurant" },
   { name: "Coffee", value: "cafe" },
   { name: "Groceries", value: "convenience_store" },
-  { name: "Chemists", value: "pharmacy" }
+  { name: "Chemists", value: "pharmacy" },
 ];
 
 const initLocation = {
@@ -67,11 +68,11 @@ const initLocation = {
   longitudeDelta: INITIAL_LONGITUDE_DELTA,
 };
 
-const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+// const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
 // Helper function to get compass direction
-const getCompassDirection = (degrees: number): string => {
-  return directions[Math.round(degrees / 45) % 8];
-};
+// const getCompassDirection = (degrees: number): string => {
+//   return directions[Math.round(degrees / 45) % 8];
+// };
 
 interface MapProps {
   bottomSheetRef: React.RefObject<BottomSheet>;
@@ -87,12 +88,13 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const locations = useAppSelector((state) => state.location.locations);
   const minRating = useAppSelector((state) => state.settings.minRating);
   const avgSpeed = useAppSelector((state) => state.odometer.avgSpeed);
+  const direction = useAppSelector((state) => state.odometer.direction);
 
   const minReviewCount = useAppSelector(
     (state) => state.settings.minReviewCount
   );
 
-  const { heading, accuracy } = useCompass();
+  // const { heading, accuracy } = useCompass();
 
   const { location: rawLocation } = useLocation();
   const [selectedCategory, setSelectedCategory] = useState<string>(
@@ -114,8 +116,10 @@ const Map = ({ bottomSheetRef }: MapProps) => {
       }
     : initLocation;
 
+
+    
   const startAngle =
-    radiusMap.mode === "walking" ? heading : rawLocation?.coords?.heading ?? 20;
+    radiusMap.mode === "walking" ? direction.range[0] : rawLocation?.coords?.heading ?? 20;
 
   const beaconPoints = generateRadiusPoints(
     currentLocation,
@@ -227,8 +231,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const onSearch = async () => {
     if (preferredMap === "IN_APP") {
       try {
-        const param =
-         {
+        const param = {
           lat: beaconPoints[beaconPoints.length / 3].latitude,
           lng: beaconPoints[beaconPoints.length / 3].longitude,
           type: selectedCategory,
@@ -468,6 +471,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
           </TouchableOpacity>
         </View>
         <SpeedOMeter style={styles.speedContainer} />
+        <ArrowDirection style={styles.arrowDirection} />
         {/* <View style={styles.compass}>
           <Compass heading={heading} direction={compassDirection} />
         </View> */}
@@ -655,6 +659,26 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#666",
     marginTop: -2,
+  },
+  arrowDirection: {
+    position: "absolute",
+    right: 10,
+    top: height / 11, // Adjust this value to position below infoChips
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 12,
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    width: 50,
+    height: 75,
   },
   compass: {
     width: 50,
