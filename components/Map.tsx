@@ -35,6 +35,7 @@ import { DirectionalBeacon } from "./DirectionalBeacon";
 import { LocationMarkers } from "./LocationMarkers";
 import { SpeedOMeter } from "./SpeedOMeter";
 import { ArrowDirection } from "./ArrowDirection";
+import { Toast } from './Toast';
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -147,6 +148,19 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const [isUserInteracting, setIsUserInteracting] = useState(false);
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   // const [searchText, setSearchText] = useState("");
+
+  const [toast, setToast] = useState<{ visible: boolean; message: string }>({
+    visible: false,
+    message: '',
+  });
+
+  const showToast = (message: string) => {
+    setToast({ visible: true, message });
+  };
+
+  const hideToast = () => {
+    setToast({ visible: false, message: '' });
+  };
 
   useEffect(() => {
     if (!isCenteringEnabled) {
@@ -284,8 +298,10 @@ const Map = ({ bottomSheetRef }: MapProps) => {
 
         setIsCenteringEnabled(false);
         dispatch(setLocations(resp.data.results));
+        showToast(`Found ${resp.data.results.length} locations nearby`);
       } catch (error) {
         console.error("Error fetching places:", error);
+        showToast("Error fetching places. Please try again.");
       }
     } else {
       Linking.openURL(calloutLink2);
@@ -341,6 +357,12 @@ const Map = ({ bottomSheetRef }: MapProps) => {
 
   return (
     <View style={styles.container}>
+      <Toast
+        visible={toast.visible}
+        message={toast.message}
+        onHide={hideToast}
+        duration={5000}
+      />
       <MapView
         userInterfaceStyle={colorScheme}
         ref={mapRef}
