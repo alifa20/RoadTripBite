@@ -313,18 +313,18 @@ const Map = ({ bottomSheetRef }: MapProps) => {
     buttonOpacity.value = withSpring(1);
 
     const region = calculateRegionForPoints(
-      locations.length > 0
-        ? locations.map(({ location }) => ({
-            latitude: location.lat,
-            longitude: location.lng,
-          }))
-        :
-         [
-            currentLocation,
-            endMarkerPosition1,
-            endMarkerPosition2,
-            ...beaconPoints,
-          ],
+      // locations.length > 0
+      //   ? locations.map(({ location }) => ({
+      //       latitude: location.lat,
+      //       longitude: location.lng,
+      //     }))
+      //   :
+      [
+        currentLocation,
+        endMarkerPosition1,
+        endMarkerPosition2,
+        ...beaconPoints,
+      ],
       200
     );
 
