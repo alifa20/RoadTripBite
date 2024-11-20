@@ -21,7 +21,7 @@ interface Props {
 
 export const ArrowDirection = ({ style }: Props) => {
   useCompass();
-  
+
   const radarColor = useThemeColor({}, "radar");
   const dispatch = useAppDispatch();
   const deviceDirection = useAppSelector((state) => state.odometer.direction);
@@ -48,7 +48,7 @@ export const ArrowDirection = ({ style }: Props) => {
       onPress={handlePress}
       onLongPress={handleLongPress}
       delayLongPress={500}
-      underlayColor="rgba(128, 128, 128, 0.2)"
+      //   underlayColor="rgba(128, 128, 128, 0.2)"
     >
       <View
         style={[

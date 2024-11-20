@@ -36,6 +36,7 @@ export const useCompass = () => {
   const [accuracy, setAccuracy] = useState(0);
   const dispatch = useAppDispatch();
   const headingManual = useAppSelector((state) => state.odometer.headingManual);
+console.log('heyhye', headingManual);
 
   useEffect(() => {
     const degree_update_rate = 3;
@@ -49,7 +50,6 @@ export const useCompass = () => {
       }
 
       setAccuracy(accuracy);
-      setHeading(heading);
       dispatch(setDirection(getDirection(heading)));
     });
 

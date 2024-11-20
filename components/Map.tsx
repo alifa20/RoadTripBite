@@ -115,10 +115,8 @@ const Map = ({ bottomSheetRef }: MapProps) => {
       }
     : initLocation;
 
-
-    
-  const startAngle =
-    radiusMap.mode === "walking" ? direction.range[0] : rawLocation?.coords?.heading ?? 20;
+  const startAngle = direction.range[0];
+  // radiusMap.mode === "walking" ? direction.range[0] : rawLocation?.coords?.heading ?? 20;
 
   const beaconPoints = generateRadiusPoints(
     currentLocation,
@@ -320,7 +318,8 @@ const Map = ({ bottomSheetRef }: MapProps) => {
             latitude: location.lat,
             longitude: location.lng,
           }))
-        : [
+        :
+         [
             currentLocation,
             endMarkerPosition1,
             endMarkerPosition2,
