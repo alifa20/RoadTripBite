@@ -17,6 +17,7 @@ export const Colors = {
     tabIconSelected: tintColorLight,
     // radar: `rgba(84, 56, 54, 0.2)`
     radar: "#543836",
+    borderNotice: "#543836", // Retain green for light mode
   },
   dark: {
     text: "#ECEDEE",
@@ -27,5 +28,6 @@ export const Colors = {
     tabIconDefault: "#9BA1A6",
     tabIconSelected: tintColorDark,
     radar: "#FFF8E7",
+    borderNotice: "#543836",  
   },
 };

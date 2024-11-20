@@ -22,7 +22,7 @@ interface Props {
 export const ArrowDirection = ({ style }: Props) => {
   useCompass();
 
-  const radarColor = useThemeColor({}, "radar");
+  const borderColor = useThemeColor({}, "borderNotice");
   const dispatch = useAppDispatch();
   const deviceDirection = useAppSelector((state) => state.odometer.direction);
   const headingManual = useAppSelector((state) => state.odometer.headingManual);
@@ -54,7 +54,8 @@ export const ArrowDirection = ({ style }: Props) => {
         style={[
           style,
           { alignItems: "center" },
-          !headingManual ? [styles.manual, { borderColor: radarColor }] : {},
+          styles.shadow,
+          !headingManual ? [styles.manual, { borderColor }] : {},
         ]}
       >
         <Text style={{ fontSize: 26 }}>{deviceDirection.symbol}</Text>
@@ -68,6 +69,22 @@ export const ArrowDirection = ({ style }: Props) => {
 
 const styles = StyleSheet.create({
   manual: {
-    borderWidth: 2,
+    borderWidth: 4,
+    // shadowColor: "white",
+    shadowColor: "#FBF9F1",
+    // shadowColor: "#39FF14",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    // Android shadow
+    elevation: 10,
+  },
+  shadow: {
+    // shadowColor: "white",
+    // shadowOffset: { width: 0, height: 0 },
+    // shadowOpacity: 0.8,
+    // shadowRadius: 8,
+    // // Android shadow
+    // elevation: 10,
   },
 });
