@@ -148,6 +148,19 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   // const [searchText, setSearchText] = useState("");
 
+  const [toast, setToast] = useState<{ visible: boolean; message: string }>({
+    visible: false,
+    message: '',
+  });
+
+  const showToast = (message: string) => {
+    setToast({ visible: true, message });
+  };
+
+  const hideToast = () => {
+    setToast({ visible: false, message: '' });
+  };
+
   useEffect(() => {
     if (!isCenteringEnabled) {
       return;
