@@ -86,7 +86,10 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const preferredMap = useAppSelector((state) => state.settings.preferredMap);
   const locations = useAppSelector((state) => state.location.locations);
   const minRating = useAppSelector((state) => state.settings.minRating);
-  const avgSpeed = useAppSelector((state) => state.odometer.avgSpeed);
+  // const avgSpeed = useAppSelector((state) => state.odometer.avgSpeed);
+  const avgSpeed = useAppSelector((state) =>
+    [...state.odometer.speedList].sort().at(-1)
+  );
   const direction = useAppSelector((state) => state.odometer.direction);
   const loading = useAppSelector((state) => state.location.loading);
 

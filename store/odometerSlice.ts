@@ -19,6 +19,7 @@ export const DIRECTIONS: Direction[] = [
 
 interface OdometerState {
   speed: number;
+  speedList: number[];
   avgSpeed: number;
   heading: number;
   direction: Direction;
@@ -29,6 +30,7 @@ interface OdometerState {
 
 const initialState: OdometerState = {
   speed: 0,
+  speedList: [],
   avgSpeed: 0,
   heading: -1,
   headingManual: false,
@@ -58,6 +60,10 @@ const odometerSlice = createSlice({
       } else {
         state.mode = "driving";
       }
+    },
+    setSpeedList: (state, action: PayloadAction<number>) => {
+      const newList = [...state.speedList, action.payload];
+      state.speedList = newList.slice(-24);
     },
     setHeading: (state, action: PayloadAction<number>) => {
       state.heading = action.payload;
