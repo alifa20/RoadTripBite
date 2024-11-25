@@ -1,14 +1,33 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { mockResponse } from "@/mocks/mockLocations";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { LocationState, PlaceLocation } from "./types";
+import functions from "@react-native-firebase/functions";
+
+interface SearchParams {
+  lat: number;
+  lng: number;
+  type: string;
+  rating: number;
+  userRatingsTotal: number;
+}
+
+export const searchLocations = createAsyncThunk(
+  "location/searchLocations",
+  async (params: SearchParams) => {
+    const resp = await functions().httpsCallable<
+      SearchParams,
+      { results: PlaceLocation[] }
+    >("placesOnCall")(params);
+    return resp.data.results;
+  }
+);
 
 const initialState: LocationState = {
-  // locations: mockResponse.data.results,
-  // nextPageToken: mockResponse.data.nextPageToken,
   locations: [],
   nextPageToken: "",
   selectedLocation: null,
   showBottomSheet: false,
+  loading: false,
+  error: null,
 };
 
 const locationSlice = createSlice({
@@ -29,8 +48,23 @@ const locationSlice = createSlice({
     },
     clearLocations: (state) => {
       state.locations = [];
-       state.selectedLocation = null;
+      state.selectedLocation = null;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(searchLocations.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(searchLocations.fulfilled, (state, action) => {
+        state.locations = action.payload;
+        state.loading = false;
+      })
+      .addCase(searchLocations.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "An error occurred";
+      });
   },
 });
 

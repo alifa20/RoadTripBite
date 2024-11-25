@@ -1,14 +1,13 @@
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { AppDispatch } from "@/store";
 import { useAppSelector } from "@/store/hooks";
-import { setLocations } from "@/store/locationSlice";
-import { PlaceLocation } from "@/store/types";
+import { searchLocations } from "@/store/locationSlice";
 import { calculateRegionForPoints } from "@/utils/calculateRegionForPoints";
 import { generateRadiusPoints } from "@/utils/generateRadiusPoints";
 import { getRadiusFromSpeed } from "@/utils/getRadiusFromSpeed";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import BottomSheet from "@gorhom/bottom-sheet";
-import functions from "@react-native-firebase/functions";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -31,10 +30,10 @@ import Animated, {
 } from "react-native-reanimated";
 import { useDispatch } from "react-redux";
 import { useLocation } from "../hooks/useLocation";
+import { ArrowDirection } from "./ArrowDirection";
 import { DirectionalBeacon } from "./DirectionalBeacon";
 import { LocationMarkers } from "./LocationMarkers";
 import { SpeedOMeter } from "./SpeedOMeter";
-import { ArrowDirection } from "./ArrowDirection";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -80,14 +79,16 @@ interface MapProps {
 const Map = ({ bottomSheetRef }: MapProps) => {
   const mapRef = useRef<MapView>(null);
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const colorScheme = useColorScheme();
+  const radarDisabled = useThemeColor({}, "radarDisabled");
 
   const preferredMap = useAppSelector((state) => state.settings.preferredMap);
   const locations = useAppSelector((state) => state.location.locations);
   const minRating = useAppSelector((state) => state.settings.minRating);
   const avgSpeed = useAppSelector((state) => state.odometer.avgSpeed);
   const direction = useAppSelector((state) => state.odometer.direction);
+  const loading = useAppSelector((state) => state.location.loading);
 
   const minReviewCount = useAppSelector(
     (state) => state.settings.minReviewCount
@@ -150,7 +151,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
 
   const [toast, setToast] = useState<{ visible: boolean; message: string }>({
     visible: false,
-    message: '',
+    message: "",
   });
 
   const showToast = (message: string) => {
@@ -158,7 +159,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   };
 
   const hideToast = () => {
-    setToast({ visible: false, message: '' });
+    setToast({ visible: false, message: "" });
   };
 
   useEffect(() => {
@@ -166,19 +167,12 @@ const Map = ({ bottomSheetRef }: MapProps) => {
       return;
     }
     if (mapRef.current) {
-      const allPoints =
-        // locations.length > 0
-        //   ? locations.map(({ location }) => ({
-        //       latitude: location.lat,
-        //       longitude: location.lng,
-        //     }))
-        //   :
-        [
-          currentLocation,
-          endMarkerPosition1,
-          endMarkerPosition2,
-          ...beaconPoints,
-        ];
+      const allPoints = [
+        currentLocation,
+        endMarkerPosition1,
+        endMarkerPosition2,
+        ...beaconPoints,
+      ];
 
       const topPadding = 200; // Height of the top controls
       const region = calculateRegionForPoints(allPoints, topPadding);
@@ -249,54 +243,19 @@ const Map = ({ bottomSheetRef }: MapProps) => {
           userRatingsTotal: minReviewCount,
         };
 
-        // const param = {
-        //   lat: -33.88566370609694,
-        //   lng: 151.00686130036487,
-        //   rankby: "distance",
-        //   // type: "restaurant",
-        //   type: selectedCategory,
-        //   rating: minRating,
-        //   userRatingsTotal: minReviewCount,
-        // };
+        const resultAction = await dispatch(searchLocations(param));
 
-        const resp = await functions().httpsCallable<
-          {
-            lat: number;
-            lng: number;
-            type: string;
-            rating: number;
-            userRatingsTotal: number;
-          },
-          {
-            results: PlaceLocation[];
-          }
-        >("placesOnCall")(param);
+        if (searchLocations.fulfilled.match(resultAction)) {
+          const locs = resultAction.payload.map(({ location }) => ({
+            latitude: location.lat,
+            longitude: location.lng,
+          }));
 
-        const resultsLocations = resp.data.results.map((place) => ({
-          location: {
-            lat: place.location.lat,
-            lng: place.location.lng,
-          },
-          name: place.name,
-          rating: place.rating,
-          userRatingsTotal: place.userRatingsTotal,
-          address: place.address,
-          isOpen: place.isOpen,
-          photos: place.photos,
-        }));
-
-        const locs = resultsLocations.map(({ location }) => ({
-          latitude: location.lat,
-          longitude: location.lng,
-        }));
-
-        const topPadding = 200;
-        const region = calculateRegionForPoints(locs, topPadding);
-
-        mapRef.current?.animateToRegion(region, 1000);
-
-        setIsCenteringEnabled(false);
-        dispatch(setLocations(resp.data.results));
+          const topPadding = 200;
+          const region = calculateRegionForPoints(locs, topPadding);
+          mapRef.current?.animateToRegion(region, 1000);
+          setIsCenteringEnabled(false);
+        }
       } catch (error) {
         console.error("Error fetching places:", error);
       }
@@ -474,9 +433,16 @@ const Map = ({ bottomSheetRef }: MapProps) => {
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={onSearch}>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              { backgroundColor: loading ? radarDisabled : "#543836" },
+            ]}
+            onPress={onSearch}
+            disabled={loading}
+          >
             <Text style={styles.buttonText}>
-              Search
+              {loading ? "Searching..." : "Search"}
               {/* &gt; {radiusMap.distance}km */}
             </Text>
           </TouchableOpacity>
@@ -626,7 +592,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button: {
-    backgroundColor: "#543836",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 15,
