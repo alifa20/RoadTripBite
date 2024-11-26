@@ -63,7 +63,7 @@ const odometerSlice = createSlice({
     },
     setSpeedList: (state, action: PayloadAction<number>) => {
       const newList = [...state.speedList, action.payload];
-      state.speedList = newList.slice(-24);
+      state.speedList = newList.slice(-100);
     },
     setHeading: (state, action: PayloadAction<number>) => {
       state.heading = action.payload;
