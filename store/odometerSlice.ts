@@ -26,6 +26,7 @@ interface OdometerState {
   compassDirection: string;
   headingManual: boolean;
   mode: "walking" | "driving";
+  isCenteringEnabled: boolean;
 }
 
 const initialState: OdometerState = {
@@ -37,6 +38,7 @@ const initialState: OdometerState = {
   compassDirection: "N",
   mode: "walking",
   direction: DIRECTIONS[0],
+  isCenteringEnabled: true,
 };
 
 const odometerSlice = createSlice({
@@ -78,6 +80,12 @@ const odometerSlice = createSlice({
     setDirection: (state, action: PayloadAction<Direction>) => {
       state.direction = action.payload;
     },
+    setIsCenteringEnabled: (state, action: PayloadAction<boolean>) => {
+      state.isCenteringEnabled = action.payload;
+      // if (action.payload) {
+        state.headingManual = !action.payload;
+      // }
+    },
   },
 });
 
@@ -88,5 +96,6 @@ export const {
   setCompassDirection,
   setAvgSpeed,
   setHeadingManual,
+  setIsCenteringEnabled,
 } = odometerSlice.actions;
 export default odometerSlice.reducer;

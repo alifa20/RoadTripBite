@@ -6,7 +6,7 @@ import {
   setDirection,
   setHeadingManual,
 } from "@/store/odometerSlice";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -48,13 +48,11 @@ export const ArrowDirection = ({ style }: Props) => {
       onPress={handlePress}
       onLongPress={handleLongPress}
       delayLongPress={500}
-      //   underlayColor="rgba(128, 128, 128, 0.2)"
     >
       <View
         style={[
           style,
           { alignItems: "center" },
-          styles.shadow,
           !headingManual ? [styles.manual, { borderColor }] : {},
         ]}
       >
@@ -70,21 +68,13 @@ export const ArrowDirection = ({ style }: Props) => {
 const styles = StyleSheet.create({
   manual: {
     borderWidth: 4,
-    // shadowColor: "white",
+
     shadowColor: "#FBF9F1",
-    // shadowColor: "#39FF14",
+
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 8,
-    // Android shadow
+
     elevation: 10,
-  },
-  shadow: {
-    // shadowColor: "white",
-    // shadowOffset: { width: 0, height: 0 },
-    // shadowOpacity: 0.8,
-    // shadowRadius: 8,
-    // // Android shadow
-    // elevation: 10,
   },
 });

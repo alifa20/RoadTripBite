@@ -3,6 +3,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { AppDispatch } from "@/store";
 import { useAppSelector } from "@/store/hooks";
 import { searchLocations } from "@/store/locationSlice";
+import { setIsCenteringEnabled } from "@/store/odometerSlice";
 import { calculateRegionForPoints } from "@/utils/calculateRegionForPoints";
 import { generateRadiusPoints } from "@/utils/generateRadiusPoints";
 import { getRadiusFromSpeed } from "@/utils/getRadiusFromSpeed";
@@ -106,7 +107,11 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const radarColor = useThemeColor({}, "radar");
 
   // Add these new state variables
-  const [isCenteringEnabled, setIsCenteringEnabled] = useState(true);
+  // const [isCenteringEnabled, dispatch(setIsCenteringEnabled] = useState(true));
+  const isCenteringEnabled = useAppSelector(
+    (state) => state.odometer.isCenteringEnabled
+  );
+
   const buttonOpacity = useSharedValue(1);
 
   const radiusMap = getRadiusFromSpeed(avgSpeed);
@@ -257,7 +262,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
           const topPadding = 200;
           const region = calculateRegionForPoints(locs, topPadding);
           mapRef.current?.animateToRegion(region, 1000);
-          setIsCenteringEnabled(false);
+          dispatch(setIsCenteringEnabled(false));
         }
       } catch (error) {
         console.error("Error fetching places:", error);
@@ -284,7 +289,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
     if (!rawLocation?.coords) return;
 
     setIsUserInteracting(false);
-    setIsCenteringEnabled(true);
+    dispatch(setIsCenteringEnabled(true));
     buttonOpacity.value = withSpring(1);
 
     const region = calculateRegionForPoints(
@@ -309,7 +314,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const handleMapDrag = () => {
     setIsUserInteracting(true);
     if (isCenteringEnabled) {
-      setIsCenteringEnabled(false);
+      dispatch(setIsCenteringEnabled(false));
       buttonOpacity.value = withSpring(0.5);
     }
   };
@@ -371,45 +376,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
         </Animated.View>
       </TouchableOpacity>
       <View style={styles.scrollersContainer}>
-        <View style={styles.infoWrapper}>
-          {/* <SearchInput
-            value={searchText}
-            onChangeText={setSearchText}
-            placeholder="Search locations..."
-          /> */}
-          {/* <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.infoContainer}
-            contentContainerStyle={styles.infoContent}
-          >
-            <View style={styles.infoChip}>
-              {noGPS && (
-                <Animated.Text
-                  style={[
-                    styles.infoText,
-                    ...(noGPS
-                      ? [styles.noGps, animatedTextStyle]
-                      : [styles.gps]),
-                  ]}
-                >
-                  {!noGPS && "✓ "}
-                  GPS -
-                </Animated.Text>
-              )}
-              <Animated.Text style={[styles.infoText]}>
-                Direction: {compassDirection}
-              </Animated.Text>
-            </View>
-            <View style={styles.infoChip}>
-              <Text style={styles.infoText}>
-                Speed:{" "}
-                {!!speed ? `${(speed * 3.6).toFixed(1)} km/h` : "0.0 km/h"}
-              </Text>
-            </View>
-          </ScrollView> */}
-        </View>
-
+        <View style={styles.infoWrapper} />
         <View style={styles.categoriesWrapper}>
           <ScrollView
             horizontal
