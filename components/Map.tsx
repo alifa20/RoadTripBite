@@ -31,10 +31,11 @@ import Animated, {
 } from "react-native-reanimated";
 import { useDispatch } from "react-redux";
 import { useLocation } from "../hooks/useLocation";
-import { ArrowDirection } from "./ArrowDirection";
 import { DirectionalBeacon } from "./DirectionalBeacon";
 import { LocationMarkers } from "./LocationMarkers";
 import { SpeedOMeter } from "./SpeedOMeter";
+import { ArrowDirection } from "./ArrowDirection";
+import { Toast } from "./Toast";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -157,13 +158,20 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   // const [searchText, setSearchText] = useState("");
 
-  const [toast, setToast] = useState<{ visible: boolean; message: string }>({
+  const [toast, setToast] = useState<{
+    visible: boolean;
+    message: string;
+    actions?: { text: string; onPress: () => void }[];
+  }>({
     visible: false,
     message: "",
   });
 
-  const showToast = (message: string) => {
-    setToast({ visible: true, message });
+  const showToast = (
+    message: string,
+    actions?: { text: string; onPress: () => void }[]
+  ) => {
+    setToast({ visible: true, message, actions });
   };
 
   const hideToast = () => {
@@ -243,6 +251,23 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const onSearch = async () => {
     if (preferredMap === "IN_APP") {
       try {
+        let shouldShowToast = true;
+        const timeoutId = setTimeout(() => {
+          showToast(
+            "The app is taking long time? You can continue other apps:",
+            [
+              {
+                text: "Google Maps",
+                onPress: () => Linking.openURL(linkGoogle),
+              },
+              {
+                text: "Apple Maps",
+                onPress: () => Linking.openURL(linkApple),
+              },
+            ]
+          );
+        }, 1000);
+
         const param = {
           lat: beaconPoints[beaconPoints.length / 3].latitude,
           lng: beaconPoints[beaconPoints.length / 3].longitude,
@@ -253,25 +278,28 @@ const Map = ({ bottomSheetRef }: MapProps) => {
 
         const resultAction = await dispatch(searchLocations(param));
 
-        if (!searchLocations.fulfilled.match(resultAction)) {
-          return;
+        if (timeoutId) {
+          clearTimeout(timeoutId);
         }
-        
-        if (resultAction.payload.length === 0) {
-          return;
+
+        if (searchLocations.fulfilled.match(resultAction)) {
+          if (resultAction.payload.length === 0) {
+            return;
+          }
+
+          const locs = resultAction.payload.map(({ location }) => ({
+            latitude: location.lat,
+            longitude: location.lng,
+          }));
+
+          const topPadding = 200;
+          const region = calculateRegionForPoints(locs, topPadding);
+          mapRef.current?.animateToRegion(region, 1000);
+          dispatch(setIsCenteringEnabled(false));
         }
-        const locs = resultAction.payload.map(({ location }) => ({
-          latitude: location.lat,
-          longitude: location.lng,
-        }));
-
-        const topPadding = 200;
-
-        const region = calculateRegionForPoints(locs, topPadding);
-        mapRef.current?.animateToRegion(region, 1000);
-        dispatch(setIsCenteringEnabled(false));
       } catch (error) {
         console.error("Error fetching places:", error);
+        showToast("Error fetching places. Please try again.");
       }
     } else {
       Linking.openURL(calloutLink2);
@@ -327,6 +355,23 @@ const Map = ({ bottomSheetRef }: MapProps) => {
 
   return (
     <View style={styles.container}>
+      <Toast
+        visible={toast.visible}
+        message={toast.message}
+        onHide={hideToast}
+        duration={5000}
+        actions={toast.actions}
+        // actions={[
+        //   {
+        //     text: "Google Maps",
+        //     onPress: () => Linking.openURL(linkGoogle),
+        //   },
+        //   {
+        //     text: "Apple Maps",
+        //     onPress: () => Linking.openURL(linkApple),
+        //   },
+        // ]}
+      />
       <MapView
         userInterfaceStyle={colorScheme}
         ref={mapRef}
