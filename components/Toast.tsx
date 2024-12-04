@@ -52,9 +52,7 @@ export const Toast = ({
 
   return (
     <Animated.View style={[styles.toastContainer, animatedStyle]}>
-      <Text style={[styles.message, { marginBottom: actions ? 12 : 0 }]}>
-        {message}
-      </Text>
+      <Text style={styles.message}>{message}</Text>
       {actions && actions.length > 0 && (
         <View style={styles.actionContainer}>
           {actions.map((action, index) => (
@@ -76,7 +74,7 @@ export const Toast = ({
 const styles = StyleSheet.create({
   toastContainer: {
     position: "absolute",
-    top: 150,
+    bottom: 50,
     left: 20,
     right: 20,
     backgroundColor: "rgba(0, 0, 0, 0.9)",
@@ -92,17 +90,20 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   message: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    fontSize: 14,
   },
   actionContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
     gap: 12,
-    marginTop: 8,
+    // marginTop: 8,
+    marginLeft: 8,
   },
   actionButton: {
     paddingVertical: 6,

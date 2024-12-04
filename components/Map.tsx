@@ -251,10 +251,9 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const onSearch = async () => {
     if (preferredMap === "IN_APP") {
       try {
-        let shouldShowToast = true;
         const timeoutId = setTimeout(() => {
           showToast(
-            "The app is taking long time? You can continue other apps:",
+            "Too slow? try:",
             [
               {
                 text: "Google Maps",
