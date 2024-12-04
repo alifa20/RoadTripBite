@@ -158,13 +158,20 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   // const [searchText, setSearchText] = useState("");
 
-  const [toast, setToast] = useState<{ visible: boolean; message: string }>({
+  const [toast, setToast] = useState<{
+    visible: boolean;
+    message: string;
+    actions?: { text: string; onPress: () => void }[];
+  }>({
     visible: false,
     message: "",
   });
 
-  const showToast = (message: string) => {
-    setToast({ visible: true, message });
+  const showToast = (
+    message: string,
+    actions?: { text: string; onPress: () => void }[]
+  ) => {
+    setToast({ visible: true, message, actions });
   };
 
   const hideToast = () => {
@@ -246,7 +253,19 @@ const Map = ({ bottomSheetRef }: MapProps) => {
       try {
         let shouldShowToast = true;
         const timeoutId = setTimeout(() => {
-          showToast("Searching nearby locations...");
+          showToast(
+            "The app is taking long time? You can continue other apps:",
+            [
+              {
+                text: "Google Maps",
+                onPress: () => Linking.openURL(linkGoogle),
+              },
+              {
+                text: "Apple Maps",
+                onPress: () => Linking.openURL(linkApple),
+              },
+            ]
+          );
         }, 1000);
 
         const param = {
@@ -261,14 +280,9 @@ const Map = ({ bottomSheetRef }: MapProps) => {
 
         if (timeoutId) {
           clearTimeout(timeoutId);
-          shouldShowToast = false;
         }
 
         if (searchLocations.fulfilled.match(resultAction)) {
-          if (shouldShowToast) {
-            showToast(`Found ${resultAction.payload.length} locations nearby`);
-          }
-
           if (resultAction.payload.length === 0) {
             return;
           }
@@ -346,6 +360,17 @@ const Map = ({ bottomSheetRef }: MapProps) => {
         message={toast.message}
         onHide={hideToast}
         duration={5000}
+        actions={toast.actions}
+        // actions={[
+        //   {
+        //     text: "Google Maps",
+        //     onPress: () => Linking.openURL(linkGoogle),
+        //   },
+        //   {
+        //     text: "Apple Maps",
+        //     onPress: () => Linking.openURL(linkApple),
+        //   },
+        // ]}
       />
       <MapView
         userInterfaceStyle={colorScheme}

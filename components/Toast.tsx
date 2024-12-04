@@ -1,110 +1,90 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated, {
-  Easing,
-  useSharedValue,
-  withTiming,
   useAnimatedStyle,
+  useSharedValue,
   withSpring,
-  runOnJS,
-  withSequence,
-} from 'react-native-reanimated';
+  withTiming,
+} from "react-native-reanimated";
 
 interface ToastProps {
   visible: boolean;
   message: string;
   onHide: () => void;
   duration?: number;
+  actions?: {
+    text: string;
+    onPress: () => void;
+  }[];
 }
 
-export function Toast({ 
-  visible, 
-  message, 
-  onHide, 
-  duration = 5000 
-}: ToastProps) {
-  const progressWidth = useSharedValue(0);
-  const toastOpacity = useSharedValue(0);
-  const toastTranslateY = useSharedValue(-100);
+export const Toast = ({
+  visible,
+  message,
+  onHide,
+  duration = 3000,
+  actions,
+}: ToastProps) => {
+  const opacity = useSharedValue(0);
+  const progress = useSharedValue(0);
 
   useEffect(() => {
     if (visible) {
-      showToast();
+      opacity.value = withSpring(1);
+      progress.value = withTiming(1, { duration });
+      const timer = setTimeout(onHide, duration);
+      return () => clearTimeout(timer);
+    } else {
+      opacity.value = withSpring(0);
+      progress.value = 0;
     }
-  }, [visible]);
+  }, [visible, duration]);
 
-  const showToast = () => {
-    progressWidth.value = 0;
-    toastOpacity.value = 0;
-    toastTranslateY.value = -100;
-
-    toastTranslateY.value = withSpring(0, {
-      damping: 15,
-      stiffness: 150,
-    });
-    toastOpacity.value = withSpring(1);
-
-    progressWidth.value = withSequence(
-      withTiming(100, {
-        duration,
-        easing: Easing.linear,
-      }),
-      withTiming(100, { duration: 0 }, (finished) => {
-        if (finished) {
-          runOnJS(onHide)();
-        }
-      })
-    );
-  };
-
-  const handleHideToast = () => {
-    toastOpacity.value = withTiming(0, {
-      duration: 300,
-      easing: Easing.out(Easing.ease),
-    });
-    toastTranslateY.value = withTiming(-100, {
-      duration: 300,
-      easing: Easing.out(Easing.ease),
-    }, () => {
-      runOnJS(onHide)();
-    });
-  };
-
-  const toastAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: toastOpacity.value,
-    transform: [{ translateY: toastTranslateY.value }],
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
   }));
 
-  const progressAnimatedStyle = useAnimatedStyle(() => ({
-    width: `${progressWidth.value}%`,
+  const progressStyle = useAnimatedStyle(() => ({
+    width: `${progress.value * 100}%`,
   }));
 
   if (!visible) return null;
 
   return (
-    <Animated.View style={[styles.toastContainer, toastAnimatedStyle]}>
-      <View style={styles.toastContent}>
-        <Text style={styles.toastText}>{message}</Text>
-        <TouchableOpacity onPress={handleHideToast} style={styles.toastClose}>
-          <Text style={styles.toastCloseText}>✕</Text>
-        </TouchableOpacity>
-      </View>
-      <Animated.View style={[styles.progressBar, progressAnimatedStyle]} />
+    <Animated.View style={[styles.toastContainer, animatedStyle]}>
+      <Text style={[styles.message, { marginBottom: actions ? 12 : 0 }]}>
+        {message}
+      </Text>
+      {actions && actions.length > 0 && (
+        <View style={styles.actionContainer}>
+          {actions.map((action, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.actionButton}
+              onPress={action.onPress}
+            >
+              <Text style={styles.actionText}>{action.text}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+      <Animated.View style={[styles.progressBar, progressStyle]} />
     </Animated.View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   toastContainer: {
-    position: 'absolute',
-    top: 50,
+    position: "absolute",
+    top: 150,
     left: 20,
     right: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    backgroundColor: "rgba(0, 0, 0, 0.9)",
     borderRadius: 8,
+    padding: 16,
     zIndex: 1000,
-    overflow: 'hidden',
-    shadowColor: '#000',
+    overflow: "hidden",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -113,30 +93,32 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  toastContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 12,
-  },
-  toastText: {
-    color: 'white',
-    fontSize: 14,
-    flex: 1,
-    marginRight: 8,
-  },
-  toastClose: {
-    padding: 4,
-  },
-  toastCloseText: {
-    color: 'white',
+  message: {
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+  },
+  actionContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 12,
+    marginTop: 8,
+  },
+  actionButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  },
+  actionText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "600",
   },
   progressBar: {
     height: 3,
-    backgroundColor: '#4CAF50',
-    position: 'absolute',
+    backgroundColor: "#4CAF50",
+    position: "absolute",
     bottom: 0,
     left: 0,
   },
