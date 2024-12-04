@@ -35,7 +35,7 @@ import { DirectionalBeacon } from "./DirectionalBeacon";
 import { LocationMarkers } from "./LocationMarkers";
 import { SpeedOMeter } from "./SpeedOMeter";
 import { ArrowDirection } from "./ArrowDirection";
-import { Toast } from './Toast';
+import { Toast } from "./Toast";
 
 const { width, height } = Dimensions.get("window");
 const ASPECT_RATIO = width / height;
@@ -244,6 +244,11 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const onSearch = async () => {
     if (preferredMap === "IN_APP") {
       try {
+        let shouldShowToast = true;
+        const timeoutId = setTimeout(() => {
+          showToast("Searching nearby locations...");
+        }, 1000);
+
         const param = {
           lat: beaconPoints[beaconPoints.length / 3].latitude,
           lng: beaconPoints[beaconPoints.length / 3].longitude,
@@ -254,25 +259,30 @@ const Map = ({ bottomSheetRef }: MapProps) => {
 
         const resultAction = await dispatch(searchLocations(param));
 
-        if (!searchLocations.fulfilled.match(resultAction)) {
-          return;
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          shouldShowToast = false;
         }
-        
-        if (resultAction.payload.length === 0) {
-          return;
+
+        if (searchLocations.fulfilled.match(resultAction)) {
+          if (shouldShowToast) {
+            showToast(`Found ${resultAction.payload.length} locations nearby`);
+          }
+
+          if (resultAction.payload.length === 0) {
+            return;
+          }
+
+          const locs = resultAction.payload.map(({ location }) => ({
+            latitude: location.lat,
+            longitude: location.lng,
+          }));
+
+          const topPadding = 200;
+          const region = calculateRegionForPoints(locs, topPadding);
+          mapRef.current?.animateToRegion(region, 1000);
+          dispatch(setIsCenteringEnabled(false));
         }
-        const locs = resultAction.payload.map(({ location }) => ({
-          latitude: location.lat,
-          longitude: location.lng,
-        }));
-
-        const topPadding = 200;
-
-        const region = calculateRegionForPoints(locs, topPadding);
-        mapRef.current?.animateToRegion(region, 1000);
-        dispatch(setIsCenteringEnabled(false));
-        showToast(`Found ${locs.length} locations nearby`);
-
       } catch (error) {
         console.error("Error fetching places:", error);
         showToast("Error fetching places. Please try again.");
