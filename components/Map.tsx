@@ -253,22 +253,23 @@ const Map = ({ bottomSheetRef }: MapProps) => {
 
         const resultAction = await dispatch(searchLocations(param));
 
-        console.log("hey", resultAction);
-
-        if (searchLocations.fulfilled.match(resultAction)) {
-          const locs = resultAction.payload.map(({ location }) => ({
-            latitude: location.lat,
-            longitude: location.lng,
-          }));
-
-          const topPadding = 200;
-          if (locs.length === 0) {
-            return;
-          }
-          const region = calculateRegionForPoints(locs, topPadding);
-          mapRef.current?.animateToRegion(region, 1000);
-          dispatch(setIsCenteringEnabled(false));
+        if (!searchLocations.fulfilled.match(resultAction)) {
+          return;
         }
+        
+        if (resultAction.payload.length === 0) {
+          return;
+        }
+        const locs = resultAction.payload.map(({ location }) => ({
+          latitude: location.lat,
+          longitude: location.lng,
+        }));
+
+        const topPadding = 200;
+
+        const region = calculateRegionForPoints(locs, topPadding);
+        mapRef.current?.animateToRegion(region, 1000);
+        dispatch(setIsCenteringEnabled(false));
       } catch (error) {
         console.error("Error fetching places:", error);
       }
