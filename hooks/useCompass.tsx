@@ -36,19 +36,16 @@ export const useCompass = () => {
   const [accuracy, setAccuracy] = useState(0);
   const dispatch = useAppDispatch();
   const headingManual = useAppSelector((state) => state.odometer.headingManual);
-console.log('heyhye', headingManual);
 
   useEffect(() => {
     const degree_update_rate = 3;
 
     CompassHeading.start(degree_update_rate, ({ heading, accuracy }: any) => {
-      
       dispatch(setHeading(heading));
 
       if (headingManual) {
         return;
       }
-
       setAccuracy(accuracy);
       dispatch(setDirection(getDirection(heading)));
     });
@@ -56,7 +53,22 @@ console.log('heyhye', headingManual);
     return () => {
       CompassHeading.stop();
     };
-  }, []);
+  }, [dispatch, headingManual]);
+
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     const randomHeading = Math.floor(Math.random() * 120) + 1; // Generate random heading between 1 and 120
+  //     dispatch(setHeading(randomHeading));
+  //     if (headingManual) {
+  //       return;
+  //     }
+  //     dispatch(setDirection(getDirection(randomHeading)));
+  //   }, 300);
+
+  //   return () => clearInterval(intervalId);
+  // }, [
+  //   // dispatch, headingManual
+  // ]);
 
   // const currentDirection = useMemo(() => {
   //   // Normalize heading to 0-360

@@ -19,22 +19,26 @@ export const DIRECTIONS: Direction[] = [
 
 interface OdometerState {
   speed: number;
+  speedList: number[];
   avgSpeed: number;
   heading: number;
   direction: Direction;
   compassDirection: string;
   headingManual: boolean;
   mode: "walking" | "driving";
+  isCenteringEnabled: boolean;
 }
 
 const initialState: OdometerState = {
   speed: 0,
+  speedList: [],
   avgSpeed: 0,
   heading: -1,
   headingManual: false,
   compassDirection: "N",
   mode: "walking",
   direction: DIRECTIONS[0],
+  isCenteringEnabled: true,
 };
 
 const odometerSlice = createSlice({
@@ -59,6 +63,10 @@ const odometerSlice = createSlice({
         state.mode = "driving";
       }
     },
+    setSpeedList: (state, action: PayloadAction<number>) => {
+      const newList = [...state.speedList, action.payload];
+      state.speedList = newList.slice(-100);
+    },
     setHeading: (state, action: PayloadAction<number>) => {
       state.heading = action.payload;
     },
@@ -72,6 +80,12 @@ const odometerSlice = createSlice({
     setDirection: (state, action: PayloadAction<Direction>) => {
       state.direction = action.payload;
     },
+    setIsCenteringEnabled: (state, action: PayloadAction<boolean>) => {
+      state.isCenteringEnabled = action.payload;
+      // if (action.payload) {
+        state.headingManual = !action.payload;
+      // }
+    },
   },
 });
 
@@ -82,5 +96,6 @@ export const {
   setCompassDirection,
   setAvgSpeed,
   setHeadingManual,
+  setIsCenteringEnabled,
 } = odometerSlice.actions;
 export default odometerSlice.reducer;

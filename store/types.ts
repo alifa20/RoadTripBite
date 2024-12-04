@@ -41,6 +41,8 @@ export const MAP_TYPES = {
     nextPageToken: string;
     selectedLocation: PlaceLocation | null;
     showBottomSheet: boolean;
+    loading: boolean;
+    error: string | null;
   }
   
   export const MIN_RATINGS = {

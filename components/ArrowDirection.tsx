@@ -6,7 +6,7 @@ import {
   setDirection,
   setHeadingManual,
 } from "@/store/odometerSlice";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -22,7 +22,7 @@ interface Props {
 export const ArrowDirection = ({ style }: Props) => {
   useCompass();
 
-  const radarColor = useThemeColor({}, "radar");
+  const borderColor = useThemeColor({}, "borderNotice");
   const dispatch = useAppDispatch();
   const deviceDirection = useAppSelector((state) => state.odometer.direction);
   const headingManual = useAppSelector((state) => state.odometer.headingManual);
@@ -48,13 +48,12 @@ export const ArrowDirection = ({ style }: Props) => {
       onPress={handlePress}
       onLongPress={handleLongPress}
       delayLongPress={500}
-      //   underlayColor="rgba(128, 128, 128, 0.2)"
     >
       <View
         style={[
           style,
           { alignItems: "center" },
-          !headingManual ? [styles.manual, { borderColor: radarColor }] : {},
+          !headingManual ? [styles.manual, { borderColor }] : {},
         ]}
       >
         <Text style={{ fontSize: 26 }}>{deviceDirection.symbol}</Text>
@@ -68,6 +67,14 @@ export const ArrowDirection = ({ style }: Props) => {
 
 const styles = StyleSheet.create({
   manual: {
-    borderWidth: 2,
+    borderWidth: 4,
+
+    shadowColor: "#FBF9F1",
+
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 8,
+
+    elevation: 10,
   },
 });

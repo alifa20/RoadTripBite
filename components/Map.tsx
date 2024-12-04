@@ -1,14 +1,14 @@
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { AppDispatch } from "@/store";
 import { useAppSelector } from "@/store/hooks";
-import { setLocations } from "@/store/locationSlice";
-import { PlaceLocation } from "@/store/types";
+import { searchLocations } from "@/store/locationSlice";
+import { setIsCenteringEnabled } from "@/store/odometerSlice";
 import { calculateRegionForPoints } from "@/utils/calculateRegionForPoints";
 import { generateRadiusPoints } from "@/utils/generateRadiusPoints";
 import { getRadiusFromSpeed } from "@/utils/getRadiusFromSpeed";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import BottomSheet from "@gorhom/bottom-sheet";
-import functions from "@react-native-firebase/functions";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -81,14 +81,19 @@ interface MapProps {
 const Map = ({ bottomSheetRef }: MapProps) => {
   const mapRef = useRef<MapView>(null);
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const colorScheme = useColorScheme();
+  const radarDisabled = useThemeColor({}, "radarDisabled");
 
   const preferredMap = useAppSelector((state) => state.settings.preferredMap);
   const locations = useAppSelector((state) => state.location.locations);
   const minRating = useAppSelector((state) => state.settings.minRating);
-  const avgSpeed = useAppSelector((state) => state.odometer.avgSpeed);
+  // const avgSpeed = useAppSelector((state) => state.odometer.avgSpeed);
+  const avgSpeed = useAppSelector((state) =>
+    [...state.odometer.speedList].sort().at(-1)
+  );
   const direction = useAppSelector((state) => state.odometer.direction);
+  const loading = useAppSelector((state) => state.location.loading);
 
   const minReviewCount = useAppSelector(
     (state) => state.settings.minReviewCount
@@ -103,7 +108,11 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const radarColor = useThemeColor({}, "radar");
 
   // Add these new state variables
-  const [isCenteringEnabled, setIsCenteringEnabled] = useState(true);
+  // const [isCenteringEnabled, dispatch(setIsCenteringEnabled] = useState(true));
+  const isCenteringEnabled = useAppSelector(
+    (state) => state.odometer.isCenteringEnabled
+  );
+
   const buttonOpacity = useSharedValue(1);
 
   const radiusMap = getRadiusFromSpeed(avgSpeed);
@@ -151,7 +160,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
 
   const [toast, setToast] = useState<{ visible: boolean; message: string }>({
     visible: false,
-    message: '',
+    message: "",
   });
 
   const showToast = (message: string) => {
@@ -159,7 +168,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   };
 
   const hideToast = () => {
-    setToast({ visible: false, message: '' });
+    setToast({ visible: false, message: "" });
   };
 
   useEffect(() => {
@@ -167,19 +176,12 @@ const Map = ({ bottomSheetRef }: MapProps) => {
       return;
     }
     if (mapRef.current) {
-      const allPoints =
-        // locations.length > 0
-        //   ? locations.map(({ location }) => ({
-        //       latitude: location.lat,
-        //       longitude: location.lng,
-        //     }))
-        //   :
-        [
-          currentLocation,
-          endMarkerPosition1,
-          endMarkerPosition2,
-          ...beaconPoints,
-        ];
+      const allPoints = [
+        currentLocation,
+        endMarkerPosition1,
+        endMarkerPosition2,
+        ...beaconPoints,
+      ];
 
       const topPadding = 200; // Height of the top controls
       const region = calculateRegionForPoints(allPoints, topPadding);
@@ -250,55 +252,27 @@ const Map = ({ bottomSheetRef }: MapProps) => {
           userRatingsTotal: minReviewCount,
         };
 
-        // const param = {
-        //   lat: -33.88566370609694,
-        //   lng: 151.00686130036487,
-        //   rankby: "distance",
-        //   // type: "restaurant",
-        //   type: selectedCategory,
-        //   rating: minRating,
-        //   userRatingsTotal: minReviewCount,
-        // };
+        const resultAction = await dispatch(searchLocations(param));
 
-        const resp = await functions().httpsCallable<
-          {
-            lat: number;
-            lng: number;
-            type: string;
-            rating: number;
-            userRatingsTotal: number;
-          },
-          {
-            results: PlaceLocation[];
-          }
-        >("placesOnCall")(param);
-
-        const resultsLocations = resp.data.results.map((place) => ({
-          location: {
-            lat: place.location.lat,
-            lng: place.location.lng,
-          },
-          name: place.name,
-          rating: place.rating,
-          userRatingsTotal: place.userRatingsTotal,
-          address: place.address,
-          isOpen: place.isOpen,
-          photos: place.photos,
-        }));
-
-        const locs = resultsLocations.map(({ location }) => ({
+        if (!searchLocations.fulfilled.match(resultAction)) {
+          return;
+        }
+        
+        if (resultAction.payload.length === 0) {
+          return;
+        }
+        const locs = resultAction.payload.map(({ location }) => ({
           latitude: location.lat,
           longitude: location.lng,
         }));
 
         const topPadding = 200;
+
         const region = calculateRegionForPoints(locs, topPadding);
-
         mapRef.current?.animateToRegion(region, 1000);
+        dispatch(setIsCenteringEnabled(false));
+        showToast(`Found ${locs.length} locations nearby`);
 
-        setIsCenteringEnabled(false);
-        dispatch(setLocations(resp.data.results));
-        showToast(`Found ${resp.data.results.length} locations nearby`);
       } catch (error) {
         console.error("Error fetching places:", error);
         showToast("Error fetching places. Please try again.");
@@ -325,7 +299,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
     if (!rawLocation?.coords) return;
 
     setIsUserInteracting(false);
-    setIsCenteringEnabled(true);
+    dispatch(setIsCenteringEnabled(true));
     buttonOpacity.value = withSpring(1);
 
     const region = calculateRegionForPoints(
@@ -350,7 +324,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
   const handleMapDrag = () => {
     setIsUserInteracting(true);
     if (isCenteringEnabled) {
-      setIsCenteringEnabled(false);
+      dispatch(setIsCenteringEnabled(false));
       buttonOpacity.value = withSpring(0.5);
     }
   };
@@ -418,45 +392,7 @@ const Map = ({ bottomSheetRef }: MapProps) => {
         </Animated.View>
       </TouchableOpacity>
       <View style={styles.scrollersContainer}>
-        <View style={styles.infoWrapper}>
-          {/* <SearchInput
-            value={searchText}
-            onChangeText={setSearchText}
-            placeholder="Search locations..."
-          /> */}
-          {/* <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.infoContainer}
-            contentContainerStyle={styles.infoContent}
-          >
-            <View style={styles.infoChip}>
-              {noGPS && (
-                <Animated.Text
-                  style={[
-                    styles.infoText,
-                    ...(noGPS
-                      ? [styles.noGps, animatedTextStyle]
-                      : [styles.gps]),
-                  ]}
-                >
-                  {!noGPS && "✓ "}
-                  GPS -
-                </Animated.Text>
-              )}
-              <Animated.Text style={[styles.infoText]}>
-                Direction: {compassDirection}
-              </Animated.Text>
-            </View>
-            <View style={styles.infoChip}>
-              <Text style={styles.infoText}>
-                Speed:{" "}
-                {!!speed ? `${(speed * 3.6).toFixed(1)} km/h` : "0.0 km/h"}
-              </Text>
-            </View>
-          </ScrollView> */}
-        </View>
-
+        <View style={styles.infoWrapper} />
         <View style={styles.categoriesWrapper}>
           <ScrollView
             horizontal
@@ -483,9 +419,16 @@ const Map = ({ bottomSheetRef }: MapProps) => {
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={onSearch}>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              { backgroundColor: loading ? radarDisabled : "#543836" },
+            ]}
+            onPress={onSearch}
+            disabled={loading}
+          >
             <Text style={styles.buttonText}>
-              Search
+              {loading ? "Searching..." : "Search"}
               {/* &gt; {radiusMap.distance}km */}
             </Text>
           </TouchableOpacity>
@@ -635,7 +578,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button: {
-    backgroundColor: "#543836",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 15,
